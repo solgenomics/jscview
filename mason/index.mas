@@ -1,0 +1,145 @@
+ 
+<%args>
+$input_gene => ()
+</%args>
+
+ <form id="form" class="form-horizontal">
+        <div class="form-group">
+          
+          <div >  
+            <label>Map</label> 
+            <select id="mapId" name="mapId">
+              <option ><-----Select---></option>
+              <option value="S2">Cassava</option>
+              <option value="S1">Cass</option>
+            </select>
+             <br>
+
+             <a id="submit" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,'','');">Submit</a>
+            </div>
+            </div>
+            
+       <script type="text/javascript">
+         function selectFunction() {           
+           document.getElementById('submit1').className = "btn btn-primary";     
+           document.getElementById('submit2').className = "btn btn-primary";     
+        };        
+      </script>
+    </form>
+  <!--<svg id="mainSVG" width="1000" height="750">-->
+<div id="container" class="svg-container">
+    <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
+</div>
+ <!-- </svg>-->
+  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
+
+
+
+<script>
+
+ var width = parseInt(d3.select('div#container').style('width'), 10);
+
+ var svg = d3.select("div#container").append("svg")
+  .attr("width", "100%")
+  .attr("height", "100%")
+  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+  .attr("preserveAspectRatio", "xMinYMid meet")
+  .attr("id", "matrixSVG");
+
+ svg.select("#brushid").remove();
+
+var isLinear = 1 ;
+
+ var chrWdt = 25,
+  chrHgt = 150, //radius * Math.sin(radians(ang/2)),
+  chrHgtZoom = chrHgt + chrWdt * 2;
+
+ var y0 = 0;
+
+ var y1 = d3.scaleLinear().range([0, chrHgt]);
+ var y2 = d3.scaleLinear().range([-chrWdt, chrHgtZoom - chrWdt]); // Use "-chwidth" to draw circles in the borders
+// var yAxis = d3.svg.axis().scale(y1).orient("left").tickSize(1).ticks(5).tickFormat(d3.format("s"));
+ var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
+// var yAxisZoom = d3.svg.axis().scale(y2).orient("left").tickSize(1).ticks(5).tickFormat(d3.format("s"));
+  var yAxisZoom =  d3.axisLeft(y2).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
+// var vbrush = d3.brushY(y1).on("brush", brush);
+   var   vbrush = d3.brushY()
+              .extent([[0, 0], [chrWdt, chrHgt]])
+              .on("brush", brush);  
+
+function selectMap(value, list) {
+
+  svg.selectAll("*").remove();
+
+  var request = new XMLHttpRequest();
+
+  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList='+value);
+
+  request.onreadystatechange = function() {
+
+    if (this.readyState === 4) {
+
+      var myArr = JSON.parse(this.responseText);
+      var result = fillArray(myArr);
+
+     // var data = result.data;
+      var list = unique(result.list);
+      var  data =  [ { "linkageGroup":"S1" , "location": 0, "markerId" : "qwd"},
+        { "linkageGroup":"S1" , "location": 20, "markerId" : "as"}, 
+        { "linkageGroup":"S1" , "location": 150, "markerId" : "sdfe"},
+        { "linkageGroup":"S1" , "location": 240, "markerId" : "rea"}, 
+        { "linkageGroup":"S2" , "location": 60, "markerId" : "sdf"},
+        { "linkageGroup":"S5" , "location": 15, "markerId" : "wer"},  
+        { "linkageGroup":"S5" , "location": 10, "markerId" : "Ufg"},
+        { "linkageGroup":"S3" , "location": 0, "markerId" : "df0g"},
+        { "linkageGroup":"S1" , "location": 40, "markerId" : "WEf"}, 
+        { "linkageGroup":"S3" , "location": 40, "markerId" : "asd"}, 
+        { "linkageGroup":"S4" , "location": 140, "markerId" : "gdw"},
+        { "linkageGroup":"S3" , "location": 110, "markerId" : "gdw"},
+        { "linkageGroup":"S2" , "location": 40, "markerId" : "esdf"},  
+        { "linkageGroup":"S1" , "location": 90, "markerId" : "rsdf"},  
+        { "linkageGroup":"S3" , "location": 10, "markerId" : "s3df"}, 
+        { "linkageGroup":"S3" , "location": 20, "markerId" : "sd4f"}, 
+        { "linkageGroup":"S3" , "location": 80, "markerId" : "s2df"}, 
+        { "linkageGroup":"S4" , "location": 150, "markerId" : "dfg"},
+        { "linkageGroup":"S4" , "location": 40, "markerId" : "yyer"},  
+        { "linkageGroup":"S5" , "location": 80, "markerId" : "rfr"}, 
+        { "linkageGroup":"S2" , "location": 190, "markerId" : "was"}, 
+        { "linkageGroup":"S3" , "location": 70, "markerId" : "e1rt"}]; 
+       list = ['S1','S2','S4','S3','S5'] ;
+
+      // Setting layout
+      var radius = width / (list.length + 2);
+
+      for (var i = 0; i < list.length; i++) {
+
+        // Filter data by chr;
+        var dataByChr = data.filter(function(d) {
+          return d.linkageGroup == list[i]
+        });
+
+        // Draw each chr
+        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * i, y0, list[i], 0,isLinear,5);
+
+        // We don't need to draw links in the linear graph for now
+        /*   if (i<n){
+                var datali = datal.filter(function(d) { return d.chrs == i }); 
+                links  (datali, svg, originX, originY,0, chrWdt, chrHgt, 0 ,radius * i +chrWdt, radius * (i+1) , y0); } */
+      }
+
+    }
+
+  }
+
+request.send();
+};
+
+</script>
+
+<form id="search_gene" method="post" enctype="multipart/form-data" action="/Map/view_chr">
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_gene %>" name="input_gene"/>
+
+
+</form>
+
+

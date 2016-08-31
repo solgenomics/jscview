@@ -1,0 +1,129 @@
+<%args>
+$input_chr => ()
+</%args>
+<%perl>
+use strict;
+
+use JSON::Any;
+my $json = JSON::Any->new;
+print "a" . $input_chr;
+</%perl>
+
+
+ <form id="form" class="form-horizontal">
+      
+           
+       <script type="text/javascript">
+         function selectFunction() {           
+           document.getElementById('submit1').className = "btn btn-primary";     
+           document.getElementById('submit2').className = "btn btn-primary";     
+        };        
+      </script>
+    </form>
+
+<div id="container" class="svg-container">
+    <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
+</div>
+ <!-- </svg>-->
+  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
+
+
+
+ <script>
+
+
+ var width = window.innerWidth,
+    height = window.innerHeight,
+    n = 4,
+    isLinear = 0;
+
+ var svg = d3.select("div#container").append("svg")
+  .attr("width", "100%")
+  .attr("height", "100%")
+  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+  .attr("preserveAspectRatio", "xMinYMid meet")
+  .attr("id", "matrixSVG");
+
+
+ svg.select("#brushid").remove();
+
+ // Setting Global variables
+ var radius = width / 4,
+  chrWdt = radius / 5,
+  chrHgt = radius * Math.sin(radians(180 / n));
+ var y1 = d3.scaleLinear().range([0, chrHgt]);
+ var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
+ var yAxis = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+ var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+ var vbrush = d3.brushY()
+  .extent([[0, 0],[chrWdt, chrHgt]])
+  .on("brush", brush);
+
+
+ function selectMap(value) {
+
+  svg.selectAll("*").remove();
+
+  var request = new XMLHttpRequest();
+
+  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList=' + value);
+
+  request.onreadystatechange = function() {
+
+    if (this.readyState === 4) {
+
+      var myArr = JSON.parse(this.responseText);
+      var result = fillArray(myArr);
+      data = result.data;
+
+      //Test data
+      var datal = [ { "chrs":1 , "s": 0,  "chrt":3, "t": 0},
+                  { "chrs":1, "s": 20,  "chrt":3, "t": 40}, 
+                  { "chrs":1 , "s": 100, "chrt":3 , "t": 100},
+                  { "chrs":2, "s": 40,  "chrt":3, "t": 30}, 
+                  { "chrs":3 , "s": 20, "chrt":4 , "t": 100},
+                  { "chrs":4, "s": 40,  "chrt":5, "t": 80}, 
+                  { "chrs":2 , "s": 100, "chrt":3 , "t": 70}];
+
+
+      //Select chromome list to use
+      var list = [];
+      list = ['S1', 'S2', 'S4', 'S5'];
+      /*   if (list === undefined || list.length == 0) {
+       for (var i=0; i < result.result.data.length; i++){
+        list.push(result.result.data[i].linkageGroup);
+        }
+      }
+*/
+      list = unique(list);
+      var forZoom = 1;
+
+      // Draw each chr
+
+      for (var i = 0; i < list.length; i++) {
+
+        var angi = 360 / n * i;
+        var x = radius * Math.cos(radians(angi));
+        var y = radius * Math.sin(radians(angi));
+
+        var dataByChr = data.filter(function(d) {
+          return d.linkageGroup == list[i]
+        });
+
+        chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3);
+      }
+
+      links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0);
+
+
+    }
+
+  }
+
+  request.send();
+ };
+
+ selectMap('S1,S2,S4,S5');
+
+
+ </script>

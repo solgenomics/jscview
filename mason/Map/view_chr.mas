@@ -1,0 +1,110 @@
+<%args>
+$input_gene => ()
+</%args>
+
+<%perl>
+use strict;
+
+use JSON::Any;
+my $json = JSON::Any->new;
+
+</%perl>
+
+ <form id="form" class="form-horizontal">
+        <div class="form-group">
+              
+       <script type="text/javascript">
+         function selectFunction() {           
+           document.getElementById('submit1').className = "btn btn-primary";     
+           document.getElementById('submit2').className = "btn btn-primary";     
+        };        
+      </script>
+    </form>
+  <!--<svg id="mainSVG" width="1000" height="750">-->
+<div id="container" class="svg-container">
+    <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
+</div>
+ <!-- </svg>-->
+  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
+
+
+
+<script>
+
+var width = window.innerWidth,
+    height = window.innerHeight; 
+var n =1;
+var isLinear = 1;
+
+ var svg = d3.select("div#container").append("svg")
+  .attr("width", "100%")
+  .attr("height", "100%")
+  .attr("viewBox", "0 0 " + (width - 10 ) + " " + (width / 2 + 10))
+  .attr("preserveAspectRatio", "xMinYMid meet")
+  .attr("id", "matrixSVG");
+
+ svg.select("#brushid").remove();
+
+
+  var radius = width/4 ,
+      chrWdt = 35 , //radius/5,
+      chrHgt = 300 , //  radius * Math.sin(radians(180/n)),
+      y1 = d3.scaleLinear().range([0,chrHgt]); 
+      y2 = d3.scaleLinear().range([-chrWdt,chrHgt + chrWdt]);  // Use - chwidth to draw circles in the borders
+      yAxis =  d3.axisRight(y1).tickSize(2).ticks(5).tickFormat(d3.format(".2s"));
+      yAxisZoom =  d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+
+  var   vbrush = d3.brushY()
+              .extent([[0, 0], [chrWdt, chrHgt]])
+              .on("brush", brush);  
+
+
+
+function selectMap(value, list) {
+
+  svg.selectAll("*").remove();
+
+  var request = new XMLHttpRequest();
+
+  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList='+value);
+
+  request.onreadystatechange = function() {
+
+    if (this.readyState === 4) {
+
+      var myArr = JSON.parse(this.responseText);
+      var result = fillArray(myArr);
+      var data = result.data;
+
+      // Setting layout
+      var radius = 0;
+      var y0 = 0;
+      var forZoom = 1;
+
+        // Draw each chr
+        chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, value, forZoom,isLinear,n);
+
+        // We don't need to draw links in the linear graph for now
+        /*   if (i<n){
+                var datali = datal.filter(function(d) { return d.chrs == i }); 
+                links  (datali, svg, originX, originY,0, chrWdt, chrHgt, 0 ,radius * i +chrWdt, radius * (i+1) , y0); } */
+      
+
+    }
+
+  }
+
+request.send();
+};
+
+selectMap('S1');
+
+</script>
+
+<form id="search_gene" method="post" enctype="multipart/form-data" action="/Map/view_chr">
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_gene %>" name="input_gene"/>
+
+
+</form>
+
+

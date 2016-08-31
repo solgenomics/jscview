@@ -1,0 +1,37 @@
+ body {
+   /* fill: none;*/
+    
+  }
+
+  .path {
+      fill: none;   
+      stroke: #002900;
+          stroke-width: 2;
+
+   }
+    
+  .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+
+
+  .axis path{
+    fill: none;
+   stroke-width: 0;
+  }
+  .axis line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 2;
+    shape-rendering: crispEdges;
+  }
+  .brush .extent {
+    stroke: #fff;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+  }
+  .form {
+  margin: 100 ;
+  }

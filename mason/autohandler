@@ -1,0 +1,6 @@
+<& /jscview_web/header.mas &>
+
+% $m->call_next;
+
+<& /jscview_web/footer.mas &>
+
