@@ -66,14 +66,14 @@ function selectMap(value, list) {
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList='+value);
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); //linkageGroupIdList='+value);
 
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
 
       var myArr = JSON.parse(this.responseText);
-      var result = fillArray(myArr);
+      var result = fillFilterArray(myArr,'12');
       var data = result.data;
 
       // Setting layout
@@ -88,7 +88,6 @@ function selectMap(value, list) {
         /*   if (i<n){
                 var datali = datal.filter(function(d) { return d.chrs == i }); 
                 links  (datali, svg, originX, originY,0, chrWdt, chrHgt, 0 ,radius * i +chrWdt, radius * (i+1) , y0); } */
-      
 
     }
 
@@ -97,7 +96,7 @@ function selectMap(value, list) {
 request.send();
 };
 
-selectMap('S1');
+selectMap('1');
 
 </script>
 

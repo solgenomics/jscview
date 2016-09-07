@@ -1,13 +1,13 @@
 
-  function chromosome(data, svg0, width, height, ang0, x, y, i, forZoom, isLinear,n) {
+  function chromosome(data, svg0, width, height, ang0, x, y, i, forZoom, isLinear,nChr) {
 
     //isLinear
     if (isLinear == 0 ) {
-        var a = 2;
+        var va = 2;
     }
-    else var a = n + forZoom + 1;
+    else var va = nChr + forZoom + 1;
 
-    var originX = window.innerWidth/a,
+    var originX = window.innerWidth/va,
       originY =  window.innerHeight/4,
       heightZoom = height + width*2;
 
@@ -15,17 +15,16 @@
               .attr("transform", " translate(" + (originX + x) + "," + (originY + y) + ") rotate(" + ang0 + ") ");
     var ang = radians(ang0 + 90);
     var max = d3.max(data.map(function(d) {
-      return +d.location;
+      return +d.position;
     }));
 
     var dataT = toMarker(data, ang, width, originX, '', '', height);
     var dataZoom = toMarkerZoom(data, ang, width, originX, '', '', heightZoom);
     window["max" + i] = max;
 
+
     // Define kind domains for axis
-    y1.domain([0, d3.max(data.map(function(d) {
-      return +d.location;
-    }))]);
+    y1.domain([0, d3.max(data.map(function(d) { return +d.position; }))]);
     y2.domain(y1.domain());
 
     // Start drawing objects
@@ -143,7 +142,7 @@
     } else {
 
       svg.append("g")
-        .attr("id", "yaxis")
+        .attr("id", "yaxis" + i)
         .attr("class", "axis")
         .attr("width", 10)
         .attr("height", 10)
@@ -189,7 +188,7 @@
     svg.selectAll("#zoom" + name).selectAll("text")
       .filter(function (d) {return y2(d.y) > -chrWdt  & y2(d.y) < chrHgtZoom - chrWdt  })
       .attr("dy", function(d) { return y2(d.y); })
-      .text(function(d) { return d.markerId; }); */
+      .text(function(d) { return d.markerName; }); */
 
       function filterByRange(d, a) {
       return a > i - 6 & a < i + 6;
@@ -208,7 +207,7 @@
       .filter(function (d) { return y2(d.y) > -chrWdt  & y2(d.y) < chrHgtZoom - chrWdt  })
    //   .attr("dy", function(d, m) { return pos * m; })
       .attr("dy", function(d, m) { if (y2(d.y) , brushRange*m) return y2(d.y); })
- .text(function(d) { return d.markerId; });
+ .text(function(d) { return d.markerName; });
 
 
 /*
@@ -304,7 +303,7 @@
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m; })
-      .text(function(d) { return d.markerId; });
+      .text(function(d) { return d.markerName; });
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
       .attr("x1", function(d) {  if ((d.y1) > 0 & (d.y1) < chrHgt) return d.x2 })

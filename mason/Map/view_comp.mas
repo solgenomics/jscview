@@ -32,9 +32,9 @@ print "a" . $input_chr;
  <script>
 
 
- var width = window.innerWidth,
-    height = window.innerHeight,
-    n = 4,
+ var width = window.innerWidth*0.7,
+    height = window.innerHeight*0.7,
+    n = 12,
     isLinear = 0;
 
  var svg = d3.select("div#container").append("svg")
@@ -48,8 +48,8 @@ print "a" . $input_chr;
  svg.select("#brushid").remove();
 
  // Setting Global variables
- var radius = width / 4,
-  chrWdt = radius / 5,
+ var radius = width / 8,
+  chrWdt = radius / 8,
   chrHgt = radius * Math.sin(radians(180 / n));
  var y1 = d3.scaleLinear().range([0, chrHgt]);
  var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
@@ -66,7 +66,7 @@ print "a" . $input_chr;
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList=' + value);
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
 
   request.onreadystatechange = function() {
 
@@ -74,7 +74,8 @@ print "a" . $input_chr;
 
       var myArr = JSON.parse(this.responseText);
       var result = fillArray(myArr);
-      data = result.data;
+      var data = result.data;
+      var list = unique(result.list);
 
       //Test data
       var datal = [ { "chrs":1 , "s": 0,  "chrt":3, "t": 0},
@@ -87,15 +88,7 @@ print "a" . $input_chr;
 
 
       //Select chromome list to use
-      var list = [];
-      list = ['S1', 'S2', 'S4', 'S5'];
-      /*   if (list === undefined || list.length == 0) {
-       for (var i=0; i < result.result.data.length; i++){
-        list.push(result.result.data[i].linkageGroup);
-        }
-      }
-*/
-      list = unique(list);
+
       var forZoom = 1;
 
       // Draw each chr

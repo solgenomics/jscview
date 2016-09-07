@@ -57,12 +57,10 @@ var isLinear = 1 ;
  var y0 = 0;
 
  var y1 = d3.scaleLinear().range([0, chrHgt]);
- var y2 = d3.scaleLinear().range([-chrWdt, chrHgtZoom - chrWdt]); // Use "-chwidth" to draw circles in the borders
-// var yAxis = d3.svg.axis().scale(y1).orient("left").tickSize(1).ticks(5).tickFormat(d3.format("s"));
+ var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); //  var y2 = d3.scaleLinear().range([-chrWdt, chrHgtZoom - chrWdt]); // Use "-chwidth" to draw circles in the borders
  var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
-// var yAxisZoom = d3.svg.axis().scale(y2).orient("left").tickSize(1).ticks(5).tickFormat(d3.format("s"));
   var yAxisZoom =  d3.axisLeft(y2).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
-// var vbrush = d3.brushY(y1).on("brush", brush);
+
    var   vbrush = d3.brushY()
               .extent([[0, 0], [chrWdt, chrHgt]])
               .on("brush", brush);  
@@ -73,7 +71,7 @@ function selectMap(value, list) {
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'https://www.cassavabase.org/brapi/v1/maps/1/positions?linkageGroupIdList='+value);
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
 
   request.onreadystatechange = function() {
 
@@ -81,32 +79,10 @@ function selectMap(value, list) {
 
       var myArr = JSON.parse(this.responseText);
       var result = fillArray(myArr);
-
-     // var data = result.data;
+      var data = result.data;
       var list = unique(result.list);
-      var  data =  [ { "linkageGroup":"S1" , "location": 0, "markerId" : "qwd"},
-        { "linkageGroup":"S1" , "location": 20, "markerId" : "as"}, 
-        { "linkageGroup":"S1" , "location": 150, "markerId" : "sdfe"},
-        { "linkageGroup":"S1" , "location": 240, "markerId" : "rea"}, 
-        { "linkageGroup":"S2" , "location": 60, "markerId" : "sdf"},
-        { "linkageGroup":"S5" , "location": 15, "markerId" : "wer"},  
-        { "linkageGroup":"S5" , "location": 10, "markerId" : "Ufg"},
-        { "linkageGroup":"S3" , "location": 0, "markerId" : "df0g"},
-        { "linkageGroup":"S1" , "location": 40, "markerId" : "WEf"}, 
-        { "linkageGroup":"S3" , "location": 40, "markerId" : "asd"}, 
-        { "linkageGroup":"S4" , "location": 140, "markerId" : "gdw"},
-        { "linkageGroup":"S3" , "location": 110, "markerId" : "gdw"},
-        { "linkageGroup":"S2" , "location": 40, "markerId" : "esdf"},  
-        { "linkageGroup":"S1" , "location": 90, "markerId" : "rsdf"},  
-        { "linkageGroup":"S3" , "location": 10, "markerId" : "s3df"}, 
-        { "linkageGroup":"S3" , "location": 20, "markerId" : "sd4f"}, 
-        { "linkageGroup":"S3" , "location": 80, "markerId" : "s2df"}, 
-        { "linkageGroup":"S4" , "location": 150, "markerId" : "dfg"},
-        { "linkageGroup":"S4" , "location": 40, "markerId" : "yyer"},  
-        { "linkageGroup":"S5" , "location": 80, "markerId" : "rfr"}, 
-        { "linkageGroup":"S2" , "location": 190, "markerId" : "was"}, 
-        { "linkageGroup":"S3" , "location": 70, "markerId" : "e1rt"}]; 
-       list = ['S1','S2','S4','S3','S5'] ;
+
+      var forZoom = 0;
 
       // Setting layout
       var radius = width / (list.length + 2);

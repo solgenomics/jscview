@@ -7,21 +7,20 @@
   	var borderY = width / 2 * sin,
   		borderX = width / 2 * cos;
   	var max = d3.max(data, function(d) {
-  		return +d.location;
+  		return +d.position;
   	});
   	var yLinear = d3.scaleLinear().range([0, height]).domain([0, max]);
 
   	for (i; i < data.length; i++) {
 
   		dataT.push({
-  			x1: (yLinear(data[i].location) * cos) - borderY,
-  			x2: (yLinear(data[i].location) * cos) + borderY,
-  			y1: (yLinear(data[i].location) * sin) + borderX,
-  			y2: (yLinear(data[i].location) * sin) - borderX,
-  			markerId: data[i].markerId
+  			x1: (yLinear(+data[i].position) * cos) - borderY,
+  			x2: (yLinear(+data[i].position) * cos) + borderY,
+  			y1: (yLinear(+data[i].position) * sin) + borderX,
+  			y2: (yLinear(+data[i].position) * sin) - borderX,
+  			markerName: data[i].markerName
   		});
   	}
-
   	return dataT;
   }
 
@@ -33,8 +32,8 @@
   	for (i; i < data.length; i++) {
 
   		dataT.push({
-  			y: data[i].location,
-  			markerId: data[i].markerId
+  			y: data[i].position,
+  			markerName: data[i].markerName
   		});
   	}
   	return dataT;
@@ -97,10 +96,26 @@
       for (var i = 0; i < myArr.result.data.length; i++) {
         data.push({
           linkageGroup: myArr.result.data[i].linkageGroup,
-          location: myArr.result.data[i].location,
-          markerId: myArr.result.data[i].markerId
+          position: myArr.result.data[i].position,
+          markerName: myArr.result.data[i].markerName
         });
         list.push(myArr.result.data[i].linkageGroup);
+      }
+      return { data: data, list: list } ;
+}
+
+ function fillFilterArray(myArr,chr){
+
+    var data = [], list= [];
+      for (var i = 0; i < myArr.result.data.length; i++) {
+        if(myArr.result.data[i].linkageGroup == chr){
+          data.push({
+            linkageGroup: myArr.result.data[i].linkageGroup,
+            position: myArr.result.data[i].position,
+            markerName: myArr.result.data[i].markerName
+          });
+          list.push(myArr.result.data[i].linkageGroup);
+        }
       }
       return { data: data, list: list } ;
 }
