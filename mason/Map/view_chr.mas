@@ -9,7 +9,48 @@ use JSON::Any;
 my $json = JSON::Any->new;
 
 </%perl>
+<script src="http://code.jquery.com/jquery-latest.min.js"
+        type="text/javascript"></script>
+<style type="text/css"> 
+            body {
+              background-color: #faf5df;
+            }
+            text {
+              font-size: 12px;
+              font-family: "Sawasdee", "URW Gothic L", sans;
+            }
+            text.label {
+              font-size: 18px;
+            }
+            text.expl {
+              font-size: 16px;
+            }
+            text.title {
+              font-size: 24px;
+              font-weight: bold;
+            }
+            text.active {
+              fill: #dd2f00;
+            }
 
+            .axis {
+              fill: none;
+              stroke: #222;
+            }
+
+            path {
+              stroke: #554508;
+            }
+            path.pointer {
+              stroke: #222;
+            }
+            line {
+              stroke: #222;
+            }
+            rect {
+              stroke: #222;
+            }
+</style>
  <form id="form" class="form-horizontal">
         <div class="form-group">
               
@@ -52,7 +93,7 @@ var isLinear = 1;
       y1 = d3.scaleLinear().range([0,chrHgt]); 
       y2 = d3.scaleLinear().range([-chrWdt,chrHgt + chrWdt]);  // Use - chwidth to draw circles in the borders
       yAxis =  d3.axisRight(y1).tickSize(2).ticks(5).tickFormat(d3.format(".2s"));
-      yAxisZoom =  d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+      yAxisZoom =  d3.axisLeft(y2).tickSize(3).tickFormat(d3.format(".2s"));
 
   var   vbrush = d3.brushY()
               .extent([[0, 0], [chrWdt, chrHgt]])
@@ -66,7 +107,7 @@ function selectMap(value, list) {
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); //linkageGroupIdList='+value);
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000'); //linkageGroupIdList='+value);
 
   request.onreadystatechange = function() {
 
@@ -83,7 +124,6 @@ function selectMap(value, list) {
 
         // Draw each chr
         chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, value, forZoom,isLinear,n);
-
         // We don't need to draw links in the linear graph for now
         /*   if (i<n){
                 var datali = datal.filter(function(d) { return d.chrs == i }); 
