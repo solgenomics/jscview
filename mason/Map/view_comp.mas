@@ -48,7 +48,7 @@ print "a" . $input_chr;
  svg.select("#brushid").remove();
 
  // Setting Global variables
- var radius = width / 8,
+ var radius = width / 4,
   chrWdt = radius / 8,
   chrHgt = radius * Math.sin(radians(180 / n));
  var y1 = d3.scaleLinear().range([0, chrHgt]);
@@ -66,7 +66,7 @@ print "a" . $input_chr;
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
+  request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
 
   request.onreadystatechange = function() {
 
@@ -75,6 +75,7 @@ print "a" . $input_chr;
       var myArr = JSON.parse(this.responseText);
       var result = fillArray(myArr);
       var data = result.data;
+      //var list = [1,2,3,4];
       var list = unique(result.list);
 
       //Test data
@@ -103,10 +104,15 @@ print "a" . $input_chr;
           return d.linkageGroup == list[i]
         });
 
-        chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3);
+     var va = n + forZoom + 1;
+
+    var originX = width/2,
+      originY =  height/4;
+
+        chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3, originX,originY,1);
       }
 
-      links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0);
+      links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
 
 
     }

@@ -18,7 +18,8 @@
   			x2: (yLinear(+data[i].position) * cos) + borderY,
   			y1: (yLinear(+data[i].position) * sin) + borderX,
   			y2: (yLinear(+data[i].position) * sin) - borderX,
-  			markerName: data[i].markerName
+  			markerName: data[i].markerName,
+			markerDbId: data[i].markerDbId
   		});
   	}
   	return dataT;
@@ -33,7 +34,8 @@
 
   		dataT.push({
   			y: data[i].position,
-  			markerName: data[i].markerName
+  			markerName: data[i].markerName,
+			markerDbId: data[i].markerDbId
   		});
   	}
   	return dataT;
@@ -112,7 +114,8 @@
           data.push({
             linkageGroup: myArr.result.data[i].linkageGroup,
             position: myArr.result.data[i].position,
-            markerName: myArr.result.data[i].markerName
+            markerName: myArr.result.data[i].markerName,
+	    markerDbId: myArr.result.data[i].markerDbId
           });
           list.push(myArr.result.data[i].linkageGroup);
         }
