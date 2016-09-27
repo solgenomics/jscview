@@ -16,6 +16,7 @@
     var max = d3.max(data.map(function(d) {
       return +d.position;
     }));
+    window["max" + i] = max;
 
     var tooltip = svg.append("div")	
                   .attr("class", "tooltip")				
@@ -26,7 +27,7 @@
 
     var dataT = toMarker(data, ang, width, originX, '', '', height);
     var dataZoom = toMarkerZoom(data, ang, width, originX, '', '', heightZoom);
-    window["max" + i] = max;
+    
 
 
     // Define kind domains for axis
@@ -42,7 +43,7 @@
 	.attr("fill", "#B75CA1");
 
       svg.append("text")
-	.attr("dx", -width)
+	     .attr("dx", -width)
       .attr("dy", -width/2)
       	.text("cM")
 	.attr("font-size",12);    
@@ -114,8 +115,7 @@
       //  .attr('opacity', 0.625)
         .attr("stroke", "black");
 
-      zoom.selectAll("text")
-        .attr("id", "text" + i)
+      zoom.append("g").attr("id", "text" + i).selectAll("text")
         .data(dataZoom)
         .enter().append("text")
         .attr("dx", width * 4  + isLinear * 200);
@@ -146,13 +146,13 @@
         .attr("transform", " rotate(" + (-ang0) + ") translate(" + ((Math.sin(ang) * width * 3 + isLinear * 200)) + "," + ((-Math.cos(ang) * width * 3)) + ")  rotate(" + ang0 + ") ")
         .call(yAxisZoom);
 
-    zoom.append("text")
-      .attr("dx", width * 3 + isLinear * 200)
-      .attr("dy", -width)
-      .text(y2.domain()[0])
-      .attr("fill", "#B75CA1");
+      zoom.append("text")
+        .attr("dx", width * 3 + isLinear * 200-20)
+        .attr("dy", -width-3)
+        .text("cM")
+        .attr("font-size",12);   
 
-    zoom.attr("visibility", "hidden");
+      zoom.attr("visibility", "hidden");
 
     } else {
 
@@ -192,7 +192,7 @@
     var chrHgtZoom = chrHgt + chrWdt*2;
     var name = d3.select(this).attr('id');
     var maxpos = name.replace("brushid", "max");
-    var s = d3.event.selection || y2.range(); console.log(s);
+    var s = d3.event.selection || y2.range(); 
     var labels = [], dataL = [], links = [],  margin = 0;
     var pos = chrHgt / 10;
     var t = svg.transition().duration(1000).call(slide);
@@ -207,7 +207,7 @@
 
     name = name.replace("brushid", "");
 
-    svg.select("#zoom" + name).selectAll("text").remove();
+    svg.select("#zoom" + name).select("#text" + name).selectAll("text").remove();
     
     y1.domain([0, eval(maxpos)]);
     y2.domain(s.map(y1.invert, y1));
@@ -232,18 +232,15 @@
       .attr("y1", function(d,i) {  
          var n = {x: 100, y: y2(d.y), t: d.markerName, id: d.markerDbId }; 
                 labels.push(n); 
-           var m = {x: 100, d: d.y, n: d.markerName}; 
+         var m = {x: 100, d: d.y, n: d.markerName}; 
                 dataL.push(m); 
-                if(i > 0) links.push({source: labels[i-1], target: n});
+         if(i > 0) links.push({source: labels[i-1], target: n});
         return y2(d.y); })
       .attr("y2", function(d) {  return y2(d.y); });
 
-	function slide(){
-		svg.selectAll("#zoom" + name).selectAll("line")
-		.attr("y1",100);	
-}
 
-    svg.selectAll("#zoom" + name).select(".yaxis").call(yAxisZoom);
+
+    svg.selectAll("#zoom" + name).selectAll(".yaxis").call(yAxisZoom);
 
     svg.selectAll("#zoom" + name).selectAll("polygon")
       .attr("points", chrWdt/2 + "," + d3.brushSelection(this)[0] + " " 
@@ -252,20 +249,18 @@
         + (chrWdt * 3 + isLinear * 200) + "," + -chrWdt);
 
 
-    svg.selectAll("#zoom" + name).selectAll("text.label") //print names
+    svg.selectAll("#zoom" + name).select("#text" + name).selectAll("text.label")  //print names
       .data(labels).enter()
       .append("svg:text")
       .classed("label", true)
       .attr("x", chrWdt * 3 + isLinear * 200) 
-      .attr("y", function(d) { console.log(d.y +"-"+d.t); return d.y }) 
+      .attr("y", function(d) { return d.y }) // console.log(d.y +"-"+d.t); 
       .text(function(d) { return d.t }) 
       .on("mouseover", function(d, i) {     
               d3.selectAll(".active").classed("active", false);
               d3.select(d3.event.target).classed("active", true);
           })
-      .on("click",function(d, i) {     
-		window.open("https://solgenomics.net/search/markers/markerinfo.pl?marker_id=" + d.id , '_blank');
-          });
+      .on("click",function(d, i) { window.open("https://solgenomics.net/search/markers/markerinfo.pl?marker_id=" + d.id , '_blank'); });
 
     force
       .nodes(labels)
@@ -276,7 +271,7 @@
         .append("svg:path")
         .classed("pointer", true)
         .attr("fill", "none")
-	.style("stroke", randomColor)
+	      .style("stroke", randomColor)
         .style("stroke-width", 2)
         .attr("d", function(d, i) {
                 var s = [chrWdt * 3 + isLinear * 200, y1(d.d)],
@@ -289,10 +284,14 @@
       .links(links);
 
 
+  function slide(){
+    svg.selectAll("#zoom" + name).selectAll("line")
+    .attr("y1",100);  
+}
 
   function ticked() {
 
-      svg.select("#zoom" + name).selectAll("text.label") 
+      svg.select("#zoom" + name).select("#text" + name).selectAll("text.label") 
         .attr("x", function(d) { d.x = chrWdt * 5  + isLinear * 200;  return d.x; })
         .attr("y", function(d,i) {
                   //    if(d.y > chrHgt + chrWdt) d.y = chrHgt + chrWdt*2;        // arrreglar aca los max y min  ... junto a donde se define la variable
@@ -407,7 +406,6 @@
   }
 
 
-
   function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2, y0,originX,originY ) {
 
     var dataT = preTransfLinkData(data, ang, x1, x2);
@@ -437,10 +435,10 @@
     var a = d3.select(this).attr('id');
     list = [];
     svg.select("#" + a).attr("fill", "#C75601");
-    list.push(a.replace("rect", ""));
+    list.push(a.replace("rect", "")); 
 
-            document.getElementById("search_gene").submit();
-            document.getElementById("input_gene")=list;
-
+    document.getElementById("input_chr").value=list;
+    document.getElementById("input_map").value=nMap();
+    document.getElementById("search_chr").submit();
   }
 

@@ -1,10 +1,9 @@
 <%args>
-$input_gene => ()
+$input_map => ()
+$input_chr => ()
 </%args>
 
 <%perl>
-use strict;
-
 use JSON::Any;
 my $json = JSON::Any->new;
 
@@ -31,7 +30,7 @@ my $json = JSON::Any->new;
               fill: #dd2f00;
             }
 
-      /*      .axis {
+            /* .axis {
               fill: none;
               stroke: #222;
             }*/
@@ -46,7 +45,7 @@ my $json = JSON::Any->new;
               stroke: #222;
             }
 
-	.tooltip {	
+.tooltip {	
   background: #eee;
   box-shadow: 0 0 5px #999999;
   color: #333;
@@ -72,27 +71,34 @@ my $json = JSON::Any->new;
       </script>
     </form>
   <!--<svg id="mainSVG" width="1000" height="750">-->
-<div id="container" class="svg-container">
+
 <h1 id="tittle"></h1>
- <form id="form" class="form-horizontal">
-  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Next</a>
+ <form id="form1" class="form-horizontal">
+   <a id="before" class="btn btn-primary" href="#" onclick="selectMap(map,+nChr-1);"></a><br>
+   <a id="after" align="right" class="btn btn-primary" href="#" onclick="selectMap(map,+nChr+1);"></a>
     </form>
+  <div id="container" class="svg-container">
 
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
  <!-- </svg>-->
   <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
 
-
-
 <script>
+  var nChr = '<% $input_chr %>';
+  var map =  '<% $input_map %>';
 
-/*var width = window.innerWidth,
-    height = window.innerHeight; */
-    var width = d3.select("div#container").style("width").replace("px", ""); 
-    var height = d3.select("div#container").style("height").replace("px", ""); 
-var n =1;
-var isLinear = 1, axisSide=-1;
+  function nMap(){
+    return map;
+  }
+
+  document.getElementById('before').innerHTML = "< Chr " + (+nChr-1);
+  document.getElementById('after').innerHTML = "Chr " + (+nChr+1) + " >";
+    
+  var width = d3.select("div#container").style("width").replace("px", ""); 
+  var height = d3.select("div#container").style("height").replace("px", ""); 
+  var n =1;
+  var isLinear = 1, axisSide=-1;
 
  var svg = d3.select("div#container").append("svg")
   .attr("width", "100%")
@@ -109,8 +115,8 @@ var isLinear = 1, axisSide=-1;
       chrHgt = 300 , //  radius * Math.sin(radians(180/n)),
       y1 = d3.scaleLinear().range([0,chrHgt]); 
       y2 = d3.scaleLinear().range([-chrWdt,chrHgt + chrWdt]);  // Use - chwidth to draw circles in the borders
-      yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5).tickFormat(d3.format(".2s"));
-      yAxisZoom =  d3.axisLeft(y2).tickSize(3).tickFormat(d3.format(".2s"));
+      yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
+      yAxisZoom =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
 
   var   vbrush = d3.brushY()
               .extent([[0, 0], [chrWdt, chrHgt]])
@@ -118,14 +124,14 @@ var isLinear = 1, axisSide=-1;
 
 
 
-function selectMap(value, list) {
+function selectMap(map, nchr) {
 
   svg.selectAll("*").remove();
 
   var requestmap = new XMLHttpRequest();
 
-  requestmap.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/'); 
-
+  // requestmap.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/'); 
+  requestmap.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map ); 
   requestmap.onreadystatechange = function() {
     if (this.readyState === 4) {
 
@@ -138,14 +144,14 @@ requestmap.send();
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000'); //linkageGroupIdList='+value);
-
+ // request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000'); //linkageGroupIdList='+value);
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=1000000000');
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
 
       var myArr = JSON.parse(this.responseText);
-      var result = fillFilterArray(myArr,'12');
+      var result = fillFilterArray(myArr,nchr);
       var data = result.data;
 
       // Setting layout
@@ -154,7 +160,7 @@ requestmap.send();
       var forZoom = 1;
 
         // Draw each chr
-        chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, value, forZoom,isLinear,n,width/5,0,axisSide);
+        chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, nchr, forZoom,isLinear,n,width/5,0,axisSide);
         // We don't need to draw links in the linear graph for now
         /*   if (i<n){
                 var datali = datal.filter(function(d) { return d.chrs == i }); 
@@ -167,14 +173,14 @@ requestmap.send();
 request.send();
 };
 
-selectMap('1');
+selectMap(map,nChr);
+
 
 </script>
 
-<form id="search_gene" method="post" enctype="multipart/form-data" action="/Map/view_chr">
-          <input class="form-control col-xs-2 panel-primary" value="<% $input_gene %>" name="input_gene"/>
-
-
+<form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr">
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_map %>" name="input_map" id="input_map"/>
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_chr %>" name="input_chr" id="input_chr"/>
 </form>
 
 

@@ -26,6 +26,11 @@ sub index :Path('/Map/view_chr/') :Args(0) {
 
 #  $c->stash->{input_chr} = $input_chr;
 #  $c->stash->{organism_html} = $organism_html;
+  my $params = $c->req->body_params();
+  my $input_chr = $c->req->param("input_chr");
+  my $input_map = $c->req->param("input_map");
+  $c->stash->{input_chr} = $input_chr;
+  $c->stash->{input_map} = $input_map;
   $c->stash(template => 'Map/view_chr.mas');
 
 }
@@ -34,7 +39,7 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   my ($self, $c) = @_;
    # get variables from catalyst object
   my $params = $c->req->body_params();
-	my @query_chr = $c->req->param("input_chr");
+  my @query_chr = $c->req->param("input_chr");
   $c->stash(template => 'Map/view_comp.mas');
 
 }

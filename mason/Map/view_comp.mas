@@ -66,8 +66,8 @@ print "a" . $input_chr;
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
-
+  //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=10000000'); 
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {

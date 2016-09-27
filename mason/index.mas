@@ -1,6 +1,7 @@
  
 <%args>
-$input_gene => ()
+$input_map => ()
+$input_chr => ()
 </%args>
 
  <form id="form" class="form-horizontal">
@@ -10,8 +11,8 @@ $input_gene => ()
             <label>Map</label> 
             <select id="mapId" name="mapId">
               <option ><-----Select---></option>
-              <option value="S2">Cassava</option>
-              <option value="S1">Cass</option>
+              <option value="2">Cassava</option>
+              <option value="9">Cass</option>
             </select>
              <br>
 
@@ -31,11 +32,14 @@ $input_gene => ()
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
  <!-- </svg>-->
-  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
+  <a id="submitchr" class="btn btn-primary" href="#" onclick=" selectMap(document.getElementById('mapId').value,list);">Compare</a>
 
 
 
 <script>
+
+
+function nMap(){ return document.getElementById('mapId').value; }; 
 
  var width = parseInt(d3.select('div#container').style('width'), 10);
 
@@ -58,20 +62,21 @@ var isLinear = 1 ;
 
  var y1 = d3.scaleLinear().range([0, chrHgt]);
  var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); //  var y2 = d3.scaleLinear().range([-chrWdt, chrHgtZoom - chrWdt]); // Use "-chwidth" to draw circles in the borders
- var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
-  var yAxisZoom =  d3.axisLeft(y2).tickSize(2).ticks(5).tickFormat(d3.format(".0s"));
+ var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
+  var yAxisZoom =  d3.axisLeft(y2).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
 
    var   vbrush = d3.brushY()
               .extent([[0, 0], [chrWdt, chrHgt]])
               .on("brush", brush);  
 
-function selectMap(value, list) {
+function selectMap(map, list) {
 
   svg.selectAll("*").remove();
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
+//request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
 
   request.onreadystatechange = function() {
 
@@ -95,7 +100,7 @@ function selectMap(value, list) {
         });
 
         // Draw each chr
-        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * i, y0, list[i], 0,isLinear,5);
+        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * i, y0, list[i], 0,isLinear,5,100,0,0);
 
         // We don't need to draw links in the linear graph for now
         /*   if (i<n){
@@ -112,10 +117,9 @@ request.send();
 
 </script>
 
-<form id="search_gene" method="post" enctype="multipart/form-data" action="/Map/view_chr">
-          <input class="form-control col-xs-2 panel-primary" value="<% $input_gene %>" name="input_gene"/>
-
-
+<form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr">
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_chr %>" name="input_chr" id="input_chr"/>
+          <input class="form-control col-xs-2 panel-primary" value="<% $input_map %>" name="input_map" id="input_map"/>
 </form>
 
 
