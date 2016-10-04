@@ -43,6 +43,25 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   $c->stash(template => 'Map/view_comp.mas');
 
 }
+
+sub view_multiple :Path('/Map/view_multi/') :Args(0) {
+  my ($self, $c) = @_;
+   # get variables from catalyst object
+  my $params = $c->req->body_params();
+  my @query_chr = $c->req->param("input_chr");
+  $c->stash(template => 'Map/view_multi.mas');
+
+}
+sub view_multiple_v :Path('/Map/view_multi_test/') :Args(0) {
+  my ($self, $c) = @_; 
+   # get variables from catalyst object
+  my $params = $c->req->body_params();
+  my @query_chr = $c->req->param("input_chr");
+  $c->stash(template => 'Map/view_multi_test.mas');
+
+}
+
+
 =encoding utf8
 
 =head1 AUTHOR

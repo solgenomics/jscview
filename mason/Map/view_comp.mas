@@ -6,7 +6,6 @@ use strict;
 
 use JSON::Any;
 my $json = JSON::Any->new;
-print "a" . $input_chr;
 </%perl>
 
 
@@ -34,8 +33,10 @@ print "a" . $input_chr;
 
  var width = window.innerWidth*0.7,
     height = window.innerHeight*0.7,
-    n = 12,
-    isLinear = 0;
+    n = 2,
+    isLinear = 1;
+    var  axisSide1=-1, chrZSide1= -1,
+     axisSide2=1, chrZSide2 = 1;
 
  var svg = d3.select("div#container").append("svg")
   .attr("width", "100%")
@@ -51,13 +52,32 @@ print "a" . $input_chr;
  var radius = width / 4,
   chrWdt = radius / 8,
   chrHgt = radius * Math.sin(radians(180 / n));
- var y1 = d3.scaleLinear().range([0, chrHgt]);
+
+  function distToZoom(){
+    return  chrWdt * 3 + isLinear*50;
+  }
+
+  function yAxisSide(axisSide){
+    if (axisSide==1) return  yAxisR;
+    else return  yAxisL;
+  }
+
+  function yAxisZoomSide(axisSide){
+    if (axisSide==-1) return  yAxisZoomR;
+    else return  yAxisZoomL;
+  }
+
+ var y1 = d3.scaleLinear().range([0, chrHgt]); 
  var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
- var yAxis = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
- var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+ var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+ var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+
+ var yAxisZoomR = d3.axisRight(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+ var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+
  var vbrush = d3.brushY()
   .extent([[0, 0],[chrWdt, chrHgt]])
-  .on("brush", brush);
+  .on("end", brush);
 
 
  function selectMap(value) {
@@ -67,7 +87,7 @@ print "a" . $input_chr;
   var request = new XMLHttpRequest();
 
   //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=10000000'); 
+  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/2/positions?pageSize=10000000'); 
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
@@ -75,45 +95,75 @@ print "a" . $input_chr;
       var myArr = JSON.parse(this.responseText);
       var result = fillArray(myArr);
       var data = result.data;
-      //var list = [1,2,3,4];
-      var list = unique(result.list);
+      var list = [1,2];
+      //var list = unique(result.list);
 
       //Test data
       var datal = [ { "chrs":1 , "s": 0,  "chrt":3, "t": 0},
-                  { "chrs":1, "s": 20,  "chrt":3, "t": 40}, 
+                  { "chrs":1, "s": 20,  "chrt":2, "t": 40}, 
                   { "chrs":1 , "s": 100, "chrt":3 , "t": 100},
-                  { "chrs":2, "s": 40,  "chrt":3, "t": 30}, 
+                  { "chrs":2, "s": 40,  "chrt":1, "t": 30}, 
                   { "chrs":3 , "s": 20, "chrt":4 , "t": 100},
                   { "chrs":4, "s": 40,  "chrt":5, "t": 80}, 
-                  { "chrs":2 , "s": 100, "chrt":3 , "t": 70}];
+                  { "chrs":2 , "s": 120, "chrt":3 , "t": 70}];
 
 
       //Select chromome list to use
 
-      var forZoom = 1;
+//       var forZoom = 1;
 
-      // Draw each chr
+//       // Draw each chr
 
-      for (var i = 0; i < list.length; i++) {
+//       for (var i = 0; i < list.length; i++) {
 
-        var angi = 360 / n * i;
-        var x = radius * Math.cos(radians(angi));
-        var y = radius * Math.sin(radians(angi));
+//        // var angi1 = 0; //360 / n * i;
+//         var angi = 360 / n * i;
+//         var x = radius * Math.cos(radians(angi));
+//         var y = radius * Math.sin(radians(angi));
 
+//         var dataByChr = data.filter(function(d) {
+//           return d.linkageGroup == list[i]
+//         });
+
+//      var va = n + forZoom + 1;
+
+//     var originX = width/2,
+//       originY =  height/4;
+// //if (angi >=180) { angi = angi -180}
+//         chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3, originX,originY,1);
+//       }
+
+//       links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
+//       //links(datal, svg, 0, chrWdt, chrHgt, radius, 50, 100, 0, originX,originY);
+
+            var radius = width / (list.length + 2);
+            var originX = 250, originY = 100;
+            var y0 = 0;
+
+      //for (var i = 0; i < list.length; i++) {
+
+        // Filter data by chr;
         var dataByChr = data.filter(function(d) {
-          return d.linkageGroup == list[i]
+          return d.linkageGroup == list[0]
+        });
+        var dataByChr2 = data.filter(function(d) {
+          return d.linkageGroup == list[1]
         });
 
-     var va = n + forZoom + 1;
+        axisSide = Math.pow(-1,(1));
+        // Draw each chr
+        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * 0, y0, list[0], 1,isLinear,5,originX,originY,axisSide1, chrZSide1);
+        chromosome(dataByChr2, svg, chrWdt, chrHgt, 0, radius * 1, y0, list[1], 1,isLinear,5,originX,originY,axisSide2, chrZSide2);
+      //  } 
+       //    if (i<n){
+        //    console.log(list[i]);
+                var datali = datal.filter(function(d) { return d.chrs == list[0] }); 
+               // datali = datali.filter(function(d) { return d.chrs == list[i] }); 
+       links(datali, svg, 0, chrWdt, chrHgt, 0, chrWdt, radius, y0, originX,originY);
+        //links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
+   //   }
 
-    var originX = width/2,
-      originY =  height/4;
-
-        chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3, originX,originY,1);
-      }
-
-      links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
-
+     // }
 
     }
 

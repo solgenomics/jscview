@@ -46,21 +46,32 @@
   	var i = 0,
   		angSource, angTarget,
   		dataT = [];
-  	var max = d3.max(data, function(d) {
-  		return +d.s;
+  	var maxs = d3.max(data, function(d) {
+  		return 150; //+d.s;
   	});
-  	var yLinear = d3.scaleLinear().range([0, chrHgt]).domain([0, max]);
+    var maxt = d3.max(data, function(d) {
+      return 98; //+d.t;
+    });
+
+  	var yLinears = d3.scaleLinear().range([0, chrHgt]).domain([0, maxs]);
+    var yLineart = d3.scaleLinear().range([0, chrHgt]).domain([0, maxt]);
 
   	for (i; i < data.length; i++) {
 
-  		angSource = radians(ang * data[i].chrs + 90);
-  		angTarget = radians(ang * data[i].chrt + 90);
+  		// angSource = radians(ang * data[i].chrs + 90);
+  		// angTarget = radians(ang * data[i].chrt + 90);         ///corregir que no afecte a los chr <90
+      angSource = (ang * data[i].chrs + 90);
+      angTarget = (ang * data[i].chrt + 90);
+if (angSource >90 && angSource < 270) { angSource = angSource -180}
+if (angTarget >90 && angTarget < 270) { angTarget = angTarget -180}
+      angSource = radians(angSource);
+      angTarget = radians(angTarget);
 
   		dataT.push({
-  			sx: (yLinear(data[i].s) * Math.cos(angSource)),
-  			sy: (yLinear(data[i].s) * Math.sin(angSource)),
-  			tx: (yLinear(data[i].t) * Math.cos(angTarget)),
-  			ty: (yLinear(data[i].t) * Math.sin(angTarget)),
+  			sx: (yLinears(data[i].s) * Math.cos(angSource)),
+  			sy: (yLinears(data[i].s) * Math.sin(angSource)),
+  			tx: (yLineart(data[i].t) * Math.cos(angTarget)),
+  			ty: (yLineart(data[i].t) * Math.sin(angTarget)),
   			chrs: data[i].chrs,
   			chrt: data[i].chrt
   		});

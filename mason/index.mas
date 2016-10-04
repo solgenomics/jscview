@@ -11,8 +11,8 @@ $input_chr => ()
             <label>Map</label> 
             <select id="mapId" name="mapId">
               <option ><-----Select---></option>
-              <option value="2">Cassava</option>
-              <option value="9">Cass</option>
+              <option value="2">Tomato-EXPIMP 2001</option>
+              <option value="9">Tomato-EXPEN 2000</option>
             </select>
              <br>
 
@@ -52,22 +52,22 @@ function nMap(){ return document.getElementById('mapId').value; };
 
  svg.select("#brushid").remove();
 
-var isLinear = 1 ;
+ var isLinear = 1;
 
  var chrWdt = 25,
-  chrHgt = 150, //radius * Math.sin(radians(ang/2)),
-  chrHgtZoom = chrHgt + chrWdt * 2;
+  chrHgt = 150; //radius * Math.sin(radians(ang/2)),
+
+  function distToZoom(){ 
+    return chrWdt * 3 + isLinear*200; 
+  }
+
 
  var y0 = 0;
 
  var y1 = d3.scaleLinear().range([0, chrHgt]);
- var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); //  var y2 = d3.scaleLinear().range([-chrWdt, chrHgtZoom - chrWdt]); // Use "-chwidth" to draw circles in the borders
+ var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); 
  var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
-  var yAxisZoom =  d3.axisLeft(y2).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
 
-   var   vbrush = d3.brushY()
-              .extent([[0, 0], [chrWdt, chrHgt]])
-              .on("brush", brush);  
 
 function selectMap(map, list) {
 
@@ -89,8 +89,11 @@ function selectMap(map, list) {
 
       var forZoom = 0;
 
+
       // Setting layout
-      var radius = width / (list.length + 2);
+      var radius = width / (list.length + 1);
+          originX=radius,
+          originY=50;
 
       for (var i = 0; i < list.length; i++) {
 
@@ -100,7 +103,7 @@ function selectMap(map, list) {
         });
 
         // Draw each chr
-        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * i, y0, list[i], 0,isLinear,5,100,0,0);
+        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, list[i], 0,isLinear,5,originX,originY);
 
         // We don't need to draw links in the linear graph for now
         /*   if (i<n){
