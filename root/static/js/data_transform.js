@@ -41,19 +41,15 @@
   	return dataT;
   }
 
-  function preTransfLinkData(data, ang, x1, x2) {
+  function preTransfLinkData(data, ang, x1, x2,chrWdt,chrHgt) {
 
   	var i = 0,
-  		angSource, angTarget,
-  		dataT = [];
-  	var maxs = d3.max(data, function(d) {
-  		return 150; //+d.s;
-  	});
-    var maxt = d3.max(data, function(d) {
-      return 98; //+d.t;
-    });
+  		  angSource, angTarget,
+  		  dataT = [];
+  	var maxs = d3.max(data, function(d) { return +d.s; 	});
+    var maxt = d3.max(data, function(d) { return +d.t;  });
 
-  	var yLinears = d3.scaleLinear().range([0, chrHgt]).domain([0, maxs]);
+  	var yLinears = d3.scaleLinear().range([0, chrHgt+chrWdt]).domain([0, maxs]);
     var yLineart = d3.scaleLinear().range([0, chrHgt]).domain([0, maxt]);
 
   	for (i; i < data.length; i++) {
@@ -62,8 +58,10 @@
   		// angTarget = radians(ang * data[i].chrt + 90);         ///corregir que no afecte a los chr <90
       angSource = (ang * data[i].chrs + 90);
       angTarget = (ang * data[i].chrt + 90);
-if (angSource >90 && angSource < 270) { angSource = angSource -180}
-if (angTarget >90 && angTarget < 270) { angTarget = angTarget -180}
+
+      if (angSource >180 && angSource < 360) { angSource = angSource -180}
+      if (angTarget >180 && angTarget < 360) { angTarget = angTarget -180}
+  
       angSource = radians(angSource);
       angTarget = radians(angTarget);
 
@@ -102,6 +100,7 @@ if (angTarget >90 && angTarget < 270) { angTarget = angTarget -180}
   	}
   	return dataT;
   }
+ 
 
  function fillArray(myArr){
 
@@ -110,7 +109,8 @@ if (angTarget >90 && angTarget < 270) { angTarget = angTarget -180}
         data.push({
           linkageGroup: myArr.result.data[i].linkageGroup,
           position: myArr.result.data[i].position,
-          markerName: myArr.result.data[i].markerName
+          markerName: myArr.result.data[i].markerName,
+          markerDbId: myArr.result.data[i].markerDbId  //to link solgenomics 
         });
         list.push(myArr.result.data[i].linkageGroup);
       }
@@ -126,7 +126,7 @@ if (angTarget >90 && angTarget < 270) { angTarget = angTarget -180}
             linkageGroup: myArr.result.data[i].linkageGroup,
             position: myArr.result.data[i].position,
             markerName: myArr.result.data[i].markerName,
-	    markerDbId: myArr.result.data[i].markerDbId
+	          markerDbId: myArr.result.data[i].markerDbId
           });
           list.push(myArr.result.data[i].linkageGroup);
         }

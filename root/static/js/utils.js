@@ -47,7 +47,8 @@
   	return degrees * Math.PI / 180;
   }
 
-    function unique(list) {
+
+  function unique(list) {
 
   	var result = [];
 
@@ -57,3 +58,30 @@
   	return result;
   }
   
+
+  function getColumnJSON(array,column){
+
+    //To get specific column list in an array
+    var element=[]; 
+
+    for(x in array)
+     element.push(array[x][column]);
+
+    return element;
+  }
+
+
+  function getCommonColumn(array1,array2,column){
+
+    //To get intersection list in a column in 2 arrays
+    var arr1 = getColumnJSON(array1,column);
+    var arr2 = getColumnJSON(array2,column);
+    var arrays = [arr1,arr2]
+
+    var result = arrays.shift().filter(function(v) {
+        return arrays.every(function(a) {
+            return a.indexOf(v) !== -1;
+        });
+    });
+    return result;
+  }

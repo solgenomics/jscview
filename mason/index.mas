@@ -2,11 +2,42 @@
 <%args>
 $input_map => ()
 $input_chr => ()
-</%args>
 
+$map_id => undef
+$map_version_id => undef
+$hilite => undef
+$size => 1
+#$map_items
+$short_name => "untitled map"
+$long_name => "untitled map"
+$force => 0
+$physical => undef
+#$referer
+$abstract => ''
+#$tempdir
+#$basepath
+#$map_url
+#$chr_url
+$comp_maps_url => ''
+$default_map_id => 9
+$private => ''
+@hilite_markers => ()
+$marker_stats => ''
+$chromosome_stats => ''
+$message => ''
+#$overview_image
+$can_overlay => 0
+$parent1_stock_id => ''
+$parent1_stock_name => '(unknown)'
+$parent2_stock_id => ''
+$parent2_stock_name => '(unknown)'
+
+</%args>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ <div class="container">
+          <h2 align="center">All Maps</h2> 
  <form id="form" class="form-horizontal">
         <div class="form-group">
-          
           <div >  
             <label>Map</label> 
             <select id="mapId" name="mapId">
@@ -14,12 +45,10 @@ $input_chr => ()
               <option value="2">Tomato-EXPIMP 2001</option>
               <option value="9">Tomato-EXPEN 2000</option>
             </select>
-             <br>
+             <a id="submit" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,'','');">Select</a>
+            </div>
+            </div>
 
-             <a id="submit" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,'','');">Submit</a>
-            </div>
-            </div>
-            
        <script type="text/javascript">
          function selectFunction() {           
            document.getElementById('submit1').className = "btn btn-primary";     
@@ -27,12 +56,14 @@ $input_chr => ()
         };        
       </script>
     </form>
+    <h3 id="tittle" align="center" ></h3>
+
   <!--<svg id="mainSVG" width="1000" height="750">-->
 <div id="container" class="svg-container">
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
  <!-- </svg>-->
-  <a id="submitchr" class="btn btn-primary" href="#" onclick=" selectMap(document.getElementById('mapId').value,list);">Compare</a>
+  <a id="submitchr" class="btn btn-primary" href="#" onclick=" selectMap(document.getElementById('mapId').value,list);" style="display: none;">Compare</a>
 
 
 
@@ -52,7 +83,9 @@ function nMap(){ return document.getElementById('mapId').value; };
 
  svg.select("#brushid").remove();
 
- var isLinear = 1;
+ var isLinear = 1, axisSide=-1, chrZSide = 1;
+
+  var sideComp=1;
 
  var chrWdt = 25,
   chrHgt = 150; //radius * Math.sin(radians(ang/2)),
@@ -72,11 +105,23 @@ function nMap(){ return document.getElementById('mapId').value; };
 function selectMap(map, list) {
 
   svg.selectAll("*").remove();
+  var requestmap = new XMLHttpRequest();
+
+  requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map ); 
+  requestmap.onreadystatechange = function() {
+    if (this.readyState === 4) {
+
+      var myArr1 = JSON.parse(this.responseText);
+  document.getElementById("tittle").innerHTML = myArr1.result.name;
+
+}}
+requestmap.send();
+
 
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
-//request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
+  request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
+//request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
 
   request.onreadystatechange = function() {
 
@@ -91,7 +136,7 @@ function selectMap(map, list) {
 
 
       // Setting layout
-      var radius = width / (list.length + 1);
+      var radius = width / (list.length + 1),
           originX=radius,
           originY=50;
 
@@ -103,7 +148,7 @@ function selectMap(map, list) {
         });
 
         // Draw each chr
-        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, list[i], 0,isLinear,5,originX,originY);
+        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], 0,isLinear,5,originX,originY,chrZSide,axisSide,sideComp);
 
         // We don't need to draw links in the linear graph for now
         /*   if (i<n){
@@ -120,9 +165,9 @@ request.send();
 
 </script>
 
-<form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr">
+<form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr" style="display: none;">
           <input class="form-control col-xs-2 panel-primary" value="<% $input_chr %>" name="input_chr" id="input_chr"/>
           <input class="form-control col-xs-2 panel-primary" value="<% $input_map %>" name="input_map" id="input_map"/>
 </form>
-
+</div>
 

@@ -1,37 +1,37 @@
 
-  function chromosome(data, svg0, width, height, ang0, x, y, i, forZoom, isLinear,nChr,originX,originY,zSide,axisSide) {
+  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp) {
 
     //isLinear
-    if (isLinear == 0 ) {
-        var va = 2;
-    }
+    if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
 
-    var  heightZoom = height + width*2;
-	  var  distZoom = distToZoom(); //width * 3 + isLinear*200;
+    var i = mapId + "_" + chrId; console.log(i);
+    var heightZoom = height + width*2;
+    var distZoom = distToZoom(); //width * 3 + isLinear*200;
 
     var svg = svg0.append("g").attr("id", "svg" + i)
               .attr("transform", " translate(" + (originX + x) + "," + (originY + y) + ") rotate(" + ang0 + ") ");
     var ang = radians(ang0 + 90);
     var max = d3.max(data.map(function(d) {
-      return +d.position;
-    }));
+               return +d.position; }));
+
     window["side" + i] = zSide;
     window["max" + i] = max;
+    window["comp"] = comp;
 
-    var tooltip = svg.append("div")	
-                  .attr("class", "tooltip")				
-    		          .style("opacity", 0.5); /// cambiar tool tip
+    var tooltip = svg.append("div") 
+                  .attr("class", "tooltip")       
+                  .style("opacity", 0.5); /// cambiar tool tip
 
     tooltip.append('div')                       
-  	   .attr('class', 'label'); 
+           .attr('class', 'label'); 
 
     var dataT = toMarker(data, ang, width, originX, '', '', height);
     var dataZoom = toMarkerZoom(data, ang, width, originX, '', '', heightZoom);
     
 
+    // Define  domains for axis
 
-    // Define kind domains for axis
     y1.domain([0, d3.max(data.map(function(d) { return +d.position; }))]);
     y2.domain(y1.domain());
 
@@ -40,17 +40,16 @@
     svg.append("text")
       .attr("dx", -width/2)
       .attr("dy", -width*1.5)
-      .text("Chr " + i)
-	    .attr("fill", "#B75CA1");
+      .text("Chr " +  i.split("_")[1])
+      .attr("fill", "#B75CA1");
 
-      svg.append("text")
-	     .attr("dx", -width)
+    svg.append("text")
+       .attr("dx", -width)
        .attr("dy", -width/2)
        .text("cM")
-	     .attr("font-size",12);    
+       .attr("font-size",12);    
 
     svg.append("rect")
-      //  .data(dataT)
         .attr("id", "rect" + i)
         .attr("x", -width / 2)
         .attr("y", -width)
@@ -62,14 +61,14 @@
         .attr("stroke", "black")
         .style("stroke-width", 1)
         .on('click', onclick)
-        .on("mouseover", function(d) {		
-		  tooltip.select('.label').html("hi");	
-            });
+        .on("mouseover", function(d) {    
+                tooltip.select('.label').html("hi"); });
 
     svg.selectAll("line.horizontal")
         .attr("id", "lines" + i)
         .data(dataT)
       .enter().append("svg:line")
+        .attr("id", function(d) {  return "lmk" + i + "-" + (d.markerDbId); })
         .attr("x1", function(d) { return d.x1;  })
         .attr("y1", function(d) { return d.y1;  })
         .attr("x2", function(d) { return d.x2;  })
@@ -94,7 +93,7 @@
         .attr("class", "y axis")
         .attr("width", 10)
         .attr("height", 10)
-        .attr("transform", "rotate(" + -ang0 + ") translate(" + (Math.sin(ang) * width / 2 * axisSide) + "," + (-(Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
+        .attr("transform", " translate(" + ( width / 2 * axisSide) + ",0)")
         .call(yAxisSide(axisSide));
 
       svg.append("polygon")
@@ -109,7 +108,7 @@
 
       zoom.append("rect")
         .attr("id", "rectx" + i)
-        .attr("x", width*(zoomSide-1)/2+distZoom*zoomSide)
+        .attr("x", width*(zoomSide-1)/2+distZoom*zoomSide) //distZoom*zoomSide) //
         .attr("y", -width)
         .attr("width", width)
         .attr("height", heightZoom)
@@ -129,8 +128,9 @@
         .attr("id", "line" + i)
         .data(dataZoom)
        .enter().append("line")
-      	.attr("y2", function(d) {  return y1(d.y); })
-      	.attr("y1", function(d) {  return y1(d.y); })
+        .attr("id", function(d) {  return "lbmk" + (d.markerDbId); })
+        .attr("y2", function(d) {  return y1(d.y); })
+        .attr("y1", function(d) {  return y1(d.y); })
         .attr("class", "line")
         .style("stroke", '#000')
         .style("stroke-width", 1)
@@ -149,7 +149,7 @@
         .attr("class", "yaxis")
         .attr("width", 10)
         .attr("height", 10)
-        .attr("transform", " rotate(" + (-ang0) + ") translate(" + ((Math.sin(ang) * distZoom * zoomSide)) + "," + ((-Math.cos(ang) * width * 3)) + ")  rotate(" + ang0 + ") ")
+        .attr("transform", " translate(" + (distZoom * zoomSide) + ",0)")
         .call(yAxisZoomSide(zoomSide));
 
       zoom.append("text")
@@ -189,7 +189,6 @@
     }
   }
 
-
   function mouseoverZ(d) {
 
     var name = d3.select(this.parentNode).attr('id');
@@ -197,9 +196,8 @@
 
     d3.select(this).style("stroke", "red");
 
-    svg.selectAll("#zoom" + name).selectAll("text").style("font-size", "18px");
+   // svg.selectAll("#zoom" + name).selectAll("text").style("font-size", "18px");
     // svg.selectAll("#zoom"+ name).selectAll("line").style("stroke","red"); 
-
   }
 
   function mousemoveZ(d) {
@@ -227,20 +225,31 @@
 
   function mouseovertxt(d) {
 
-    d3.select(this).style("font-size", "18px");
+   // d3.select(this).style("font-size", "18px");
     // svg.selectAll("#zoom"+ name).selectAll("line").style("stroke","red"); 
   }
 
   function mouseouttxt(d) {
 
-    d3.select(this).style("font-size", "14px");
+   // d3.select(this).style("font-size", "14px");
 
   }
+
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      svg0.appendChild(this);
+    });
+  };
 
   function mouseover(d, i) {
 
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("svg", "");
+        var map = name.split("_")[0];  
+    var nChr = name.split("_")[1];
+
+    svg.select("#svg" + name).select("#svgo" + name).selectAll("text").attr("dy", null).text(null);
+    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
 
     d3.select(this).style("stroke", "blue");
     d3.select(this).each(moveToFront);
@@ -251,10 +260,22 @@
 
     var pos = chrHgt / 10;
 
+    svg.select("#svg"  + map + "_" +(Number(nChr)+1)).style("opacity", 0);
+    svg.select("#svg"  + map + "_" +(Number(nChr)+2)).style("opacity", 0);
+
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m; })
-      .text(function(d) { return d.markerName; });
+      .text(function(d) { return d.markerName; });  
+
+    /*
+    svg.select("#svg" + name).select("#svgo" + name).append("rect")
+    //.attr("x", width * 1.5)
+    //.attr("y", 0)
+    .attr("width",chrWdt*3)
+    .attr("height", chrHgt)
+    .style("fill","yellow")
+    .style("fill-opacity","1").moveToFront(); */
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
       .attr("x1", function(d) {  if ((d.y1) > 0 & (d.y1) < chrHgt) return d.x2 })
@@ -264,17 +285,26 @@
 
   }
 
+
+  d3.selection.prototype.moveToFront = function() {  
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+
   function mouseout(d) {
 
     var name = d3.select(this.parentNode).attr('id');
-    name = name.replace("svg", "");
-
+    name = name.replace("svg", ""); 
+        var map = name.split("_")[0];  
+    var nChr = name.split("_")[1];
+//svg.select("#svg" + name).select("#svgo" + name).selectAll("rect").style("fill-opacity","0");
     d3.select(this).style("stroke", "gray");
-    svg.selectAll("text").style("font-size", "14px");
-    svg.select("#svg" + name).select("#svgo" + name).selectAll("text").attr("dy", null).text(null);
-
-    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
-
+   // svg.selectAll("text").style("font-size", "14px");
+    svg.select("#svg" + name).select("#svgo" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
+    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).transition().delay(1000).attr("x2", null).attr("y1", null).attr("y2", null);
+    svg.select("#svg"  + map + "_" + (Number(nChr)+1)).transition().delay(1000).style("opacity", 1);
+    svg.select("#svg" + map + "_" + (Number(nChr)+2)).transition().delay(1000).style("opacity", 1);
   }
 
   function moveToFront() {
@@ -282,30 +312,6 @@
     this.parentNode.appendChild(this);
   }
 
-
-  function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2, y0,originX,originY ) {
-
-    var dataT = preTransfLinkData(data, ang, x1, x2);
-    var dataForLink = transfLinkData(dataT, ang, chrWdt, radius, x1, x2);
-console.log(dataForLink);
-    svg.append("g")
-      .attr("class", "link")
-      .selectAll("path")
-      .data(dataForLink)
-      .enter().append("path")
-      .attr("d", link)
-      .style("opacity", 1)
-      .attr("transform", " translate(" + (originX) + "," + (originY + y0) + ") ");
-
-  
-    function link(d) {
-        return "M" + (d.tx+ x2) + "," + ( d.ty)
-            + "C" + (d.tx+ x2) + "," +  ((d.ty + d.sy) / 2)
-            + " " + (d.sx+ x1) + "," +  ((d.ty + d.sy) / 2)
-            + " " + (d.sx+ x1) + "," +  (d.sy);
-      };
-
-    }
 
   function onclick() {
 
@@ -341,7 +347,9 @@ console.log(dataForLink);
 
       label2= label2.reverse();
       for (var i = 0; i < label1.length; i++) { 
-           meanL.push({y: (label1[i] + label2[i]) /2, t: labels[i].t, x: labels[i].x} );
+           meanL.push({y: (label1[i] + label2[i]) /2, t: labels[i].t, x: labels[i].x, id: labels[i].id, markerDbId: labels[i].markerDbId} );
       } 
       return meanL;
   }
+
+

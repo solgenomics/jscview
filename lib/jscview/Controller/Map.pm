@@ -39,7 +39,12 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   my ($self, $c) = @_;
    # get variables from catalyst object
   my $params = $c->req->body_params();
-  my @query_chr = $c->req->param("input_chr");
+  my $input_chr1 = $c->req->param("input_chr");
+  my $input_mapSId = $c->req->param("mapSId");
+  my $input_mapId = $c->req->param("mapId");
+  $c->stash->{mapSId} = $input_mapSId;
+  $c->stash->{mapId} = $input_mapId;
+  $c->stash->{input_chr} = $input_chr1;
   $c->stash(template => 'Map/view_comp.mas');
 
 }

@@ -1,13 +1,20 @@
 <%args>
 $input_chr => ()
+$mapSId => ()
+$mapId => ()
+
 </%args>
 <%perl>
 use strict;
+use File::Basename;
 
 use JSON::Any;
 my $json = JSON::Any->new;
+
 </%perl>
 
+ <div class="container">
+<h2 id="tittle" align="center" >Comparative Map</h2>
 
  <form id="form" class="form-horizontal">
       
@@ -24,37 +31,34 @@ my $json = JSON::Any->new;
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
  <!-- </svg>-->
-  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);">Compare</a>
+  <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);" style="display: none;">Compare</a>
 
 
 
  <script>
 
-
- var width = window.innerWidth*0.7,
-    height = window.innerHeight*0.7,
-    n = 2,
-    isLinear = 1;
-    var  axisSide1=-1, chrZSide1= -1,
-     axisSide2=1, chrZSide2 = 1;
-
- var svg = d3.select("div#container").append("svg")
-  .attr("width", "100%")
-  .attr("height", "100%")
-  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
-  .attr("preserveAspectRatio", "xMinYMid meet")
-  .attr("id", "matrixSVG");
-
-
- svg.select("#brushid").remove();
-
+var mapTId = '<% $mapId %>';
+var mapSId = '<% $mapSId %>';
+var nChr = '<% $input_chr %>'.split("_")[1];
+console.log(nChr);
  // Setting Global variables
- var radius = width / 4,
-  chrWdt = radius / 8,
-  chrHgt = radius * Math.sin(radians(180 / n));
+ var width = window.innerWidth*0.7,
+     height = window.innerHeight*0.7,
+     n = 2,
+     isLinear = 1;
+
+ var axisSide1=-1, chrZSide1= -1,
+     axisSide2=1, chrZSide2 = 1;
+  var sideComp=-1;
+ var radius = width / 2,
+     chrWdt = (width / 4) / 8,
+     chrHgt = (width / 4)  * Math.sin(radians(180 / n));
+/*   var radius = width / 4,
+     chrWdt = radius / 8,
+     chrHgt = radius * Math.sin(radians(180 / n));*/
 
   function distToZoom(){
-    return  chrWdt * 3 + isLinear*50;
+    return  chrWdt * 5 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
   }
 
   function yAxisSide(axisSide){
@@ -68,7 +72,7 @@ my $json = JSON::Any->new;
   }
 
  var y1 = d3.scaleLinear().range([0, chrHgt]); 
- var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
+ var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders //to zoom
  var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
  var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
@@ -76,103 +80,74 @@ my $json = JSON::Any->new;
  var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
  var vbrush = d3.brushY()
-  .extent([[0, 0],[chrWdt, chrHgt]])
-  .on("end", brush);
+                .extent([[0, 0],[chrWdt, chrHgt]])
+                .on("end", brush);
 
+  //Draw graph
+ var svg = d3.select("div#container").append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+            .attr("preserveAspectRatio", "xMinYMid meet")
+            .attr("id", "matrixSVG");
 
- function selectMap(value) {
+ svg.select("#brushid").remove();
 
-  svg.selectAll("*").remove();
+  // To get data
+  var getChrJSON = function(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        var status = xhr.status;
+        if (status == 200) {
+          resolve(xhr.response.result.data);
 
-  var request = new XMLHttpRequest();
+        } else {
+          reject(status);
+        }
+      };
+      xhr.send();
+    });
+  };
 
-  //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/9/positions?pageSize=10000000'); 
-  request.open('GET', 'http://192.168.1.180:3100/brapi/v1/sgn_maps/2/positions?pageSize=10000000'); 
-  request.onreadystatechange = function() {
+  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
+                  }, function(status) {
+                    alert('Something went wrong.');
+                  });
+  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
+                  }, function(status) {
+                    alert('Something went wrong.');
+                  });
 
-    if (this.readyState === 4) {
-
-      var myArr = JSON.parse(this.responseText);
-      var result = fillArray(myArr);
-      var data = result.data;
-      var list = [1,2];
-      //var list = unique(result.list);
-
-      //Test data
-      var datal = [ { "chrs":1 , "s": 0,  "chrt":3, "t": 0},
-                  { "chrs":1, "s": 20,  "chrt":2, "t": 40}, 
-                  { "chrs":1 , "s": 100, "chrt":3 , "t": 100},
-                  { "chrs":2, "s": 40,  "chrt":1, "t": 30}, 
-                  { "chrs":3 , "s": 20, "chrt":4 , "t": 100},
-                  { "chrs":4, "s": 40,  "chrt":5, "t": 80}, 
-                  { "chrs":2 , "s": 120, "chrt":3 , "t": 70}];
-
-
-      //Select chromome list to use
-
-//       var forZoom = 1;
-
-//       // Draw each chr
-
-//       for (var i = 0; i < list.length; i++) {
-
-//        // var angi1 = 0; //360 / n * i;
-//         var angi = 360 / n * i;
-//         var x = radius * Math.cos(radians(angi));
-//         var y = radius * Math.sin(radians(angi));
-
-//         var dataByChr = data.filter(function(d) {
-//           return d.linkageGroup == list[i]
-//         });
-
-//      var va = n + forZoom + 1;
-
-//     var originX = width/2,
-//       originY =  height/4;
-// //if (angi >=180) { angi = angi -180}
-//         chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, list[i], forZoom, isLinear, 3, originX,originY,1);
-//       }
-
-//       links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
-//       //links(datal, svg, 0, chrWdt, chrHgt, radius, 50, 100, 0, originX,originY);
-
-            var radius = width / (list.length + 2);
-            var originX = 250, originY = 100;
-            var y0 = 0;
-
-      //for (var i = 0; i < list.length; i++) {
-
-        // Filter data by chr;
-        var dataByChr = data.filter(function(d) {
-          return d.linkageGroup == list[0]
+  Promise.all([
+    chruno,
+    chrdos
+  ])
+    .then((values) => {
+      const source = values[0];
+      const target = values[1]; 
+      var labels = [];
+      var dataByChr = source.filter(function(d) {
+        var n = {mName: d.markerName, id: d.markerDbId}; 
+                         labels.push(n); 
+          return d.linkageGroup == nChr;
         });
-        var dataByChr2 = data.filter(function(d) {
-          return d.linkageGroup == list[1]
+      var dataByChr2 = target.filter(function(d) {
+          return d.linkageGroup == nChr;
         });
+      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr);
+    });
 
-        axisSide = Math.pow(-1,(1));
-        // Draw each chr
-        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius * 0, y0, list[0], 1,isLinear,5,originX,originY,axisSide1, chrZSide1);
-        chromosome(dataByChr2, svg, chrWdt, chrHgt, 0, radius * 1, y0, list[1], 1,isLinear,5,originX,originY,axisSide2, chrZSide2);
-      //  } 
-       //    if (i<n){
-        //    console.log(list[i]);
-                var datali = datal.filter(function(d) { return d.chrs == list[0] }); 
-               // datali = datali.filter(function(d) { return d.chrs == list[i] }); 
-       links(datali, svg, 0, chrWdt, chrHgt, 0, chrWdt, radius, y0, originX,originY);
-        //links(datal, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY);
-   //   }
-
-     // }
-
-    }
-
-  }
-
-  request.send();
- };
-
- selectMap('S1,S2,S4,S5');
 
 
  </script>
+ <form>
+<div>
+<label>Marker Name</label>
+  <input id="searchmk" type="text" name="fname">
+  <a id="searchmarker" class="btn btn-primary" href="#" onclick="searchmarkerid(document.getElementById('searchmk').value);">Search</a>
+</div>
+</form>
+</div>
