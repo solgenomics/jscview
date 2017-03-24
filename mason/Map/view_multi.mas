@@ -43,9 +43,12 @@ my $json = JSON::Any->new;
    svg.select("#brushid").remove();
 
    // Setting Global variables
-   var radius = width / 4,
+   var radius = width / 3,
+       chrWdt = radius / 12,
+       chrHgt = radius * Math.sin(radians(180 / n))-(radius/5);
+  /* var radius = width / 4,
        chrWdt = radius / 8,
-       chrHgt = radius * Math.sin(radians(180 / n))-(radius/10);
+       chrHgt = radius * Math.sin(radians(180 / n))-(radius/10); */
     
     function distToZoom(){
       return  chrWdt * 3 + isLinear*200; 
@@ -60,7 +63,7 @@ my $json = JSON::Any->new;
       else return  yAxisZoomL;
     }
 
-   var y1 = d3.scaleLinear().range([0, chrHgt]);
+   var y1 = d3.scaleLinear().range([-chrWdt/2, chrHgt + chrWdt/2]);
    var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
    var yAxis = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
    var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
@@ -73,7 +76,7 @@ my $json = JSON::Any->new;
                 .extent([[0, 0],[chrWdt, chrHgt]])
                 .on("brush", brush);
 
-
+/*
    function selectMap(value) {
 
       svg.selectAll("*").remove();
@@ -89,16 +92,6 @@ my $json = JSON::Any->new;
           var result = fillArray(myArr);
           var data = result.data;
           var list = unique(result.list);
-
-          //Test data
-          var datal = [ { "chrs":1 , "s": 0,  "chrt":3, "t": 0},
-                      { "chrs":1, "s": 20,  "chrt":3, "t": 40}, 
-                      { "chrs":1 , "s": 100, "chrt":3 , "t": 100},
-                      { "chrs":2, "s": 40,  "chrt":3, "t": 30}, 
-                      { "chrs":3 , "s": 20, "chrt":4 , "t": 100},
-                      { "chrs":4, "s": 0,  "chrt":5, "t": 10}, 
-                      { "chrs":2 , "s": 100, "chrt":3 , "t": 70}];
-
 
           //Select chromome list to use
           var forZoom = 1;
@@ -124,11 +117,11 @@ my $json = JSON::Any->new;
             //  y = y+20 * Math.cos(radians(angi)); x= x+20* Math.sin(radians(angi))
             }
 
-            chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, 2, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+        //    chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, 2, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
           }
           
           var dataT = preTransfLinkData(datal, 360 / n, 0, 0,chrWdt,chrHgt);
-          var dataForLink = transfLinkData(dataT, 360 / n, chrWdt, radius, 0, 0);
+          var dataForLink = transfLinkData(dataT, 360 / n, chrWdt, radius, 0, 0); console.log(dataForLink);
           links(dataForLink, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY,0);
 
         }
@@ -137,9 +130,132 @@ my $json = JSON::Any->new;
 
       request.send();
    };
+*/
+//  selectMap('S1,S2,S4,S5');
 
-   selectMap('S1,S2,S4,S5');
+///get chrs
+var mapSId = 2;
+var mapTId = 9;
 
+  var getChrJSON = function(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        var status = xhr.status;
+        if (status == 200) {
+          resolve(xhr.response.result.data);
+
+        } else {
+          reject(status);
+        }
+      };
+      xhr.send();
+    });
+  };
+var myFunct=function(e){return this.indexOf(e)<0;}; 
+
+  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
+                  }, function(status) {
+                    alert('Something went wrong.');
+                  });
+  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
+                  }, function(status) {
+                    alert('Something went wrong.');
+                  });
+
+  Promise.all([
+    chruno,
+    chrdos
+  ])
+    .then((values) => {
+      const source = values[0]; 
+      const target = values[1];  
+      var s,t;
+      var IdMarkers = getCommonColumn(source,target,"markerDbId"); 
+       //       var filtered=source.filter(myFunct,IdMarkers);// console.log(filtered);
+
+              var datal = [];
+      for (var i = 0; i < IdMarkers.length; i++) {  
+        s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+        t = target.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+
+           datal.push({
+                  "chrs": s[0].linkageGroup, 
+                  "s": (+s[0].position),  
+                  "chrt": t[0].linkageGroup, 
+                  "t": (+t[0].position), //-chrWdt*0.5),    //arreglar
+                  "markerDbId": IdMarkers[i]});
+      }
+             //     console.log(datal);
+
+          var forZoom = 1;
+          var comp=1;
+          var list = [1,2,3,4,5,6,7,8,9,10,11,12];
+          // Draw each chr
+
+          for (var i = 0; i < list.length*2; i++) {
+
+            var angi = 360 / (n*2) * i;
+            var x = radius * Math.cos(radians(angi));
+            var y = radius * Math.sin(radians(angi));
+
+            var dataByChr = source.filter(function(d) {
+              return d.linkageGroup == list[i]
+            });
+            var dataByChr2 = source.filter(function(d) {
+              return d.linkageGroup == list[i-12]
+            });
+
+            var originX = width/2, axisSide = -1, chrZSide=1;
+                originY = height*0.4;
+
+            if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; 
+             // y = y+20 * Math.sin(radians(angi)); x= x+20* Math.cos(radians(angi))
+            //  y = y+20 * Math.cos(radians(angi)); x= x+20* Math.sin(radians(angi))
+            }
+if (i<12){
+            chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, mapSId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+} else{
+              chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x, y, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+
+}
+          }
+          
+          var dataT = preTransfLinkData(datal, 360 / (n*2), 0, 0,chrWdt,chrHgt);
+          var dataForLink = transfLinkData(dataT, 360 / (n*2), chrWdt, radius, 0, 0);
+          links(dataForLink, svg, 360 / (n*2), chrWdt, chrHgt, radius, 0, 0, 0, originX,originY,0);
+
+
+    });
+
+(function(console){
+
+console.save = function(data, filename){
+
+    if(!data) {
+        console.error('Console.save: No data')
+        return;
+    }
+
+    if(!filename) filename = 'console.json'
+
+    if(typeof data === "object"){
+        data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], {type: 'text/json'}),
+        e    = document.createEvent('MouseEvents'),
+        a    = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+ }
+})(console)
 
  </script>
 </div>

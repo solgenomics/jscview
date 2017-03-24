@@ -5,7 +5,7 @@
     if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
 
-    var i = mapId + "_" + chrId; console.log(i);
+    var i = mapId + "_" + chrId; //console.log(i);
     var heightZoom = height + width*2;
     var distZoom = distToZoom(); //width * 3 + isLinear*200;
 
@@ -39,22 +39,23 @@
 
     svg.append("text")
       .attr("dx", -width/2)
-      .attr("dy", -width*1.5)
-      .text("Chr " +  i.split("_")[1])
+      .attr("dy", -width-1)
+      .text("Chr " + i.split("_")[1])
+      .attr("font-size",10) // 
       .attr("fill", "#B75CA1");
 
     svg.append("text")
        .attr("dx", -width)
        .attr("dy", -width/2)
        .text("cM")
-       .attr("font-size",12);    
+       .attr("font-size",6);    
 
     svg.append("rect")
         .attr("id", "rect" + i)
         .attr("x", -width / 2)
-        .attr("y", -width)
-        .attr("rx", width)
-        .attr("ry", width)
+       .attr("y", -(height + width * 2)/2 ) // -(height + width * 2)/2) //  .attr("y", -width)
+        .attr("rx", width/2)
+        .attr("ry", width/2)
         .attr("width", width)
         .attr("height", height + width * 2)
         .attr("fill", 'transparent')
@@ -93,7 +94,8 @@
         .attr("class", "y axis")
         .attr("width", 10)
         .attr("height", 10)
-        .attr("transform", " translate(" + ( width / 2 * axisSide) + ",0)")
+        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
+//        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (-width ) + ")")
         .call(yAxisSide(axisSide));
 
       svg.append("polygon")
@@ -109,12 +111,10 @@
       zoom.append("rect")
         .attr("id", "rectx" + i)
         .attr("x", width*(zoomSide-1)/2+distZoom*zoomSide) //distZoom*zoomSide) //
-        .attr("y", -width)
+        .attr("y", -width-height/2)
         .attr("width", width)
         .attr("height", heightZoom)
         .attr("fill", 'transparent')
-     //  .attr("fill", "#FDDDDC")
-      //  .attr('opacity', 0.625)
         .attr("stroke", "black");
 
       zoom.append("g").attr("id", "text" + i).selectAll("text")
@@ -162,6 +162,14 @@
 
     } else {
 
+      svg.append("rect")
+        .attr("id", "recttext" + i)
+        .attr("x", chrWdt * 0.5)
+        .attr("y", -chrWdt * 0.5)
+        .attr("width",0)
+        .attr("height", chrHgt+chrWdt * 1)
+        .style("fill","white");
+
       svg.append("g")
         .attr("id", "yaxis" + i)
         .attr("class", "axis")
@@ -177,6 +185,7 @@
         .data(dataT)
         .enter().append("text")
         .attr("dx", width * 1.5)
+         .attr("height", 0)
         .on("mouseover", mouseovertxt)
         .on("mouseout", mouseouttxt);
 
@@ -245,8 +254,9 @@
 
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("svg", "");
-        var map = name.split("_")[0];  
-    var nChr = name.split("_")[1];
+        
+    //  var map = name.split("_")[0];  
+    //   var nChr = name.split("_")[1];
 
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text").attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
@@ -260,22 +270,17 @@
 
     var pos = chrHgt / 10;
 
-    svg.select("#svg"  + map + "_" +(Number(nChr)+1)).style("opacity", 0);
-    svg.select("#svg"  + map + "_" +(Number(nChr)+2)).style("opacity", 0);
+    //   svg.select("#svg"  + map + "_" +(Number(nChr)+1)).style("opacity", 0);
+    //  svg.select("#svg"  + map + "_" +(Number(nChr)+2)).style("opacity", 0);
+
+    svg.select("#svg" + name).select("#recttext" + name)
+    .style("width",chrWdt*4)
+    .style("fill-opacity","1");//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m; })
-      .text(function(d) { return d.markerName; });  
-
-    /*
-    svg.select("#svg" + name).select("#svgo" + name).append("rect")
-    //.attr("x", width * 1.5)
-    //.attr("y", 0)
-    .attr("width",chrWdt*3)
-    .attr("height", chrHgt)
-    .style("fill","yellow")
-    .style("fill-opacity","1").moveToFront(); */
+      .text(function(d) { return d.markerName; });//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
       .attr("x1", function(d) {  if ((d.y1) > 0 & (d.y1) < chrHgt) return d.x2 })
@@ -292,19 +297,21 @@
       });
     };
 
+
   function mouseout(d) {
 
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("svg", ""); 
-        var map = name.split("_")[0];  
+
+    var map = name.split("_")[0];  
     var nChr = name.split("_")[1];
-//svg.select("#svg" + name).select("#svgo" + name).selectAll("rect").style("fill-opacity","0");
-    d3.select(this).style("stroke", "gray");
-   // svg.selectAll("text").style("font-size", "14px");
+
+    d3.select(this).style("stroke", randomColor);
+    svg.select("#svg" + name).selectAll("#recttext" + name).transition().delay(1000).style("width","0");
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
-    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).transition().delay(1000).attr("x2", null).attr("y1", null).attr("y2", null);
-    svg.select("#svg"  + map + "_" + (Number(nChr)+1)).transition().delay(1000).style("opacity", 1);
-    svg.select("#svg" + map + "_" + (Number(nChr)+2)).transition().delay(1000).style("opacity", 1);
+    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").transition().delay(1000).attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
+ //  svg.select("#svg"  + map + "_" + (Number(nChr)+1)).transition().delay(1000).style("opacity", 1);
+   // svg.select("#svg" + map + "_" + (Number(nChr)+2)).transition().delay(1000).style("opacity", 1);
   }
 
   function moveToFront() {
@@ -329,7 +336,7 @@
   function getPosition(labels){
       
       //function to get marker labels position in order to not overlapping each other
-      var label1 =[], label2=[], meanL = []; 
+      var u, label1 =[], label2=[], meanL = []; 
       
       label1.push(labels[0].y) ;
       for (var i = 1; i < labels.length; i++) {  
@@ -347,9 +354,15 @@
 
       label2= label2.reverse();
       for (var i = 0; i < label1.length; i++) { 
-           meanL.push({y: (label1[i] + label2[i]) /2, t: labels[i].t, x: labels[i].x, id: labels[i].id, markerDbId: labels[i].markerDbId} );
-      } 
+          u = (label1[label1.length-i-1] + label2[label1.length-i-1]) /2
+          meanL.push({y: u, t: labels[i].t, x: labels[i].x, id: labels[i].id, markerDbId: labels[i].markerDbId} ); 
+      }
       return meanL;
   }
 
-
+  function hightlightMarkers(labels){
+      
+      for (var i = 1; i < labels.length; i++) {  
+          svg.selectAll("#lpmk"+ labels[i].markerDbId).style("stroke", "blue");
+      }
+   }

@@ -1,32 +1,39 @@
 
- function selectCompMap(data,map,data1,map1,nChr) {
+ function selectCompMap(data,map,data1,map1,nChr1,nChr2) {
+
+  if (nChr1>1){  document.getElementById('before').innerHTML = "< Chr " + (+nChr1-1); } else { document.getElementById('before').innerHTML = ""; }
+  if (nChr1<12){  document.getElementById('after').innerHTML = "Chr " + (+nChr1+1) + " >"; } else { document.getElementById('after').innerHTML = ""; }
+  if (nChr2>1){  document.getElementById('before2').innerHTML = "< Chr " + (+nChr2-1); } else { document.getElementById('before2').innerHTML = ""; }
+  if (nChr2<12){  document.getElementById('after2').innerHTML = "Chr " + (+nChr2+1) + " >"; } else { document.getElementById('after2').innerHTML = ""; }
 
         svg.selectAll("*").remove();
 
-        var list = [nChr,nChr];
+        var list = [nChr1,nChr2];
               window["source"] = map + "_" + list[0];
               window["target"] = map1 + "_" + list[1];
 
         var originX = 150, originY = 100;
         var y0 = 0;
 
-        axisSide = 1// Math.pow(-1,(1));
+        axisSide = 1;// Math.pow(-1,(1));
 
         // Draw each chr 
         chromosome(data, svg, chrWdt, chrHgt, 0, radius * 0, y0,map, list[0], 1,isLinear,5,originX,originY,axisSide, 1,-1);
         chromosome(data1, svg, chrWdt, chrHgt, 0, radius, y0,map1, list[1], 1,isLinear,5,originX,originY,axisSide2, chrZSide2,-1);
 
      //   links(dataLinks, svg, 0, chrWdt, chrHgt, 0, chrWdt, radius, y0, originX,originY);
+      //    links(data, svg, 0, chrWdt, chrHgt, 0, chrWdt, radius, y0, originX,originY);
+
  };
 
 
   function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2, y0,originX,originY,zoom2chr ) {
     
 
-
-    if (zoom2chr == 1 ) zoom2chr =chrWdt;  //It add height depending if the link is between chromosomes or zoom to chr 
+    if (zoom2chr == 1 ) zoom2chr = chrWdt;  //It add height depending if the link is between chromosomes or zoom to chr 
 
     svg.append("g")
+      .attr("id", "path-multi")
       .attr("class", "link")
       .selectAll("path")
       .data(data)
@@ -34,7 +41,9 @@
       .attr("id", function(d) {  return "lpmk" + (d.markerDbId); })
       .attr("d", link)
       .style("opacity", 1)
-      .attr("transform", " translate(" + (originX) + "," + (originY + y0) + ") ");
+      .style("stroke-width", 1)
+      .attr("transform", " translate(" + (originX) + "," + (originY + y0) + ") ")
+       .on('click', onclicklink);
 
     function link(d) {
     /*
@@ -50,6 +59,12 @@
 
      // }
     }
+  }
+
+  function onclicklink() {
+
+    //function to redirect each chr itself web page
+    d3.select(this).attr("stroke", "#C75601");
   }
 
   function getMatrixLinks(chrS,chrT,valueToJoin,chrdistZoom){ //Sirve para el grande tambien
@@ -110,7 +125,7 @@
       svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
       svg.selectAll("#lmk" + t + '-' + id).style("stroke", "red").style("stroke-width", 4);
       svg.select("#zoom"+s).selectAll("#pmk"+id).style("stroke", "red");
-      svg.selectAll("#lpmk"+id).style("stroke", "red");
+      svg.selectAll("#lpmk"+id).style("stroke", "red"); 
 
   }
   function searchmarkerid(name){
@@ -121,16 +136,16 @@
       svg.selectAll("line").style("stroke", "lightgray").style("stroke-width", 2);
       svg.select("#zoom"+s).selectAll("path.pointer").style("stroke", "lightgray");
       svg.select("#zoom"+s).selectAll("path.pointer").style("stroke-width", function(d){ if (d.n == name) id= d.markerDbId;  return "2"});
-console.log(name + ":"+id);
       svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
       svg.selectAll("#lmk" + t + '-' + id).style("stroke", "red").style("stroke-width", 4);
       svg.select("#zoom"+s).selectAll("#pmk"+id).style("stroke", "red");
-      svg.selectAll("#lpmk"+id).style("stroke", "red");
-
+      svg.select("#zoom"+s).selectAll("#lamk"+id).style("background-color", "red");
+      svg.selectAll("#lamk"+id).style("fill", "red"); 
+      svg.selectAll("#lpmk"+id).style("stroke", "red"); 
   }
   function getId(array,name){
-      var a = array.indexOf("TG183"); console.log(a);
-      return a;
+  /*    var a = array.indexOf("TG183"); console.log(a);
+      return a;*/
   }
 
 

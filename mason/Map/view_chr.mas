@@ -208,7 +208,7 @@ selectMap(map,nChr);
           
           <div >  
             <label> Compare map to   :&#09; &#09; </label> 
-            <select id="mapId" name="mapId">
+            <select id="mapTId" name="mapTId">
               <option ><-----Select---></option>
               <option value="2">Tomato-EXPIMP 2001</option>
               <option value="9">Tomato-EXPEN 2000</option>

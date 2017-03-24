@@ -3,39 +3,16 @@
 $input_map => ()
 $input_chr => ()
 
-$map_id => undef
-$map_version_id => undef
-$hilite => undef
-$size => 1
-#$map_items
-$short_name => "untitled map"
-$long_name => "untitled map"
-$force => 0
-$physical => undef
-#$referer
-$abstract => ''
-#$tempdir
-#$basepath
-#$map_url
-#$chr_url
-$comp_maps_url => ''
-$default_map_id => 9
-$private => ''
-@hilite_markers => ()
-$marker_stats => ''
-$chromosome_stats => ''
-$message => ''
-#$overview_image
-$can_overlay => 0
-$parent1_stock_id => ''
-$parent1_stock_name => '(unknown)'
-$parent2_stock_id => ''
-$parent2_stock_name => '(unknown)'
-
 </%args>
+    <style type="text/css">
+ .label {
+   /* text-shadow: 2px 2px 8px #000;*/
+        background-color: #00ff00;
+}
+</style>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
- <div class="container">
-          <h2 align="center">All Maps</h2> 
+          <div class="container">
+ <h2 align="center">All Maps</h2> 
  <form id="form" class="form-horizontal">
         <div class="form-group">
           <div >  
@@ -112,10 +89,9 @@ function selectMap(map, list) {
     if (this.readyState === 4) {
 
       var myArr1 = JSON.parse(this.responseText);
-  document.getElementById("tittle").innerHTML = myArr1.result.name;
-
-}}
-requestmap.send();
+      document.getElementById("tittle").innerHTML = myArr1.result.name;
+    }}
+  requestmap.send();
 
 
   var request = new XMLHttpRequest();
@@ -140,7 +116,7 @@ requestmap.send();
           originX=radius,
           originY=50;
 
-      for (var i = 0; i < list.length; i++) {
+     for (var  i = (list.length-1); i > -1;i--) {
 
         // Filter data by chr;
         var dataByChr = data.filter(function(d) {

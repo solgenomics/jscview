@@ -31,9 +31,11 @@ function brush() {
   
     brushRange = y2.domain()[1] - y2.domain()[0]/10;
 
+    //svg.selectAll("#zoom" + name).remove();
     svg.select("#zoom" + name).select("#text" + name).selectAll("text").remove();
-  
-    svg.selectAll("path").remove();
+    console.log(svg.selectAll(".zoom" ).NodeList);  
+//console.log(d3.select("g.parent"));
+
 
     svg.selectAll("#zoom" + name).append("text")
        .attr("dx", 0)
@@ -51,17 +53,29 @@ function brush() {
         .attr("x1", function(d) {  return zoomSide*chrdistZoom; })
         .attr("x2", function(d) {  return zoomSide*(chrdistZoom + chrWdt); })
         .attr("y1", function(d,i) {  
-                  var n = {x: zoomSide*(chrdistZoom+chrWdt), y: y2(d.y), t: d.markerName, id: d.markerDbId, markerDbId: d.markerDbId }; 
-                         labels.push(n); 
+           //       var n = {x: zoomSide*(chrdistZoom+chrWdt), y: y2(d.y), t: d.markerName, id: d.markerDbId, markerDbId: d.markerDbId }; 
+          //               labels.push(n); 
                   if (comp==-1) labelsChrSforComp.push({x: comp*zoomSide*(chrWdt/2), y: (d.y), t: d.markerName, id: d.markerDbId, markerDbId: d.markerDbId });      
-                  var m = {x: 0, d: d.y, n: d.markerName, markerDbId: d.markerDbId }; 
+                  var m = {x: 0, d: d.y, n: d.markerName, markerDbId: d.markerDbId , y: y2(d.y), t: d.markerName, id: d.markerDbId }; 
+                //                    var m = {x: 0, d: d.y, n: d.markerName, markerDbId: d.markerDbId }; 
                           dataL.push(m); 
-                  if(i > 0) links.push({source: labels[i-1], target: n}); //it was labels[i-1] I don't know why, verify                 
+            //      if(i > 0) links.push({source: labels[i-1], target: n}); //it was labels[i-1] I don't know why, verify                 
+                  if(i > 0) links.push({source: dataL[i-1], target: m}); //it was labels[i-1] I don't know why, verify                 
                 return y2(d.y); })
         .attr("y2", function(d) {  return y2(d.y); });
 
     //To compute new positions
-    labels = getPosition(labels);  
+    labels = getPosition(dataL);  
+
+
+    if (comp==-1){
+      svg.selectAll("path").remove();
+    } 
+    else{
+      hightlightMarkers(dataL);
+                svg.selectAll(".zoom").selectAll(".rect").style("stroke", "red");
+    }
+
 
     svg.selectAll("#zoom" + name).selectAll(".yaxis").call(yAxisZoomSide(zoomSide));
     
@@ -76,6 +90,7 @@ function brush() {
     svg.selectAll("#zoom" + name).select("#text" + name).selectAll("text.label")  //print marker names
        .data(labels).enter()
        .append("svg:text")
+     //  .attr("id", function(d) {  return "lamk" + (d.markerDbId); })
        .classed("label", true)
        .attr("direction", function(d) { if (comp == 1) { if (zoomSide == 1) { return "ltr";} else {return "rtl"; }} else return "rtl"; })  //corregir
        .text(function(d) { return d.t }) 
@@ -93,6 +108,7 @@ function brush() {
     svg.select("#zoom" + name).selectAll("path.pointer")
          .data(dataL).enter()
          .append("svg:path")
+         .attr("id", function(d) {  return "pmk" + (d.markerDbId); })
          .classed("pointer", true)
          .attr("fill", "none")
         .style("stroke", randomColor) 
@@ -130,6 +146,7 @@ function brush() {
 
     //Fit labels and path after movement, make changes here
       svg.select("#zoom" + name).select("#text" + name).selectAll("text.label") 
+          .attr("id", function(d) {  return "lamk" + (d.markerDbId); })
          .attr("x", function(d) { d.x = chrdistZoom + chrWdt * 2 * comp ;  return zoomSide*d.x; })
          .attr("y", function(d,i) {
                    //    if(d.y > chrHgt + chrWdt) d.y = chrHgt + chrWdt*2;        // arrreglar aca los max y min  ... junto a donde se define la variable

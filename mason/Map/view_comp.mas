@@ -1,7 +1,8 @@
 <%args>
-$input_chr => ()
+$input_chr1 => ()
+$input_chr2 => ()
 $mapSId => ()
-$mapId => ()
+$mapTId => ()
 
 </%args>
 <%perl>
@@ -26,8 +27,20 @@ my $json = JSON::Any->new;
         };        
       </script>
     </form>
-
-<div id="container" class="svg-container">
+<div class="table-responsive">
+  <table class="table">
+  <tr> 
+    <th colspan="2"><h3 id="tittle1" width="50%" align="center" ></h3></th>
+    <th colspan="2"><h3 id="tittle2" width="50%" align="center" ></h3></th>
+  </tr>
+  <tr><td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after"  class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+  </tr>
+  </table>
+  </div>
+    <div id="container" class="svg-container">
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
  <!-- </svg>-->
@@ -37,12 +50,13 @@ my $json = JSON::Any->new;
 
  <script>
 
-var mapTId = '<% $mapId %>';
+var mapTId = '<% $mapTId %>';
 var mapSId = '<% $mapSId %>';
-var nChr = '<% $input_chr %>'.split("_")[1];
-console.log(nChr);
+var nChr1 = '<% $input_chr1 %>'.split("_")[1],
+    nChr2 = '<% $input_chr2 %>'.split("_")[1];
+
  // Setting Global variables
- var width = window.innerWidth*0.7,
+ var width = window.innerWidth*0.9,
      height = window.innerHeight*0.7,
      n = 2,
      isLinear = 1;
@@ -50,15 +64,15 @@ console.log(nChr);
  var axisSide1=-1, chrZSide1= -1,
      axisSide2=1, chrZSide2 = 1;
   var sideComp=-1;
- var radius = width / 2,
-     chrWdt = (width / 4) / 8,
-     chrHgt = (width / 4)  * Math.sin(radians(180 / n));
+ var radius = width * 0.7,
+     chrWdt = (width / 2) / 8, //(width / 4) / 8,
+     chrHgt = (width / 2)  * Math.sin(radians(180 / n));
 /*   var radius = width / 4,
      chrWdt = radius / 8,
      chrHgt = radius * Math.sin(radians(180 / n));*/
 
   function distToZoom(){
-    return  chrWdt * 5 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
+    return  chrWdt * 4 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
   }
 
   function yAxisSide(axisSide){
@@ -92,6 +106,31 @@ console.log(nChr);
             .attr("id", "matrixSVG");
 
  svg.select("#brushid").remove();
+
+ function selectMap(mapSId,mapTId,nChr1,nChr2) {
+
+
+  var requestmap1 = new XMLHttpRequest();
+
+  requestmap1.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ mapSId ); 
+  requestmap1.onreadystatechange = function() {
+    if (this.readyState === 4) {
+
+      var myArr1 = JSON.parse(this.responseText);
+      document.getElementById("tittle1").innerHTML = myArr1.result.name;
+    }}
+  requestmap1.send();
+
+  var requestmap2 = new XMLHttpRequest();
+
+  requestmap2.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ mapTId ); 
+  requestmap2.onreadystatechange = function() {
+    if (this.readyState === 4) {
+
+      var myArr2 = JSON.parse(this.responseText);
+      document.getElementById("tittle2").innerHTML = myArr2.result.name;
+    }}
+  requestmap2.send();
 
   // To get data
   var getChrJSON = function(url) {
@@ -132,14 +171,16 @@ console.log(nChr);
       var dataByChr = source.filter(function(d) {
         var n = {mName: d.markerName, id: d.markerDbId}; 
                          labels.push(n); 
-          return d.linkageGroup == nChr;
+          return d.linkageGroup == nChr1;
         });
       var dataByChr2 = target.filter(function(d) {
-          return d.linkageGroup == nChr;
+          return d.linkageGroup == nChr2;
         });
-      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr);
+      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2);
     });
+}
 
+selectMap(mapSId,mapTId,nChr1,nChr2);
 
 
  </script>
