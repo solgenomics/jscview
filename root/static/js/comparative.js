@@ -1,5 +1,5 @@
 
- function selectCompMap(data,map,data1,map1,nChr1,nChr2) {
+ function selectCompMap(data,map,data1,map1,nChr1,nChr2,y0) {
 
   if (nChr1>1){  document.getElementById('before').innerHTML = "< Chr " + (+nChr1-1); } else { document.getElementById('before').innerHTML = ""; }
   if (nChr1<12){  document.getElementById('after').innerHTML = "Chr " + (+nChr1+1) + " >"; } else { document.getElementById('after').innerHTML = ""; }
@@ -13,12 +13,11 @@
               window["target"] = map1 + "_" + list[1];
 
         var originX = 150, originY = 100;
-        var y0 = 0;
 
         axisSide = 1;// Math.pow(-1,(1));
 
         // Draw each chr 
-        chromosome(data, svg, chrWdt, chrHgt, 0, radius * 0, y0,map, list[0], 1,isLinear,5,originX,originY,axisSide, 1,-1);
+        chromosome(data, svg, chrWdt, chrHgt, 0, radius * 0 , y0,map, list[0], 1,isLinear,5,originX,originY,axisSide, 1,-1);
         chromosome(data1, svg, chrWdt, chrHgt, 0, radius, y0,map1, list[1], 1,isLinear,5,originX,originY,axisSide2, chrZSide2,-1);
 
      //   links(dataLinks, svg, 0, chrWdt, chrHgt, 0, chrWdt, radius, y0, originX,originY);
@@ -27,8 +26,7 @@
  };
 
 
-  function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2, y0,originX,originY,zoom2chr ) {
-    
+  function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2,x0, y0,originX,originY,zoom2chr ) {
 
     if (zoom2chr == 1 ) zoom2chr = chrWdt;  //It add height depending if the link is between chromosomes or zoom to chr 
 
@@ -42,7 +40,7 @@
       .attr("d", link)
       .style("opacity", 1)
       .style("stroke-width", 1)
-      .attr("transform", " translate(" + (originX) + "," + (originY + y0) + ") ")
+      .attr("transform", " translate(" + (originX) + "," + (originY +y0) + ") ")
        .on('click', onclicklink);
 
     function link(d) {
@@ -52,10 +50,10 @@
               + "1"
               + " " + (d.sx+ x1) + " " +  (d.sy);
    /*   } else { 
-      */  return "M" + (d.tx+ x2) + "," + ( d.ty)
-            + "C" + (d.tx+ x2) + "," +  ((d.ty + d.sy) / 2)
-            + " " + (d.sx+ x1) + "," +  ((d.ty + d.sy) / 2)
-            + " " + (d.sx+ x1) + "," +  (d.sy); 
+      */  return "M" + (d.tx+ x2 -x0 ) + "," + ( d.ty)
+            + "C" + (d.tx+ x2 -x0 ) + "," +  ((d.ty + d.sy) / 2)
+            + " " + (d.sx+ x1+x0) + "," +  ((d.ty + d.sy) / 2)
+            + " " + (d.sx+ x1+x0) + "," +  (d.sy); 
 
      // }
     }
@@ -93,11 +91,12 @@
   }
 
   // Called in brush
-  function drawCompLine(labels,chrT,x,chrdistZoom){
+  function drawCompLine(labels,chrT,x,chrdistZoom,y0){
 
         var IdMarkers = getCommonColumn(labels,chrT,"markerDbId"); 
         var targetChr = []; 
         var t=window['target'];
+        var x0 = 0;
          //Filter chrT with markers selected
 
         for (var i = 0; i < IdMarkers.length; i++) {  
@@ -111,7 +110,7 @@
         //Pass data to construct links
         var dataLinks = getMatrixLinks(labels,targetChr,IdMarkers,chrdistZoom);
 
-        links(dataLinks, svg, 0, chrWdt, chrHgt, 0, chrWdt, 0, 0, 150 + x, 100,1);
+        links(dataLinks, svg, 0, chrWdt, chrHgt, 0, chrWdt, 0, x0, y0, 150 + x, 100,1);
 
    }
 

@@ -124,7 +124,7 @@
     var maxt = d3.max(data, function(d) { return +d.t;  });
     var yLinears = d3.scaleLinear().range(y1.range()).domain([0, maxs]); // sacar de aqui el rango como codigos anteriores
     var yLineart = d3.scaleLinear().range(y1.range()).domain([0, maxt]);
-console.log(maxs);
+
     var angSource, angTarget, angSourceT, angTargetT;
 
     for (var i = 0; i < data.length; i++) {

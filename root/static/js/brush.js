@@ -33,9 +33,6 @@ function brush() {
 
     //svg.selectAll("#zoom" + name).remove();
     svg.select("#zoom" + name).select("#text" + name).selectAll("text").remove();
-    console.log(svg.selectAll(".zoom" ).NodeList);  
-//console.log(d3.select("g.parent"));
-
 
     svg.selectAll("#zoom" + name).append("text")
        .attr("dx", 0)
@@ -126,8 +123,9 @@ function brush() {
          .attr("d", function(d){
             dataChrT.push({x:comp*zoomSide*(chrWdt/2), d: (d.y), n: d.markerName, markerDbId: d.markerDbId });
          });
+ var y0 = vy0();    
 
-        drawCompLine(labelsChrSforComp,dataChrT,zoomSide*(chrdistZoom+chrWdt/2),chrdistZoom);  
+        drawCompLine(labelsChrSforComp, dataChrT, zoomSide*(chrdistZoom+chrWdt/2), chrdistZoom, y0);  
     }
 
     function slide(){
@@ -172,4 +170,7 @@ function brush() {
 
 function vComp(){
     return window["comp"];  
+}
+function vy0(){
+    return window["y0"];  
 }

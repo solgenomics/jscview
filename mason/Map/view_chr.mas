@@ -73,12 +73,14 @@ my $json = JSON::Any->new;
 
 <h1 id="tittle" align="center" ></h1>
 <form id="form1" class="form-horizontal">
-    <table width="100%">
+  <div class="table-responsive">
+  <table class="table">
       <tr>
-        <th align="left" width="50%"><a id="before" class="btn btn-primary" href="#" onclick="nChr=+nChr-1; selectMap(map,nChr);"></a></th>
-        <th align="right" width="50%"><a id="after"  class="btn btn-primary" href="#" onclick="nChr=+nChr+1;selectMap(map,nChr);"></a></th>
+        <th align="center" width="50%"><a id="before" class="btn btn-primary" href="#" onclick="nChr=+nChr-1; selectMap(map,nChr);"></a></th>
+        <th align="center" width="50%"><a id="after"  class="btn btn-primary" href="#" onclick="nChr=+nChr+1; selectMap(map,nChr);"></a></th>
       </tr>
     </table>
+    <div>
 </form>
 <div id="container" class="svg-container">
   <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
@@ -119,8 +121,8 @@ my $json = JSON::Any->new;
       originY=100;
       chrWdt = 35 , //radius/5,
       chrHgt = 300 , //  radius * Math.sin(radians(180/n)),
-      y1 = d3.scaleLinear().range([0,chrHgt]); 
-      y2 = d3.scaleLinear().range([-chrWdt,chrHgt + chrWdt]);  // Use - chwidth to draw circles in the borders
+      y1 = d3.scaleLinear().range([-chrHgt/2,chrHgt/2]); 
+      y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2,chrHgt/2 + chrWdt]);  // Use - chwidth to draw circles in the borders
    var   yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
    var   yAxisR =  d3.axisRight(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
    var   yAxisZoomR =  d3.axisRight(y2).tickSize(3);
@@ -140,7 +142,7 @@ my $json = JSON::Any->new;
   }
 
   var   vbrush = d3.brushY()
-              .extent([[0, 0], [chrWdt, chrHgt]])
+              .extent([[0, -chrHgt/2], [chrWdt, chrHgt/2]])
               .on("end", brush);  
 
 
@@ -180,7 +182,7 @@ requestmap.send();
 
       // Setting layout
       var radius = 0;
-      var y0 = 0;
+      var y0 = chrWdt*3;
       var forZoom = 1;
 
         // Draw each chr

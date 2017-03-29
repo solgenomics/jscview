@@ -282,7 +282,7 @@
       return a > i - 6 & a < i + 6;
     };
 
-    var pos = chrHgt / 10;
+    var pos = chrHgt / 10 ;
 
     //   svg.select("#svg"  + map + "_" +(Number(nChr)+1)).style("opacity", 0);
     //  svg.select("#svg"  + map + "_" +(Number(nChr)+2)).style("opacity", 0);
@@ -293,14 +293,14 @@
 
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
-      .attr("dy", function(d, m) { return pos * m; })
+      .attr("dy", function(d, m) { return pos * m - chrHgt/2; })
       .text(function(d) { return d.markerName; });//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
-      .attr("x1", function(d) {  if ((d.y1) > 0 & (d.y1) < chrHgt) return d.x2 })
-      .attr("x2", function(d) { if ((d.y1) > 0 & (d.y1) < chrHgt) return chrWdt * 1.5})
-      .attr("y1", function(d) {  if ((d.y1) > 0 & (d.y1) < chrHgt) return d.y1;})
-      .attr("y2", function(d, m) { if ((d.y1) > 0 & (d.y1) < chrHgt) return pos * m; });
+      .attr("x1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.x2 })
+      .attr("x2", function(d) { if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return chrWdt * 1.5})
+      .attr("y1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.y1 ;})
+      .attr("y2", function(d, m) { if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return pos * m - chrHgt/2; });
 
   }
 

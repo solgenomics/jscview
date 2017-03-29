@@ -34,8 +34,8 @@ my $json = JSON::Any->new;
 
    var svg = d3.select("div#container").append("svg")
     .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+    .attr("height", "150%")
+    .attr("viewBox", "0 0 " + (width - 10) + " " + height*1.5 ) //(width / 2 + 10))
     .attr("preserveAspectRatio", "xMinYMid meet")
     .attr("id", "matrixSVG");
 
@@ -46,9 +46,6 @@ my $json = JSON::Any->new;
    var radius = width / 3,
        chrWdt = radius / 12,
        chrHgt = radius * Math.sin(radians(180 / n))-(radius/5);
-  /* var radius = width / 4,
-       chrWdt = radius / 8,
-       chrHgt = radius * Math.sin(radians(180 / n))-(radius/10); */
     
     function distToZoom(){
       return  chrWdt * 3 + isLinear*200; 
@@ -63,6 +60,8 @@ my $json = JSON::Any->new;
       else return  yAxisZoomL;
     }
 
+
+   var y0 = chrWdt * 7;
    var y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
    var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
    var yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
@@ -74,65 +73,10 @@ my $json = JSON::Any->new;
 
    var vbrush = d3.brushY()
                 .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
-                //.extent([[0, 0],[chrWdt, chrHgt]])
                 .on("brush", brush);
 
-/*
-   function selectMap(value) {
 
-      svg.selectAll("*").remove();
-      var request = new XMLHttpRequest();
-
-      //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/2/positions?pageSize=10000000'); 
-      request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/2/positions?pageSize=10000000'); 
-      request.onreadystatechange = function() {
-
-        if (this.readyState === 4) {
-
-          var myArr = JSON.parse(this.responseText);
-          var result = fillArray(myArr);
-          var data = result.data;
-          var list = unique(result.list);
-
-          //Select chromome list to use
-          var forZoom = 1;
-          var comp=1;
-
-          // Draw each chr
-
-          for (var i = 0; i < list.length; i++) {
-
-            var angi = 360 / n * i;
-            var x = radius * Math.cos(radians(angi));
-            var y = radius * Math.sin(radians(angi));
-
-            var dataByChr = data.filter(function(d) {
-              return d.linkageGroup == list[i]
-            });
-
-            var originX = width/2, axisSide = -1, chrZSide=1;
-                originY = height*0.4;
-
-            if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; 
-             // y = y+20 * Math.sin(radians(angi)); x= x+20* Math.cos(radians(angi))
-            //  y = y+20 * Math.cos(radians(angi)); x= x+20* Math.sin(radians(angi))
-            }
-
-        //    chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, 2, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
-          }
-          
-          var dataT = preTransfLinkData(datal, 360 / n, 0, 0,chrWdt,chrHgt);
-          var dataForLink = transfLinkData(dataT, 360 / n, chrWdt, radius, 0, 0); console.log(dataForLink);
-          links(dataForLink, svg, 360 / n, chrWdt, chrHgt, radius, 0, 0, 0, originX,originY,0);
-
-        }
-
-      }
-
-      request.send();
-   };
-*/
-//  selectMap('S1,S2,S4,S5');
+    window["y0"] = y0;
 
 ///get chrs
 var mapSId = 2;
@@ -181,9 +125,8 @@ var myFunct=function(e){return this.indexOf(e)<0;};
       for (var i = 0; i < IdMarkers.length; i++) {  
         s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
         t = target.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
-if(+s[0].linkageGroup ==2) {
-  console.log(s[0].position + '--'+ s[0].markerName);
-}
+
+
            datal.push({
                   "chrs": s[0].linkageGroup, 
                   "s": (+s[0].position),  
@@ -193,7 +136,7 @@ if(+s[0].linkageGroup ==2) {
       }
              //     console.log(datal);
 
-          var forZoom = 1;
+          var forZoom = 1, x0 =50;
           var comp=1;
           var list = [1,2,3,4,5,6,7,8,9,10,11,12];
           // Draw each chr
@@ -219,9 +162,9 @@ if(+s[0].linkageGroup ==2) {
             //  y = y+20 * Math.cos(radians(angi)); x= x+20* Math.sin(radians(angi))
             }
 if (i<12){
-            chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, mapSId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+            chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x+x0, y+y0, mapSId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
 } else{
-            chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x, y, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+            chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x -x0, y+y0, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
 
 }
           }
@@ -229,37 +172,11 @@ if (i<12){
           var dataT = preTransfLinkData(datal, 360 / (n*2), 0, 0,chrWdt,chrHgt);
         //  var dataForLink = transfLinkData(dataT, 360 / (n*2), chrWdt, radius, 0, 0);
           var dataForLink = transfLinkData1(datal, 360 / (n*2), chrWdt, radius, 0, 0);
-          links(dataForLink, svg, 360 / (n*2), chrWdt, chrHgt, radius, 0, 0, 0, originX,originY,0);
+          links(dataForLink, svg, 360 / (n*2), chrWdt, chrHgt, radius, 0, 0, x0, y0, originX,originY,0);
 
 
     });
 
-(function(console){
-
-console.save = function(data, filename){
-
-    if(!data) {
-        console.error('Console.save: No data')
-        return;
-    }
-
-    if(!filename) filename = 'console.json'
-
-    if(typeof data === "object"){
-        data = JSON.stringify(data, undefined, 4)
-    }
-
-    var blob = new Blob([data], {type: 'text/json'}),
-        e    = document.createEvent('MouseEvents'),
-        a    = document.createElement('a')
-
-    a.download = filename
-    a.href = window.URL.createObjectURL(blob)
-    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
-    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-    a.dispatchEvent(e)
- }
-})(console)
 
  </script>
 </div>

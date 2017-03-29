@@ -72,10 +72,10 @@ function nMap(){ return document.getElementById('mapId').value; };
   }
 
 
- var y0 = 0;
+ var y0 = chrWdt*2;
 
- var y1 = d3.scaleLinear().range([0, chrHgt]);
- var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); 
+ var y1 = d3.scaleLinear().range([ -chrHgt/2, chrHgt/2]); 
+ var y2 = d3.scaleLinear().range([-chrHgt/2-chrWdt, chrHgt/2 + chrWdt]); 
  var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
 
 

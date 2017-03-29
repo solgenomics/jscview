@@ -33,10 +33,11 @@ my $json = JSON::Any->new;
     <th colspan="2"><h3 id="tittle1" width="50%" align="center" ></h3></th>
     <th colspan="2"><h3 id="tittle2" width="50%" align="center" ></h3></th>
   </tr>
-  <tr><td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="right" width="25%"><a id="after"  class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+  <tr>
+    <td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+    <td align="right" width="25%"><a id="after" class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+    <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+    <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
   </tr>
   </table>
   </div>
@@ -65,8 +66,8 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
      axisSide2=1, chrZSide2 = 1;
   var sideComp=-1;
  var radius = width * 0.7,
-     chrWdt = (width / 2) / 8, //(width / 4) / 8,
-     chrHgt = (width / 2)  * Math.sin(radians(180 / n));
+     chrWdt = (width / 2) / 12, //(width / 4) / 8,
+     chrHgt = (width /3)  * Math.sin(radians(180 / n));
 /*   var radius = width / 4,
      chrWdt = radius / 8,
      chrHgt = radius * Math.sin(radians(180 / n));*/
@@ -84,7 +85,9 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
     if (axisSide==-1) return  yAxisZoomR;
     else return  yAxisZoomL;
   }
+  function y0(){ return chrWdt*4; }
 
+var y0 = y0();
  var y1 = d3.scaleLinear().range([-chrHgt/2, chrHgt*.5]); 
  var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrHgt + chrWdt-chrHgt/2]); // Use - chwidth to draw circles in the borders //to zoom
  var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
@@ -96,6 +99,7 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
  var vbrush = d3.brushY()
                 .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
                 .on("end", brush);
+    window["y0"] = y0;
 
   //Draw graph
  var svg = d3.select("div#container").append("svg")
@@ -176,7 +180,7 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
       var dataByChr2 = target.filter(function(d) {
           return d.linkageGroup == nChr2;
         });
-      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2);
+      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0);
     });
 }
 
