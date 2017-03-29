@@ -49,7 +49,7 @@ function brush() {
  
 
     svg.selectAll("#zoom" + name).selectAll("line")
-        .filter(function(d) { return y2(d.y) > -chrWdt -1  & y2(d.y) < chrHgtZoom - chrWdt + 1 })//.transition(t)
+        .filter(function(d) { return y2(d.y) > -chrHgtZoom/2 -1  & y2(d.y) < chrHgtZoom/2 + 1 })//.transition(t)
         .attr("x1", function(d) {  return zoomSide*chrdistZoom; })
         .attr("x2", function(d) {  return zoomSide*(chrdistZoom + chrWdt); })
         .attr("y1", function(d,i) {  
@@ -83,8 +83,8 @@ function brush() {
     svg.selectAll("#zoom" + name).selectAll("polygon")
       .attr("points", zoomSide*chrWdt/2 + "," + d3.brushSelection(this)[0] + " " 
         + zoomSide*chrWdt/2 + " ," + d3.brushSelection(this)[1]  + " " 
-        + (zoomSide*chrdistZoom) + "," + (chrHgt + chrWdt)  + " " 
-        + (zoomSide*chrdistZoom) + "," + -chrWdt);
+        + (zoomSide*chrdistZoom) + "," + (chrHgt/2 + chrWdt)  + " " 
+        + (zoomSide*chrdistZoom) + "," + -(chrHgt/2 + chrWdt));
  
     //To draw marker labels
     svg.selectAll("#zoom" + name).select("#text" + name).selectAll("text.label")  //print marker names

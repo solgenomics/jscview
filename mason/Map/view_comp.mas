@@ -85,8 +85,8 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
     else return  yAxisZoomL;
   }
 
- var y1 = d3.scaleLinear().range([0, chrHgt]); 
- var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders //to zoom
+ var y1 = d3.scaleLinear().range([-chrHgt/2, chrHgt*.5]); 
+ var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrHgt + chrWdt-chrHgt/2]); // Use - chwidth to draw circles in the borders //to zoom
  var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
  var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
@@ -94,7 +94,7 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
  var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
  var vbrush = d3.brushY()
-                .extent([[0, 0],[chrWdt, chrHgt]])
+                .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
                 .on("end", brush);
 
   //Draw graph

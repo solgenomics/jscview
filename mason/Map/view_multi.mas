@@ -28,7 +28,7 @@ my $json = JSON::Any->new;
  <script>
 
    var width = window.innerWidth*0.7,
-       height = window.innerHeight*0.7, 
+       height = window.innerHeight*0.9, 
        n = 12,
        isLinear = 0;
 
@@ -63,17 +63,18 @@ my $json = JSON::Any->new;
       else return  yAxisZoomL;
     }
 
-   var y1 = d3.scaleLinear().range([-chrWdt/2, chrHgt + chrWdt/2]);
-   var y2 = d3.scaleLinear().range([-chrWdt, chrHgt + chrWdt]); // Use - chwidth to draw circles in the borders
-   var yAxis = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
-   var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
-   var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
-   var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
+   var y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
+   var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
+   var yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
+   var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
+   var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
+   var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
    var yAxisZoomR =  d3.axisRight(y2).tickSize(3);
    var yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
 
    var vbrush = d3.brushY()
-                .extent([[0, 0],[chrWdt, chrHgt]])
+                .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
+                //.extent([[0, 0],[chrWdt, chrHgt]])
                 .on("brush", brush);
 
 /*
@@ -180,7 +181,9 @@ var myFunct=function(e){return this.indexOf(e)<0;};
       for (var i = 0; i < IdMarkers.length; i++) {  
         s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
         t = target.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
-
+if(+s[0].linkageGroup ==2) {
+  console.log(s[0].position + '--'+ s[0].markerName);
+}
            datal.push({
                   "chrs": s[0].linkageGroup, 
                   "s": (+s[0].position),  
@@ -197,7 +200,7 @@ var myFunct=function(e){return this.indexOf(e)<0;};
 
           for (var i = 0; i < list.length*2; i++) {
 
-            var angi = 360 / (n*2) * i;
+            var angi = (360 / (n*2)) * i -90;
             var x = radius * Math.cos(radians(angi));
             var y = radius * Math.sin(radians(angi));
 
@@ -218,13 +221,14 @@ var myFunct=function(e){return this.indexOf(e)<0;};
 if (i<12){
             chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x, y, mapSId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
 } else{
-              chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x, y, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+            chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x, y, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
 
 }
           }
           
           var dataT = preTransfLinkData(datal, 360 / (n*2), 0, 0,chrWdt,chrHgt);
-          var dataForLink = transfLinkData(dataT, 360 / (n*2), chrWdt, radius, 0, 0);
+        //  var dataForLink = transfLinkData(dataT, 360 / (n*2), chrWdt, radius, 0, 0);
+          var dataForLink = transfLinkData1(datal, 360 / (n*2), chrWdt, radius, 0, 0);
           links(dataForLink, svg, 360 / (n*2), chrWdt, chrHgt, radius, 0, 0, 0, originX,originY,0);
 
 

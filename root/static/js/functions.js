@@ -39,14 +39,14 @@
 
     svg.append("text")
       .attr("dx", -width/2)
-      .attr("dy", -width-1)
+      .attr("dy", -(height + width * 2)/2 -1) 
       .text("Chr " + i.split("_")[1])
       .attr("font-size",10) // 
       .attr("fill", "#B75CA1");
 
     svg.append("text")
        .attr("dx", -width)
-       .attr("dy", -width/2)
+       .attr("dy", -(height + width * 2)/2 -1 ) 
        .text("cM")
        .attr("font-size",6);    
 
@@ -87,6 +87,7 @@
         .attr("id", "brushid" + i)
         .attr("class", "brush")
         .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
+//        .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
         .call(vbrush);
 
       svg.append("g")
@@ -94,7 +95,8 @@
         .attr("class", "y axis")
         .attr("width", 10)
         .attr("height", 10)
-        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
+        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
+//        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
 //        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (-width ) + ")")
         .call(yAxisSide(axisSide));
 
@@ -154,9 +156,21 @@
 
       zoom.append("text")
         .attr("dx", distZoom-20)
-        .attr("dy", -width-3)
+        .attr("dy", -width-3-height/2)
         .text("cM")
-        .attr("font-size",12);   
+        .attr("font-size",12);  
+
+      zoom.append("text")
+        .attr("id", "close" + i)
+        .attr("dx", width*(zoomSide-1)/2+distZoom*zoomSide/2) //distZoom*zoomSide) //
+        .attr("dy", -width*1.5-height/2-5)
+        .text("[x]")
+        .style("stroke", "red")
+        .on('click', function() {
+			zoom.attr("visibility", "hidden");
+	      	zoom.selectAll("path.pointer").style("stroke", "lightgray");
+	   	    svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
+		});
 
       zoom.attr("visibility", "hidden");
 
