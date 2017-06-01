@@ -179,7 +179,7 @@
       svg.append("rect")
         .attr("id", "recttext" + i)
         .attr("x", chrWdt * 0.5)
-        .attr("y", -chrWdt * 0.5)
+        .attr("y", -chrWdt * 0.5-chrHgt/2) 
         .attr("width",0)
         .attr("height", chrHgt+chrWdt * 1)
         .style("fill","white");

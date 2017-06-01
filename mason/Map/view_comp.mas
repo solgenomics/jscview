@@ -113,31 +113,8 @@ var y0 = y0();
 
  function selectMap(mapSId,mapTId,nChr1,nChr2) {
 
-
-  var requestmap1 = new XMLHttpRequest();
-
-  requestmap1.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ mapSId ); 
-  requestmap1.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      var myArr1 = JSON.parse(this.responseText);
-      document.getElementById("tittle1").innerHTML = myArr1.result.name;
-    }}
-  requestmap1.send();
-
-  var requestmap2 = new XMLHttpRequest();
-
-  requestmap2.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ mapTId ); 
-  requestmap2.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      var myArr2 = JSON.parse(this.responseText);
-      document.getElementById("tittle2").innerHTML = myArr2.result.name;
-    }}
-  requestmap2.send();
-
   // To get data
-  var getChrJSON = function(url) {
+  var getChrJSON = function(url,tittle) {
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open('get', url, true);
@@ -146,6 +123,7 @@ var y0 = y0();
         var status = xhr.status;
         if (status == 200) {
           resolve(xhr.response.result.data);
+      document.getElementById(tittle).innerHTML = xhr.response.metadata.name;
 
         } else {
           reject(status);
@@ -155,12 +133,12 @@ var y0 = y0();
     });
   };
 
-  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
-                  }, function(status) {
+  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/markers?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
+                 }, function(status) {
                     alert('Something went wrong.');
                   });
-  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
-                  }, function(status) {
+  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/markers?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
+                 }, function(status) {
                     alert('Something went wrong.');
                   });
 

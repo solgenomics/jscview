@@ -9,6 +9,8 @@ my $json = JSON::Any->new;
 </%perl>
 
  <div class="container">
+ <h2 align="center">Comparative map</h2> 
+ <h3 align="center">Tomato-EXPIMP 2001  & Tomato-EXPEN 2000</h3> 
 
  <form id="form" class="form-horizontal">
       

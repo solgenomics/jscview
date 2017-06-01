@@ -61,26 +61,26 @@ my $json = JSON::Any->new;
 }
 </style>
  <form id="form" class="form-horizontal">
-        <div class="form-group">
-              
+    <div class="form-group">
        <script type="text/javascript">
          function selectFunction() {           
            document.getElementById('submit1').className = "btn btn-primary";     
            document.getElementById('submit2').className = "btn btn-primary";     
         };        
       </script>
-    </form>
+    </div>
+ </form>
 
 <h1 id="tittle" align="center" ></h1>
 <form id="form1" class="form-horizontal">
   <div class="table-responsive">
-  <table class="table">
+    <table class="table">
       <tr>
         <th align="center" width="50%"><a id="before" class="btn btn-primary" href="#" onclick="nChr=+nChr-1; selectMap(map,nChr);"></a></th>
         <th align="center" width="50%"><a id="after"  class="btn btn-primary" href="#" onclick="nChr=+nChr+1; selectMap(map,nChr);"></a></th>
       </tr>
     </table>
-    <div>
+  </div>
 </form>
 <div id="container" class="svg-container">
   <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
@@ -154,24 +154,11 @@ function selectMap(map, nchr) {
 
   svg.selectAll("*").remove();
 
-  var requestmap = new XMLHttpRequest();
-
-  //requestmap.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map ); 
-  requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map ); 
-  requestmap.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      var myArr1 = JSON.parse(this.responseText);
-	document.getElementById("tittle").innerHTML = myArr1.result.name;
-
-}}
-requestmap.send();
-
-
   var request = new XMLHttpRequest();
 
   //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=10000'); //linkageGroupIdList='+value);
-  request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=1000000000');
+  request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map +'/markers?linkageGroup='+ nchr +'&pageSize=1000000000');
+
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
@@ -179,6 +166,9 @@ requestmap.send();
       var myArr = JSON.parse(this.responseText);
       var result = fillFilterArray(myArr,nchr);
       var data = result.data;
+
+      document.getElementById("tittle").innerHTML = myArr.metadata.name;
+
 
       // Setting layout
       var radius = 0;
@@ -220,15 +210,15 @@ selectMap(map,nChr);
              <input class="btn btn-primary" type = "submit" value = "Compare">
                        <input class="form-control col-xs-2 panel-primary" value="<% $input_chr %>" name="input_chr" id="input_chr" style="display: none;"/>
             </div>
-            </div>
-    </form>
+        </div>
+  </form>
     
 <form>
-      <div class="form-group">
+ <div class="form-group">
   <label>Marker Name</label>
   <input id="searchmk" type="text" name="fname">
   <a id="searchmarker" class="btn btn-primary" href="#" onclick="searchmarker(document.getElementById('searchmk').value);">Search</a>
-</div>
+ </div>
 </form>
 <form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr"  style="display: none;">
           <input class="form-control col-xs-2 panel-primary" value="<% $input_map %>" name="input_map" id="input_map"/>
