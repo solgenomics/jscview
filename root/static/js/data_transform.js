@@ -62,18 +62,20 @@
 
   	/*	 angSource = radians(ang * data[i].chrs + 90);
   		 angTarget = radians(ang * data[i].chrt + 90);    */     ///corregir que no afecte a los chr <90
-        angSource = radians(ang * data[i].chrs + 90);
-       angTarget = radians(ang * data[i].chrt + 90);    
+        angSource = ang * data[i].chrs + 90; //radians(ang * data[i].chrs + 360);
+       angTarget = ang * data[i].chrt + 90;//radians(ang * data[i].chrt + 3600);    
    /*   angSource = (ang * (data[i].chrs) + 157); //90
       angTarget = (ang * data[i].chrt)+347;  //270*/
   /*    angSource = (ang * (data[i].chrs) + 67); //90
       angTarget = (ang * data[i].chrt)+257;  //270*/
       //(ang * (data[i].chrt+12))+90;
 //      angTarget = (ang * data[i].chrt + 90);
+       //  angSource = radians(ang * data[i].chrs + 90);
+       // angTarget = radians(ang * data[i].chrt + 90);  
 
       if (angSource >180 && angSource < 360) { angSource = angSource -180}
       if (angTarget >180 && angTarget < 360) { angTarget = angTarget -180}
-//console.log(ang + ":" + angSource * 180 / Math.PI + "-"); 
+
       angSource = radians(angSource);
       angTarget = radians(angTarget);
 
@@ -98,15 +100,15 @@
 
   	for (var i = 0; i < data.length; i++) {
 
-  		angSource = radians(ang * (data[i].chrs-1));
+  	/*	angSource = radians(ang * (data[i].chrs-1));
   		angTarget = radians((ang * (data[i].chrt-1)) + 180); 
   		angSourceT = radians((ang * (data[i].chrs-1)) + 90);
-  		angTargetT = radians((ang * (data[i].chrt-1)) + 270); //radians((ang * (data[i].chrt+12)) + 90);
-    /*  angSource = radians(ang * (data[i].chrs-1) -90);
+  		angTargetT = radians((ang * (data[i].chrt-1)) + 270); //radians((ang * (data[i].chrt+12)) + 90);*/
+      angSource = radians(ang * (data[i].chrs-1) -90);
       angTarget = radians((ang * (data[i].chrt-1)) + 90); 
       angSourceT = radians((ang * (data[i].chrs-1)) + 0);
-      angTargetT = radians((ang * (data[i].chrt-1)) + 0); //radians((ang * (data[i].chrt+12)) + 90);*/
-// console.log(ang + ":" + angSource * 180 / Math.PI + "-" +angSourceT * 180 / Math.PI); 
+      angTargetT = radians((ang * (data[i].chrt-1)) + 0); //radians((ang * (data[i].chrt+12)) + 90);
+
   		dataT.push({
   			sx: data[i].sx - (width / 2 * Math.sin(angSourceT)) + (radius * Math.cos(angSource)),
   			sy: data[i].sy + (width / 2 * Math.cos(angSourceT)) + (radius * Math.sin(angSource)),
@@ -114,9 +116,35 @@
   			ty: data[i].ty + (width / 2 * Math.cos(angTargetT)) + (radius * Math.sin(angTarget)),
         markerDbId: data[i].markerDbId
   		});
-  	} 
+  	}  
   	return dataT; 
   }
+     
+  function transfLinkData_by2(data, ang, width, radius, x1, x2) {
+
+    var dataT = [];
+    var maxs = d3.max(data, function(d) { return +d.s;  });
+    var maxt = d3.max(data, function(d) { return +d.t;  });
+    var yLinears = d3.scaleLinear().range(y1.range()).domain([0, maxs]); // sacar de aqui el rango como codigos anteriores
+    var yLineart = d3.scaleLinear().range(y1.range()).domain([0, maxt]);
+    var angSource, angTarget;
+
+    for (var i = 0; i < data.length; i++) {
+
+      angSource = ang;
+      angTarget = ang;
+
+      dataT.push({
+        sx: -(width / 2 * Math.sin(angSource +180)),
+        sy: yLinears(data[i].s) * Math.cos(angSource),
+        tx: radius + (width / 2 * Math.sin(angTarget +180)),
+        ty: yLineart(data[i].t) * Math.cos(angTarget),
+        markerDbId: data[i].markerDbId
+      });
+    } 
+    return dataT; 
+  }
+
    function transfLinkData1(data, ang, width, radius, x1, x2) {
 //long distance
     var dataT = [];
@@ -131,7 +159,7 @@
 
       angSource = radians((ang * (data[i].chrs-1)-90)%360);
       angTarget = radians((ang * (data[i].chrt-1)) + 90); 
-      angTargetT = radians((ang * (data[i].chrt-1)) + 270); //radians((ang * (data[i].chrt+12)) + 90);
+     // angTargetT = radians((ang * (data[i].chrt-1)) + 270); //radians((ang * (data[i].chrt+12)) + 90);
 
       dataT.push({
         sx:   (width / 2 * Math.sin(angSource +180)) + (radius * Math.cos(angSource)) - (yLinears(data[i].s) * Math.sin(angSource)),
@@ -147,30 +175,30 @@
  function fillArray(myArr){
 
     var data = [], list= [];
-      for (var i = 0; i < myArr.result.data.length; i++) {
+      for (var i = 0; i < myArr.result.linkageGroups.length; i++) {
         data.push({
-          linkageGroup: myArr.result.data[i].linkageGroup,
-          position: myArr.result.data[i].position,
-          markerName: myArr.result.data[i].markerName,
-          markerDbId: myArr.result.data[i].markerDbId  //to link solgenomics 
+          linkageGroup: myArr.result.linkageGroups[i].linkageGroup,
+          position: myArr.result.linkageGroups[i].position,
+          markerName: myArr.result.linkageGroups[i].markerName,
+          markerDbId: myArr.result.linkageGroups[i].markerDbId  //to link solgenomics 
         });
-        list.push(myArr.result.data[i].linkageGroup);
+        list.push(myArr.result.linkageGroups[i].linkageGroup);
       }
       return { data: data, list: list } ;
 }
 
  function fillFilterArray(myArr,chr){
 
-    var data = [], list= [];
-      for (var i = 0; i < myArr.result.data.length; i++) {
-        if(myArr.result.data[i].linkageGroup == chr){
+    var data = [], list= [];  
+      for (var i = 0; i < myArr.result.linkageGroups.length; i++) {
+        if(myArr.result.linkageGroups[i].linkageGroup == chr){
           data.push({
-            linkageGroup: myArr.result.data[i].linkageGroup,
-            position: myArr.result.data[i].position,
-            markerName: myArr.result.data[i].markerName,
-	          markerDbId: myArr.result.data[i].markerDbId
+            linkageGroup: myArr.result.linkageGroups[i].linkageGroup,
+            position: myArr.result.linkageGroups[i].position,
+            markerName: myArr.result.linkageGroups[i].markerName,
+	          markerDbId: myArr.result.linkageGroups[i].markerDbId
           });
-          list.push(myArr.result.data[i].linkageGroup);
+          list.push(myArr.result.linkageGroups[i].linkageGroup);
         }
       }
       return { data: data, list: list } ;

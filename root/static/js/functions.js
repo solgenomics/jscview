@@ -5,7 +5,7 @@
     if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
 
-    var i = mapId + "_" + chrId; //console.log(i);
+    var i = mapId + "_" + chrId; 
     var heightZoom = height + width*2;
     var distZoom = distToZoom(); //width * 3 + isLinear*200;
 
@@ -41,14 +41,14 @@
       .attr("dx", -width/2)
       .attr("dy", -(height + width * 2)/2 -1) 
       .text("Chr " + i.split("_")[1])
-      .attr("font-size",10) // 
+      //.attr("font-size",15) // 
       .attr("fill", "#B75CA1");
 
     svg.append("text")
-       .attr("dx", -width)
-       .attr("dy", -(height + width * 2)/2 -1 ) 
-       .text("cM")
-       .attr("font-size",6);    
+       .attr("dx", -width*1.5)
+       .attr("dy", -(height + width )/2 -1 ) 
+       .text("cM");
+     //  .attr("font-size",12);    
 
     svg.append("rect")
         .attr("id", "rect" + i)
@@ -80,6 +80,15 @@
         .on("mouseout", mouseout)
         .attr("transform", "rotate(" + -ang0 + ") ");
 
+    svg.append("text")
+       .attr("id", "mksearched")
+       .attr("dx", width*2)
+       .attr("dy", null ) 
+       .style("fill", "red");
+       // .attr("font-size",16);   
+
+
+    /* Draw objects when require a zoom in chromosome */
 
     if (forZoom == 1) {
 
@@ -87,17 +96,19 @@
         .attr("id", "brushid" + i)
         .attr("class", "brush")
         .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
-//        .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
+        //        .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
         .call(vbrush);
-
+        
+  //vbrush.event(context.select('g.y.brush').attr("y",10).attr("height",50));
+//svg.select("brushid" + i).selectAll("rect").attr("y",20).attr("height",150);
       svg.append("g")
         .attr("id", "yaxis")
         .attr("class", "y axis")
         .attr("width", 10)
         .attr("height", 10)
         .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
-//        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
-//        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (-width ) + ")")
+      //        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
+      //        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (-width ) + ")")
         .call(yAxisSide(axisSide));
 
       svg.append("polygon")
@@ -121,7 +132,8 @@
 
       zoom.append("g").attr("id", "text" + i).selectAll("text")
         .data(dataZoom)
-        .enter().append("text")
+        .enter().append("text")        
+        .attr("class", "label-bg")
         .attr("dx", width * 4  + isLinear * 200);
 
       zoom.append("g").attr("id", "path" + i);
@@ -154,35 +166,32 @@
         .attr("transform", " translate(" + (distZoom * zoomSide) + ",0)")
         .call(yAxisZoomSide(zoomSide));
 
+      /* cM for axes */
       zoom.append("text")
         .attr("dx", distZoom-20)
         .attr("dy", -width-3-height/2)
-        .text("cM")
-        .attr("font-size",12);  
+        .text("cM");
+        // .attr("font-size",16);  
 
+      /* Symbol close [X] */
       zoom.append("text")
         .attr("id", "close" + i)
-        .attr("dx", width*(zoomSide-1)/2+distZoom*zoomSide/2) //distZoom*zoomSide) //
+        .attr("dx", distZoom*zoomSide) // width*(zoomSide-1)/2+distZoom*zoomSide/2) 
         .attr("dy", -width*1.5-height/2-5)
-        .text("[x]")
+        .text("[x] Close")
         .style("stroke", "red")
         .on('click', function() {
-			zoom.attr("visibility", "hidden");
-	      	zoom.selectAll("path.pointer").style("stroke", "lightgray");
-	   	    svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
-		});
+            zoom.attr("visibility", "hidden");
+            zoom.selectAll("path.pointer").style("stroke", "lightgray");
+
+       svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
+    });
 
       zoom.attr("visibility", "hidden");
 
     } else {
 
-      svg.append("rect")
-        .attr("id", "recttext" + i)
-        .attr("x", chrWdt * 0.5)
-        .attr("y", -chrWdt * 0.5-chrHgt/2) 
-        .attr("width",0)
-        .attr("height", chrHgt+chrWdt * 1)
-        .style("fill","white");
+      /* Draw chromosomes for index, not zoom */  
 
       svg.append("g")
         .attr("id", "yaxis" + i)
@@ -191,16 +200,26 @@
         .attr("height", 10)
         .attr("y", -35)
         .style("stroke-width", 0)
-        .attr("transform", " rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + (-(Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
-        .call(yAxis);
+        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
+//        .attr("transform", " rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + (-(Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
+        .call(yAxisSide(axisSide));
+
+      svg.append("g").attr("id", "svgog" + i).selectAll("text.horizontal")
+        .attr("id", "textxg" + i)
+        .data(dataT)
+        .enter().append("text")
+          .attr("class", "label-bg")
+          .attr("dx", width * 1.5)
+          .attr("height", 0);
 
       svg.append("g").attr("id", "svgo" + i).selectAll("text.horizontal")
         .attr("id", "textx" + i)
         .data(dataT)
         .enter().append("text")
-        .attr("dx", width * 1.5)
-         .attr("height", 0)
-        .on("mouseover", mouseovertxt)
+          .attr("class", "label")
+          .attr("dx", width * 1.5)
+          .attr("height", 0)
+          .on("mouseover", mouseovertxt)
         .on("mouseout", mouseouttxt);
 
       // for lines names
@@ -209,6 +228,7 @@
         .data(dataT)
         .enter().append("line")
         .style("stroke", randomColor);
+
     }
   }
 
@@ -242,7 +262,7 @@
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("zoom", "");
 
-    svg.selectAll("#zoom" + name).selectAll("text").style("font-size", "14px");
+    svg.selectAll("#zoom" + name).selectAll("text"); //.style("font-size", "18px");
     svg.selectAll("#zoom" + name).selectAll("line").style("stroke", "blue");
   }
 
@@ -258,20 +278,27 @@
 
   }
 
-  d3.selection.prototype.moveToFront = function() {
-    return this.each(function(){
-      svg0.appendChild(this);
-    });
-  };
+  // d3.selection.prototype.moveToFront = function() {
+  //   return this.each(function(){
+  //     svg0.appendChild(this);
+  //   });
+  // };
+
+  d3.selection.prototype.moveToFront = function() {  
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+
+
+  /* Mouseover and mouseout for markers in all maps - index */
 
   function mouseover(d, i) {
 
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("svg", "");
-        
-    //  var map = name.split("_")[0];  
-    //   var nChr = name.split("_")[1];
 
+    svg.select("#svg" + name).select("#svgog" + name).selectAll("text").attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text").attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
 
@@ -284,12 +311,10 @@
 
     var pos = chrHgt / 10 ;
 
-    //   svg.select("#svg"  + map + "_" +(Number(nChr)+1)).style("opacity", 0);
-    //  svg.select("#svg"  + map + "_" +(Number(nChr)+2)).style("opacity", 0);
-
-    svg.select("#svg" + name).select("#recttext" + name)
-    .style("width",chrWdt*4)
-    .style("fill-opacity","1");//.moveToFront();  
+    svg.select("#svg" + name).select("#svgog" + name).selectAll("text")
+      .filter(filterByRange)
+      .attr("dy", function(d, m) { return pos * m - chrHgt/2; })
+      .text(function(d) { return " " + d.markerName; });//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
@@ -300,17 +325,11 @@
       .attr("x1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.x2 })
       .attr("x2", function(d) { if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return chrWdt * 1.5})
       .attr("y1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.y1 ;})
-      .attr("y2", function(d, m) { if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return pos * m - chrHgt/2; });
-
+      .attr("y2", function(d, m) { if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) { return pos * m - chrHgt/2; } });
   }
 
 
-  d3.selection.prototype.moveToFront = function() {  
-      return this.each(function(){
-        this.parentNode.appendChild(this);
-      });
-    };
-
+  /* Mouseout for markers in all maps - index */
 
   function mouseout(d) {
 
@@ -321,11 +340,10 @@
     var nChr = name.split("_")[1];
 
     d3.select(this).style("stroke", randomColor);
-    svg.select("#svg" + name).selectAll("#recttext" + name).transition().delay(1000).style("width","0");
+
+    svg.select("#svg" + name).select("#svgog" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").transition().delay(1000).attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
- //  svg.select("#svg"  + map + "_" + (Number(nChr)+1)).transition().delay(1000).style("opacity", 1);
-   // svg.select("#svg" + map + "_" + (Number(nChr)+2)).transition().delay(1000).style("opacity", 1);
   }
 
   function moveToFront() {
@@ -338,13 +356,14 @@
 
     //function to redirect each chr itself web page
     var a = d3.select(this).attr('id');
-    list = [];
-    svg.select("#" + a).attr("fill", "#C75601");
+    list = []; alert(window['comp']); 
     list.push(a.replace("rect", "")); 
-
-    document.getElementById("input_chr").value=list;
-    document.getElementById("input_map").value=nMap();
-    document.getElementById("search_chr").submit();
+    var res = a.replace("rect", "").split("_");     
+    
+    if (window['comp'] != 1){
+      svg.select("#" + a).attr("fill", "#C75601");
+      window.location='http://192.168.33.10:3000/Map/view_chr?map='+res[0]+'&chr=' + res[1];
+    }
   }
 
   function getPosition(labels){
@@ -376,7 +395,90 @@
 
   function hightlightMarkers(labels){
       
-      for (var i = 1; i < labels.length; i++) {  
-          svg.selectAll("#lpmk"+ labels[i].markerDbId).style("stroke", "blue");
+      for (var i = 1; i < labels.length; i++) { 
+        labels[i].markerDbId=labels[i].markerDbId.replace(/\./g,''); 
+        svg.selectAll("#lpmk"+ labels[i].markerDbId).style("stroke", "red").moveToFront();
       }
    }
+
+
+  Number.prototype.between = function ([min, max]) {
+      return this >= min && this <= max;
+  };
+
+
+  function searchmarker(idx,nchr){
+      var id=null, position;
+      id=idx;
+
+      if (id == null){
+          alert("Marker not found");
+      } 
+      else{
+        var s=nMap() + "_" + nchr; 
+        svg.selectAll("line").style("stroke", "lightgray").style("stroke-width", 2);
+        svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", function (d){  position = d.y1; return 4}).moveToFront(); //marker in main
+        svg.selectAll("#lamk"+id).style("fill", "red").moveToFront();
+        var visible   = svg.select("#zoom"+s).attr("visibility");
+        
+        if (visible == 'unhidden'){
+          svg.select("#zoom"+s).selectAll("path.pointer").style("stroke-width", "2");
+          svg.select("#zoom"+s).selectAll("#pmk"+id).style("stroke", "red").moveToFront();  ///marker in zoom
+          svg.selectAll("#lamk"+id).style("fill", "red").moveToFront(); //label in zoom
+        } else {
+          svg.selectAll("#lmk" +s+'-' +id)
+              .style("stroke", "red")
+              .style("stroke-width", function(d){ 
+                    svg.select("#mksearched").attr("dy", d.y1).text(d.markerName); 
+                    return 4 })
+              .attr("x2", svg.select("#mksearched").attr("dx")).moveToFront();
+        }
+        document.getElementById('minrange').value=y1.invert(position)-5; 
+        document.getElementById('maxrange').value=y1.invert(position)+5;
+        brush(); 
+      }
+  }
+  
+
+  function searchmarkerid(name){
+     
+      var id=null, position; 
+      var t=window['target'], s=window['source'];
+      svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) { id = d.markerDbId; }; return "2"}); // que busque en el target tambien
+
+      if (id == null){
+          alert("Marker not found");
+      } 
+      else{
+        svg.selectAll("line").style("stroke", "lightgray").style("stroke-width", 2);
+        svg.select("#zoom"+s).selectAll("path.pointer").style("stroke", "lightgray");
+        svg.select("#zoom"+s).selectAll("path.pointer").style("stroke-width", "2"); //function(d){ if (d.n == name) id= d.markerDbId;  return "2"});
+        svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", function(d){ if (d.markerName == name) { position = d.y1;}; return  4}).moveToFront();
+        svg.selectAll("#lmk" + t + '-' + id).style("stroke", "red").style("stroke-width", 4).moveToFront();
+        svg.select("#zoom"+s).selectAll("#pmk"+id).style("stroke", "red").moveToFront();
+        svg.select("#zoom"+s).selectAll("#lamk"+id).style("background-color", "red").moveToFront();
+        svg.selectAll("#lamk"+id).style("fill", "red").moveToFront();
+        svg.selectAll("#lpmk"+id).style("stroke", "red").moveToFront();
+        document.getElementById('minrange').value=y1.invert(position)-5; 
+        document.getElementById('maxrange').value=y1.invert(position)+5;
+        brush();
+      } 
+  }
+  function getId(array,name){
+  /*    var a = array.indexOf("TG183"); console.log(a);
+      return a;*/
+  }
+
+
+  function getIdColumnJSON(array,column){
+    var element=[]; 
+
+    for(x in array){
+       element.push({
+        id: array[x]["id"],
+        col: array[x][column]
+     });
+    }
+    return element;
+  }
+

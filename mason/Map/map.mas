@@ -1,0 +1,161 @@
+ 
+<%args>
+$input_map => ()
+$input_chr => ()
+</%args>
+
+<style type="text/css">
+
+.label {
+      z-index: 10;
+      pointer-events: none;
+      text-anchor: start;
+      font-size: 0.9rem;
+      text-shadow: 0 0 3px #fff;
+      fill: rgb(70, 70, 70);
+    }
+
+  .label-bg {
+      pointer-events: none;
+      text-anchor: start;
+      fill: none;
+      stroke: white;
+      font-size: 0.99rem;
+      stroke-width: 0.9rem;
+      opacity: 0.9;
+    }
+
+</style>
+
+<& ../site/header.mas &>
+
+<main role="main" class="container">
+    <br>
+    <script type="text/javascript">
+     var nmap =  '<% $input_map %>';
+
+     </script>
+
+    <br><br><br>
+    <h3 id="tittle" align="center" >Chromosomes</h3>
+    <br>
+
+    <div id="container" class="svg-container">
+      <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
+    </div>
+
+    <div id="comments" class="svg-container">
+      <hr>
+      <p>
+        Type: <p id="type"></p><br>
+        Unit:  <br>
+        Comment: 
+      </p>
+    </div>
+
+    <script>
+
+     var width = 800; //parseInt(d3.select('div#container').style('width'), 10);
+     var height = 320;
+// alert(width);
+     var svg = d3.select("div#container").append("svg")
+     .attr("class", "svg-content")
+      // .attr("width", "100%")
+      // .attr("height", "100%") // width/3 )
+       .attr("viewBox", "0 0 " + width + " " + height ) 
+     .attr("preserveAspectRatio", "xMinYMid meet")
+      .attr("id", "matrixSVG");
+
+     svg.select("#brushid").remove();
+
+     var isLinear = 1, axisSide=-1, chrZSide = 1;
+     var comp=0;
+     var chrWdt = 20,
+         chrHgt = 150; 
+
+      function distToZoom(){ 
+        return chrWdt * 3 + isLinear*200; 
+      }
+
+     var y0 = chrWdt*2;
+     var y1 = d3.scaleLinear().range([ -chrHgt/2, chrHgt/2]); 
+     var y2 = d3.scaleLinear().range([-chrHgt/2-chrWdt, chrHgt/2 + chrWdt]); 
+     
+     var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+     var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+
+     var yAxisZoomR = d3.axisRight(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+     var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+
+
+     function selectMap(map) {
+
+      svg.selectAll("*").remove();
+      document.getElementById("tittle").innerHTML = "";
+      var requestmap = new XMLHttpRequest();
+
+      requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+map); 
+      requestmap.onreadystatechange = function() {
+        if (this.readyState === 4) {
+
+          var myArr1 = JSON.parse(this.responseText);
+          document.getElementById("tittle").innerHTML = myArr1.result.name;
+          document.getElementById("type").innerHTML = myArr1.result.type;
+        }
+      }
+      requestmap.send();
+//<p>"+ myArr[i].comments +"</p>
+
+      var request = new XMLHttpRequest();
+
+      request.open('GET', 'http://192.168.33.10:3000/static/images/map9.json'); 
+    //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
+    //request.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+ map + '/positions?pageSize=50'); 
+
+      request.onreadystatechange = function() {
+
+      if (this.readyState === 4) {
+
+        var myArr = JSON.parse(this.responseText); 
+        var result = fillArray(myArr);
+        var data = result.data; 
+        var list = unique(result.list);
+        var forZoom = 0;
+
+          // Setting layout
+          var radius = width / (list.length + 1),
+          originX=radius,
+          originY=150;
+
+          for (var  i = (list.length-1); i > -1;i--) {
+
+            // Filter data by chr;
+            var dataByChr = data.filter(function(d) {
+              return d.linkageGroup == list[i]
+            });
+
+            // Draw each chr
+            chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp);
+
+          }
+        } 
+      }
+      request.send();
+    };
+
+    selectMap(nmap); 
+
+    function yAxisSide(axisSide){
+      if (axisSide==1) return  yAxisR;
+      else return  yAxisL;
+    }
+
+    </script>
+
+    </main>
+
+<& ../site/footer.mas &>
+
+</body>
+</html>
+

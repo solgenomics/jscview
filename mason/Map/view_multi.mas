@@ -92,7 +92,7 @@ var mapTId = 9;
       xhr.onload = function() {
         var status = xhr.status;
         if (status == 200) {
-          resolve(xhr.response.result.data);
+          resolve(xhr.response.result);
 
         } else {
           reject(status);
@@ -103,11 +103,11 @@ var mapTId = 9;
   };
 var myFunct=function(e){return this.indexOf(e)<0;}; 
 
-  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
+  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
                   }, function(status) {
                     alert('Something went wrong.');
                   });
-  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
+  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
                   }, function(status) {
                     alert('Something went wrong.');
                   });
@@ -117,8 +117,8 @@ var myFunct=function(e){return this.indexOf(e)<0;};
     chrdos
   ])
     .then((values) => {
-      const source = values[0]; 
-      const target = values[1];  
+      const source = values[0].linkageGroups; 
+      const target = values[1].linkageGroups;  
       var s,t;
       var IdMarkers = getCommonColumn(source,target,"markerDbId"); 
        //       var filtered=source.filter(myFunct,IdMarkers);// console.log(filtered);

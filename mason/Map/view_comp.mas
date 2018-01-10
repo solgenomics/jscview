@@ -13,67 +13,76 @@ use JSON::Any;
 my $json = JSON::Any->new;
 
 </%perl>
+<& ../site/header.mas &>
 
- <div class="container">
-<h2 id="tittle" align="center" >Comparative Map</h2>
+<main role="main" class="container">
+  <div id="ballsWaveG" class="overlay">
+    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+  </div>
+  <br><br>
+    <h3 class="my-4" align="center">Comparative Map<small></small></h3>
 
- <form id="form" class="form-horizontal">
-      
-           
-       <script type="text/javascript">
+    <form id="form" class="form-horizontal">
+      <script type="text/javascript">
          function selectFunction() {           
            document.getElementById('submit1').className = "btn btn-primary";     
            document.getElementById('submit2').className = "btn btn-primary";     
         };        
       </script>
     </form>
-<div class="table-responsive">
-  <table class="table">
-  <tr> 
-    <th colspan="2"><h3 id="tittle1" width="50%" align="center" ></h3></th>
-    <th colspan="2"><h3 id="tittle2" width="50%" align="center" ></h3></th>
-  </tr>
-  <tr>
-    <td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-    <td align="right" width="25%"><a id="after" class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-    <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-    <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-  </tr>
-  </table>
+  <div class="table-responsive">
+    <table class="table">
+      <tr> 
+        <th colspan="2"><h4 id="tittle1" width="50%" align="center" ></h4></th>
+        <th colspan="2"><h4 id="tittle2" width="50%" align="center" ></h4></th>
+      </tr>
+      <tr>
+        <td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after" class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+      </tr>
+    </table>
   </div>
-    <div id="container" class="svg-container">
+  <div id="container" class="svg-container">
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
-</div>
+  </div>
  <!-- </svg>-->
   <a id="submitchr" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,list);" style="display: none;">Compare</a>
 
 
+<script>
+    var mapTId = '<% $mapTId %>';
+    var mapSId = '<% $mapSId %>';
+var nChr1 = '<% $input_chr1 %>',//'<% $input_chr1 %>'.split("_")[1],
+nChr2 = '<% $input_chr2 %>'; // '<% $input_chr2 %>'.split("_")[1]; 
 
- <script>
+  // Setting Global variables
+  var width = 800, //window.innerWidth*0.9,
+  height = 500, // window.innerHeight*0.7,
+  n = 2,
+  isLinear = 1;
 
-var mapTId = '<% $mapTId %>';
-var mapSId = '<% $mapSId %>';
-var nChr1 = '<% $input_chr1 %>'.split("_")[1],
-    nChr2 = '<% $input_chr2 %>'.split("_")[1];
-
- // Setting Global variables
- var width = window.innerWidth*0.9,
-     height = window.innerHeight*0.7,
-     n = 2,
-     isLinear = 1;
-
- var axisSide1=-1, chrZSide1= -1,
-     axisSide2=1, chrZSide2 = 1;
+  var axisSide1=-1, chrZSide1= -1,
+  axisSide2=1, chrZSide2 = 1;
   var sideComp=-1;
- var radius = width * 0.7,
-     chrWdt = (width / 2) / 12, //(width / 4) / 8,
-     chrHgt = (width /3)  * Math.sin(radians(180 / n));
-/*   var radius = width / 4,
-     chrWdt = radius / 8,
-     chrHgt = radius * Math.sin(radians(180 / n));*/
+
+  var radius = 550,
+  chrWdt =  35, 
+  chrHgt = 200; 
+  /*   var chrHgt = radius * Math.sin(radians(180 / n));*/
+  var originX = 50, 
+     originY = 100; 
 
   function distToZoom(){
-    return  chrWdt * 4 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
+  return  chrWdt * 4 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
   }
 
   function yAxisSide(axisSide){
@@ -85,33 +94,41 @@ var nChr1 = '<% $input_chr1 %>'.split("_")[1],
     if (axisSide==-1) return  yAxisZoomR;
     else return  yAxisZoomL;
   }
-  function y0(){ return chrWdt*4; }
+  function y0(){ return chrWdt*3; }
 
-var y0 = y0();
- var y1 = d3.scaleLinear().range([-chrHgt/2, chrHgt*.5]); 
- var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrHgt + chrWdt-chrHgt/2]); // Use - chwidth to draw circles in the borders //to zoom
- var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
- var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+  var y0 = y0();
+  var y1 = d3.scaleLinear().range([-chrHgt/2, chrHgt*.5]); 
+  var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrHgt + chrWdt-chrHgt/2]); // Use - chwidth to draw circles in the borders //to zoom
+  var yAxisR = d3.axisRight(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+  var yAxisL = d3.axisLeft(y1).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
- var yAxisZoomR = d3.axisRight(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
- var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+  var yAxisZoomR = d3.axisRight(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
+  var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
- var vbrush = d3.brushY()
-                .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
-                .on("end", brush);
-    window["y0"] = y0;
+  var vbrush = d3.brushY()
+  .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
+  .on("end", brush);
+
+  window["y0"] = y0;
 
   //Draw graph
- var svg = d3.select("div#container").append("svg")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
-            .attr("preserveAspectRatio", "xMinYMid meet")
-            .attr("id", "matrixSVG");
+  var svg = d3.select("div#container").append("svg")
+  // .attr("width", "100%")
+  // .attr("height", "100%")
+  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+  .attr("preserveAspectRatio", "xMinYMid meet")
+  .attr("id", "matrixSVG");
 
- svg.select("#brushid").remove();
+  svg.select("#brushid").remove();
 
- function selectMap(mapSId,mapTId,nChr1,nChr2) {
+  function getmarkerid(){
+    var id = '';
+    var name = document.getElementById('searchmk').value;
+    svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) id = d.markerDbId;  return "2"});
+    return id;
+  }
+
+  function selectMap(mapSId,mapTId,nChr1,nChr2) {
 
   // To get data
   var getChrJSON = function(url,tittle) {
@@ -122,8 +139,8 @@ var y0 = y0();
       xhr.onload = function() {
         var status = xhr.status;
         if (status == 200) {
-          resolve(xhr.response.result.data);
-      document.getElementById(tittle).innerHTML = xhr.response.metadata.name;
+          resolve(xhr.response.result); 
+          document.getElementById(tittle).innerHTML = xhr.response.result.name;
 
         } else {
           reject(status);
@@ -133,44 +150,99 @@ var y0 = y0();
     });
   };
 
-  const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapSId +'/markers?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
-                 }, function(status) {
-                    alert('Something went wrong.');
-                  });
-  const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/sgn_maps/'+mapTId + '/markers?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
-                 }, function(status) {
-                    alert('Something went wrong.');
-                  });
+  // const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapSId +'/positions?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
+  //                }, function(status) {
+  //                   alert('Something went wrong.');
+  //                 });
+  // const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapTId + '/positions?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
+  //                }, function(status) {
+  //                   alert('Something went wrong.');
+  // });
+  const chruno = getChrJSON('http://192.168.33.10:3000/static/images/map2.json','tittle1').then(function(d) { return d;
+  }, function(status) {
+    alert('Something went wrong.');
+  });
+  const chrdos = getChrJSON('http://192.168.33.10:3000/static/images/map9.json','tittle2').then(function(d) { return d;
+  }, function(status) {
+    alert('Something went wrong.');
+  });
 
   Promise.all([
     chruno,
     chrdos
-  ])
-    .then((values) => {
-      const source = values[0];
-      const target = values[1]; 
-      var labels = [];
-      var dataByChr = source.filter(function(d) {
-        var n = {mName: d.markerName, id: d.markerDbId}; 
-                         labels.push(n); 
-          return d.linkageGroup == nChr1;
-        });
-      var dataByChr2 = target.filter(function(d) {
-          return d.linkageGroup == nChr2;
-        });
-      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0);
+    ])
+  .then((values) => {
+    const source = values[0].linkageGroups;
+    const target = values[1].linkageGroups; 
+    var labels = [];
+    var dataByChr = source.filter(function(d) {
+      var n = {mName: d.markerName, id: d.markerDbId}; 
+      labels.push(n);
+      return d.linkageGroup == nChr1;
     });
-}
+    var dataByChr2 = target.filter(function(d) {
+      return d.linkageGroup == nChr2;
+    }); 
+    return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY);
+  });
+  $('#ballsWaveG').hide();
+  }
 
-selectMap(mapSId,mapTId,nChr1,nChr2);
+  selectMap(mapSId,mapTId,nChr1,nChr2);
+
+  function checkrange(){
+
+    var min = +(document.getElementById('minrange').value); 
+    var max = +(document.getElementById('maxrange').value); 
+    document.getElementById('searchmk').value="";
+
+    if(min == max){
+      alert('Please insert different numbers');
+    } else {    
+      if (min.between(y1.domain()) && max.between(y1.domain())) {
+        brush();
+      } else{
+        alert('Please insert a number between: ' + y1.domain());
+      }
+    }
+  }
+
+  </script>
+
+<div class="form-group">
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputEmail4">Search by marker name</label>
+            <input type="text" class="form-control" id="searchmk" placeholder="Marker name">
+          </div>
+          <div class="form-group col-md-12">
+              <input id="searchmarker" type="button" class="btn btn-primary" value="Search" onclick="searchmarkerid(document.getElementById('searchmk').value);">
+          </div>
+        </div>
+      </form>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label >Position from</label>
+            <input type="numerical" class="form-control" id="minrange" placeholder="Number">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputPassword4">To</label>
+            <input type="numerical" class="form-control" id="maxrange" placeholder="Number">
+          </div>
+          <div class="form-group col-md-6">
+            <input type="button" class="btn btn-primary" value="View" onclick="checkrange();">
+          </div>
+        </div>
+      </form>
+    </div>
 
 
- </script>
- <form>
-<div>
-<label>Marker Name</label>
-  <input id="searchmk" type="text" name="fname">
-  <a id="searchmarker" class="btn btn-primary" href="#" onclick="searchmarkerid(document.getElementById('searchmk').value);">Search</a>
-</div>
-</form>
-</div>
+</main>
+
+<& ../site/footer.mas &>
+
+</body>
+</html>
+

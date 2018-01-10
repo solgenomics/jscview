@@ -4,146 +4,151 @@ $input_map => ()
 $input_chr => ()
 
 </%args>
-    <style type="text/css">
- .label {
-   /* text-shadow: 2px 2px 8px #000;*/
-        background-color: #00ff00;
-}
+<& ../site/header.mas &>
+
+ <style type="text/css">
+
+  .label {
+        z-index: 10;
+        pointer-events: none;
+        text-anchor: start;
+        /*font-size: 0.9rem;*/
+        text-shadow: 0 0 3px #fff;
+        fill: rgb(70, 70, 70);
+      }
+
+    .label-bg {
+        pointer-events: none;
+        text-anchor: start;
+        fill: none;
+        stroke: white;
+        /*font-size: 0.99rem;*/
+        stroke-width: 0.9rem;
+        opacity: 0.9;
+      }
+
 </style>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-          <div class="container">
- <h2 align="center">All Maps</h2> 
- <form id="form" class="form-horizontal">
-        <div class="form-group">
-          <div >  
-            <label>Map</label> 
-            <select id="mapId" name="mapId">
-              <option ><-----Select---></option>
-              <option value="2">Tomato-EXPIMP 2001</option>
-              <option value="9">Tomato-EXPEN 2000</option>
-            </select>
-             <a id="submit" class="btn btn-primary" href="#" onclick="selectMap(document.getElementById('mapId').value,'','');">Select</a>
-            </div>
-            </div>
 
-       <script type="text/javascript">
-         function selectFunction() {           
-           document.getElementById('submit1').className = "btn btn-primary";     
-           document.getElementById('submit2').className = "btn btn-primary";     
-        };        
-      </script>
-    </form>
-    <h3 id="tittle" align="center" ></h3>
-
-  <!--<svg id="mainSVG" width="1000" height="750">-->
-<div id="container" class="svg-container">
-    <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
-</div>
- <!-- </svg>-->
-  <a id="submitchr" class="btn btn-primary" href="#" onclick=" selectMap(document.getElementById('mapId').value,list);" style="display: none;">Compare</a>
-
-
-
-<script>
-
-
-function nMap(){ return document.getElementById('mapId').value; }; 
-
- var width = parseInt(d3.select('div#container').style('width'), 10);
-
- var svg = d3.select("div#container").append("svg")
-  .attr("width", "100%")
-  .attr("height", "100%")
-  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
-  .attr("preserveAspectRatio", "xMinYMid meet")
-  .attr("id", "matrixSVG");
-
- svg.select("#brushid").remove();
-
- var isLinear = 1, axisSide=-1, chrZSide = 1;
-
-  var sideComp=1;
-
- var chrWdt = 25,
-  chrHgt = 150; //radius * Math.sin(radians(ang/2)),
-
-  function distToZoom(){ 
-    return chrWdt * 3 + isLinear*200; 
-  }
-
-
- var y0 = chrWdt*2;
-
- var y1 = d3.scaleLinear().range([ -chrHgt/2, chrHgt/2]); 
- var y2 = d3.scaleLinear().range([-chrHgt/2-chrWdt, chrHgt/2 + chrWdt]); 
- var yAxis =  d3.axisLeft(y1).tickSize(2).ticks(5); //.tickFormat(d3.format(".0s"));
-
-
-function selectMap(map, list) {
-
-  svg.selectAll("*").remove();
-  var requestmap = new XMLHttpRequest();
-
-  requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map ); 
-  requestmap.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      var myArr1 = JSON.parse(this.responseText);
-      document.getElementById("tittle").innerHTML = myArr1.result.name;
-    }}
-  requestmap.send();
-
-
+<!-- <body> -->
+  <div id="ballsWaveG" class="overlay">
+    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+  </div>
+ <div class="container" id="container">
+  <br><br>
+  <h2 class="my-4" align="center">All Maps
+        <small></small>
+  </h2>
+  
+<script type="text/javascript">
+   
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
-//request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
+  // request.open('GET', 'https://sgn-test.sgn.cornell.edu/brapi/v1/maps/'); 
+  request.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'); 
 
+  //Working with list of maps and creating html div for each of them
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
 
-      var myArr = JSON.parse(this.responseText);
-      var result = fillArray(myArr);
-      var data = result.data;
-      var list = unique(result.list);
+    var myArr = JSON.parse(this.responseText).result.data;
 
-      var forZoom = 0;
+      for (var  i = 0; i<myArr.length; i++){
 
+        var iDiv = document.createElement('div');
+        iDiv.className = 'row';
 
-      // Setting layout
-      var radius = width / (list.length + 1),
-          originX=radius,
-          originY=50;
+        var innerDiv = document.createElement('div');
+        innerDiv.className = 'col-md-6';
+        innerDiv.id = 'map' + myArr[i].mapDbId;
+        iDiv.appendChild(innerDiv);
 
-     for (var  i = (list.length-1); i > -1;i--) {
+        //Calling the chr drawing function
+        maps(myArr[i].mapDbId);
 
-        // Filter data by chr;
-        var dataByChr = data.filter(function(d) {
-          return d.linkageGroup == list[i]
-        });
+        var innerDivT = document.createElement('div');
+        innerDivT.className = 'col-md-6';
+        innerDivT.id = 'mapp';
+        iDiv.appendChild(innerDivT);
+        innerDivT.innerHTML = "<h3>"+ myArr[i].name +"</h3><p>"+ myArr[i].species +"</p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br>Id: "+ myArr[i].mapDbId +"</p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
 
-        // Draw each chr
-        chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], 0,isLinear,5,originX,originY,chrZSide,axisSide,sideComp);
+        document.getElementById('container').appendChild(iDiv);
 
-        // We don't need to draw links in the linear graph for now
-        /*   if (i<n){
-                var datali = datal.filter(function(d) { return d.chrs == i }); 
-                links  (datali, svg, originX, originY,0, chrWdt, chrHgt, 0 ,radius * i +chrWdt, radius * (i+1) , y0); } */
-      }
-
-    }
-
+       }
+     }
+             $('#ballsWaveG').hide();
   }
 
-request.send();
+  request.send();
+
+ </script>
+
+<script>
+
+//Function for dra chrs
+function maps(map){
+
+  var requestmap = new XMLHttpRequest();
+
+  requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+ map ); 
+  requestmap.onreadystatechange = function() {
+    if (this.readyState === 4) {
+
+      var myArr1 = JSON.parse(this.responseText);
+      var LG =myArr1.result.linkageGroups;
+
+
+      var svg = d3.select("div#map"+map).append("svg")
+                  .attr("id", "matrixSVG1");
+
+
+      var width =25;
+      var height =  $("#map"+map).height()*0.8;
+      var maxpos = Math.max.apply(Math,LG.map(function(o){return o.maxPosition;}));
+      var conv = height/maxpos;
+
+     for (var i = 0; i < LG.length; i++) {  
+
+        svg.append("rect")
+        .attr("id", "rect" )
+        .attr("x", width*(i+1))
+        .attr("y", width/2)
+        .attr("rx", width/2)
+        .attr("ry", width/2)
+        .attr("width", width/1.5)
+        .attr("height",  LG[i].maxPosition * conv)
+        .attr("fill", 'transparent')
+        .attr("stroke", "black")
+        .style("stroke-width", 1);
+
+        svg.append("rect")
+        .attr("id", "rect" )
+        .attr("x", width*(i+1))
+        .attr("y", width)
+        .attr("width", width/1.5)
+        .attr("height", ( LG[i].maxPosition * conv - width ))
+        .attr("fill", '#d88c49')
+        .attr("stroke", "#d88c49")
+        .style("stroke-width", 0);
+      }
+    }
+  }
+  requestmap.send();
+
 };
 
 </script>
 
-<form id="search_chr" method="post" enctype="multipart/form-data" action="/Map/view_chr" style="display: none;">
-          <input class="form-control col-xs-2 panel-primary" value="<% $input_chr %>" name="input_chr" id="input_chr"/>
-          <input class="form-control col-xs-2 panel-primary" value="<% $input_map %>" name="input_map" id="input_map"/>
-</form>
 </div>
 
+<& ../site/footer.mas &>
+
+</body>
+</html>
