@@ -3,6 +3,7 @@
 $input_map => ()
 $input_chr => ()
 $dbhost => ()
+$host => ()
 
 </%args>
 <& ../site/header.mas &>
@@ -28,11 +29,14 @@ $dbhost => ()
    
   var request = new XMLHttpRequest();
   var brApiSite = '<% $dbhost %>';
+  var host = '<% $host %>';
 
-  request.open('GET', 'http://192.168.33.10:3000/static/images/map.json'); 
-  // request.open('GET', brApiSite + '/brapi/v1/maps/'); 
+  request.open('GET', host + '/static/images/map.json'); 
+  // request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
 
   //Working with list of maps and creating html div for each one of them
+  // request.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+
   request.onreadystatechange = function() {
 
     if (this.readyState === 4) {
@@ -77,7 +81,7 @@ function maps(map){
   var requestmap = new XMLHttpRequest();
 
   //request.open('GET', brApiSite + '/brapi/v1/maps/'+ map ); 
-  requestmap.open('GET', 'http://192.168.33.10:3000/static/images/31.json' ); 
+  requestmap.open('GET', host + '/static/images/31.json' ); 
  
   requestmap.onreadystatechange = function() {
     if (this.readyState === 4) {
