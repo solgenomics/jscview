@@ -7,7 +7,7 @@
 
     var i = mapId + "_" + chrId; 
     var heightZoom = height + width*2;
-    var distZoom = distToZoom(); //width * 3 + isLinear*200;
+    var distZoom = distToZoom(); 
 
     var svg = svg0.append("g").attr("id", "svg" + i)
               .attr("transform", " translate(" + (originX + x) + "," + (originY + y) + ") rotate(" + ang0 + ") ");
@@ -41,19 +41,19 @@
       .attr("dx", -width/2)
       .attr("dy", -(height + width * 2)/2 -1) 
       .text("Chr " + i.split("_")[1])
-      //.attr("font-size",15) // 
+      .attr("font-size",12) // 
       .attr("fill", "#B75CA1");
 
     svg.append("text")
        .attr("dx", -width*1.5)
        .attr("dy", -(height + width )/2 -1 ) 
-       .text("cM");
-     //  .attr("font-size",12);    
+       .text("cM")
+       .attr("font-size",10);    
 
     svg.append("rect")
         .attr("id", "rect" + i)
         .attr("x", -width / 2)
-       .attr("y", -(height + width * 2)/2 ) // -(height + width * 2)/2) //  .attr("y", -width)
+       .attr("y", -(height + width * 2)/2 ) 
         .attr("rx", width/2)
         .attr("ry", width/2)
         .attr("width", width)
@@ -96,19 +96,15 @@
         .attr("id", "brushid" + i)
         .attr("class", "brush")
         .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
-        //        .attr("transform", "rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + ((Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
         .call(vbrush);
         
-  //vbrush.event(context.select('g.y.brush').attr("y",10).attr("height",50));
-//svg.select("brushid" + i).selectAll("rect").attr("y",20).attr("height",150);
+
       svg.append("g")
         .attr("id", "yaxis")
         .attr("class", "y axis")
         .attr("width", 10)
         .attr("height", 10)
         .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
-      //        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (- height/2)  + ")")
-      //        .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (-width ) + ")")
         .call(yAxisSide(axisSide));
 
       svg.append("polygon")
@@ -123,7 +119,7 @@
 
       zoom.append("rect")
         .attr("id", "rectx" + i)
-        .attr("x", width*(zoomSide-1)/2+distZoom*zoomSide) //distZoom*zoomSide) //
+        .attr("x", width*(zoomSide-1)/2+distZoom*zoomSide)
         .attr("y", -width-height/2)
         .attr("width", width)
         .attr("height", heightZoom)
@@ -201,7 +197,6 @@
         .attr("y", -35)
         .style("stroke-width", 0)
         .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
-//        .attr("transform", " rotate(" + -ang0 + ")  translate(" + (-(Math.sin(ang) * width / 2)) + "," + (-(Math.cos(ang) * width / 2)) + ")  rotate(" + ang0 + ") ")
         .call(yAxisSide(axisSide));
 
       svg.append("g").attr("id", "svgog" + i).selectAll("text.horizontal")
@@ -278,12 +273,6 @@
 
   }
 
-  // d3.selection.prototype.moveToFront = function() {
-  //   return this.each(function(){
-  //     svg0.appendChild(this);
-  //   });
-  // };
-
   d3.selection.prototype.moveToFront = function() {  
       return this.each(function(){
         this.parentNode.appendChild(this);
@@ -297,6 +286,10 @@
 
     var name = d3.select(this.parentNode).attr('id');
     name = name.replace("svg", "");
+
+    d3.select("svg").selectAll("*:not(#svg"+name +")").selectAll("[id^=svgog]").selectAll("text").attr("dy", null).text(null);
+    d3.select("svg").selectAll("*:not(#svg"+name +")").selectAll("[id^=svgo]").selectAll("text").attr("dy", null).text(null);
+    d3.select("svg").selectAll("*:not(#svg"+name +")").selectAll("[id^=svgol]").selectAll("line").attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
 
     svg.select("#svg" + name).select("#svgog" + name).selectAll("text").attr("dy", null).text(null);
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text").attr("dy", null).text(null);
@@ -319,7 +312,7 @@
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m - chrHgt/2; })
-      .text(function(d) { return d.markerName; });//.moveToFront();  
+      .text(function(d) { return d.markerName; }).style("font-size", "10px");//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
       .attr("x1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.x2 })
@@ -341,9 +334,9 @@
 
     d3.select(this).style("stroke", randomColor);
 
-    svg.select("#svg" + name).select("#svgog" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
-    svg.select("#svg" + name).select("#svgo" + name).selectAll("text").transition().delay(1000).attr("dy", null).text(null);
-    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").transition().delay(1000).attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
+    svg.select("#svg" + name).select("#svgog" + name).selectAll("text").transition().delay(5000).attr("dy", null).text(null);
+    svg.select("#svg" + name).select("#svgo" + name).selectAll("text").transition().delay(5000).attr("dy", null).text(null);
+    svg.select("#svg" + name).select("#svgol" + name).selectAll("line").transition().delay(5000).attr("x1", null).attr("x2", null).attr("y1", null).attr("y2", null);
   }
 
   function moveToFront() {
@@ -356,12 +349,11 @@
 
     //function to redirect each chr itself web page
     var a = d3.select(this).attr('id');
-    list = []; alert(window['comp']); 
+    list = []; 
     list.push(a.replace("rect", "")); 
     var res = a.replace("rect", "").split("_");     
     
     if (window['comp'] != 1){
-      svg.select("#" + a).attr("fill", "#C75601");
       window.location='http://192.168.33.10:3000/Map/view_chr?map='+res[0]+'&chr=' + res[1];
     }
   }

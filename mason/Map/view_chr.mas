@@ -1,6 +1,9 @@
 <%args>
 $input_map => ()
 $input_chr => ()
+$dbhost => ()
+$host => ()
+
 </%args>
 
 <%perl>
@@ -22,57 +25,6 @@ my $json = JSON::Any->new;
     <div id="ballsWaveG_8" class="ballsWaveG"></div>
   </div>
 
-<!--     <style type="text/css"> 
-
-      text {
-       /* font-size: 12px; */
-        font-family: "Sawasdee", "URW Gothic L", sans;
-      }
-      text.label {
-        font-size: 16px;
-      }
-      text.expl {
-        font-size: 12px;
-      }
-      text.title {
-        font-size: 24px;
-        font-weight: bold;
-      }
-      text.active {
-        fill: #dd2f00;
-      }
-
-      /* .axis {
-        fill: none;
-        stroke: #222;
-      }*/
-
-      path {
-        stroke: #554508;
-      }
-      path.pointer {
-        stroke: #222;
-      }
-      line {
-        stroke: #222;
-      }
-
-      .tooltip {  
-        background: #eee;
-        box-shadow: 0 0 5px #999999;
-        color: #333;
-        display: none;
-        font-size: 12px;
-        left: 130px;
-        padding: 10px;
-        position: absolute;
-        text-align: center;
-        top: 95px;
-        width: 80px;
-        z-index: 10;      
-      }
-    </style> -->
-
     <br><br>
     <h3 class="my-4" id="tittle" align="center">All Maps<small></small></h3>
 
@@ -81,11 +33,9 @@ my $json = JSON::Any->new;
         <table class="table">
           <tr>
             <th align="center" width="50%">
-              <!-- <input id="before" type="button" class="btn btn-primary" value="" onclick="nChr=+nChr-1; selectMap(map,nChr);"> -->
               <a id="before" class="btn btn-primary" href="#" onclick="nChr=+nChr-1; selectMap(map,nChr);"></a>
               </th>
             <th align="center" width="50%">
-            <!-- <input id="after" type="button" class="btn btn-primary" value="" onclick="nChr=+nChr+1; selectMap(map,nChr);"> -->
             <a id="after"  class="btn btn-primary" href="#" onclick="nChr=+nChr+1; selectMap(map,nChr);"></a>
             </th>
           </tr>
@@ -101,17 +51,17 @@ my $json = JSON::Any->new;
       /* Declare variables */
       var nChr = '<% $input_chr %>';
       var map =  '<% $input_map %>';
+      var brApiSite = '<% $dbhost %>';
+      var host = '<% $host %>';
 
-      var width = 800; //d3.select("div#container").style("width").replace("px", ""); 
-      var height = 500; //d3.select("div#container").style("height").replace("px", ""); 
+      var width = 800; 
+      var height = 500; 
       var n =1;
       var isLinear = 1, axisSide=-1, chrZSide = 1;
       var sideComp=1;
 
       var svg = d3.select("div#container").append("svg")
                   .attr("class", "svg-content")
-                  // .attr("width", "100%")
-                  // .attr("height", "100%")
                   .attr("viewBox", "0 0 " + width + " " + height ) 
                   .attr("preserveAspectRatio", "xMinYMin meet")
                   .attr("id", "matrixSVG");
@@ -124,10 +74,10 @@ my $json = JSON::Any->new;
           y1 = d3.scaleLinear().range([-chrHgt/2,chrHgt/2]), 
           y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2,chrHgt/2 + chrWdt]);  // Use - chwidth to draw circles in the borders
 
-      var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
-      var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(5);//.tickFormat(d3.format(".2s"));
+      var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(5);
+      var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(5);
       var yAxisZoomR =  d3.axisRight(y2).tickSize(3);
-      var yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
+      var yAxisZoomL =  d3.axisLeft(y2).tickSize(3);
 
       var vbrush = d3.brushY()
                   .extent([[0, -chrHgt/2], [chrWdt, chrHgt/2]])
@@ -178,9 +128,7 @@ my $json = JSON::Any->new;
 
         var request = new XMLHttpRequest();
 
-        //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map +'/positions?pageSize=10000'); //linkageGroupIdList='+value);
-        //request.open('GET', 'http://192.168.33.10:3100/brapi/v1/sgn_maps/'+ map +'/markers?linkageGroup='+ nchr +'&pageSize=1000000000');
-       // request.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+ map +'/positions?linkageGroup='+ nchr +'&pageSize=10');
+        // request.open('GET', brApiSite + '/brapi/v1/maps/'+ map +'/positions?linkageGroup='+ nchr +'&pageSize=100000000');
         request.open('GET', 'http://192.168.33.10:3000/static/images/map9.json'); 
         request.onreadystatechange = function() {
 
@@ -228,7 +176,7 @@ my $json = JSON::Any->new;
         // var map =  '<% $input_map %>';
         var mapTId = document.getElementById('mapTId').value;
         var nchT = document.getElementById('nchT').value;
-        window.location='http://192.168.33.10:3000/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
+        window.location= host + '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
       }
 
     </script>

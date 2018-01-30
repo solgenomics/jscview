@@ -27,6 +27,10 @@ sub index :Path('/Map/view_chr/') :Args(0) {
   my $params = $c->req->body_params();
   my $input_chr = $c->req->param("chr");
   my $input_map = $c->req->param("map");
+  my $dbhost = $c->config->{dbhost};
+  my $host = $c->config->{host};
+  $c->stash->{dbhost} = $dbhost;
+  $c->stash->{host} = $host;
   $c->stash->{input_chr} = $input_chr;
   $c->stash->{input_map} = $input_map;
   $c->stash(template => 'Map/view_chr.mas');
@@ -41,6 +45,10 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   my $input_chr2 = $c->req->param("nChr2");  
   my $input_mapSId = $c->req->param("mapSId");
   my $input_mapTId = $c->req->param("mapTId");
+  my $dbhost = $c->config->{dbhost};
+  my $host = $c->config->{host};
+  $c->stash->{dbhost} = $dbhost;
+  $c->stash->{host} = $host;
   $c->stash->{mapSId} = $input_mapSId;
   $c->stash->{mapTId} = $input_mapTId;
   $c->stash->{input_chr1} = $input_chr1;
@@ -54,9 +62,14 @@ sub view_multiple :Path('/Map/view_multi/') :Args(0) {
    # get variables from catalyst object
   my $params = $c->req->body_params();
   my @query_chr = $c->req->param("input_chr");
+  my $dbhost = $c->config->{dbhost};
+  my $host = $c->config->{host};
+  $c->stash->{dbhost} = $dbhost;
+  $c->stash->{host} = $host;
   $c->stash(template => 'Map/view_multi.mas');
 
 }
+
 sub view_multiple_v :Path('/Map/view_multi_test/') :Args(0) {
   my ($self, $c) = @_; 
    # get variables from catalyst object
@@ -70,7 +83,10 @@ sub index2 :Path('/Map/') :Args(1) {
   my ($self, $c, $id) = @_;
 
   $c->stash->{input_map} = $id;
+  my $dbhost = $c->config->{dbhost};
+  $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/map.mas');
+
 
 }
 =encoding utf8

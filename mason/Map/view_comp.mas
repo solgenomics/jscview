@@ -3,6 +3,8 @@ $input_chr1 => ()
 $input_chr2 => ()
 $mapSId => ()
 $mapTId => ()
+$dbhost => ()
+$host => ()
 
 </%args>
 <%perl>
@@ -61,12 +63,14 @@ my $json = JSON::Any->new;
 <script>
     var mapTId = '<% $mapTId %>';
     var mapSId = '<% $mapSId %>';
-var nChr1 = '<% $input_chr1 %>',//'<% $input_chr1 %>'.split("_")[1],
-nChr2 = '<% $input_chr2 %>'; // '<% $input_chr2 %>'.split("_")[1]; 
+    var brApiSite = '<% $dbhost %>';
+    var host = '<% $host %>';
+    var nChr1 = '<% $input_chr1 %>',
+        nChr2 = '<% $input_chr2 %>';
 
   // Setting Global variables
-  var width = 800, //window.innerWidth*0.9,
-  height = 500, // window.innerHeight*0.7,
+  var width = 800, 
+  height = 500, 
   n = 2,
   isLinear = 1;
 
@@ -77,12 +81,12 @@ nChr2 = '<% $input_chr2 %>'; // '<% $input_chr2 %>'.split("_")[1];
   var radius = 550,
   chrWdt =  35, 
   chrHgt = 200; 
-  /*   var chrHgt = radius * Math.sin(radians(180 / n));*/
+
   var originX = 50, 
      originY = 100; 
 
   function distToZoom(){
-  return  chrWdt * 4 + isLinear*chrWdt*3.35; //    return  chrWdt * 3 + isLinear*50;
+    return  chrWdt * 4 + isLinear*chrWdt*3.35; 
   }
 
   function yAxisSide(axisSide){
@@ -106,18 +110,16 @@ nChr2 = '<% $input_chr2 %>'; // '<% $input_chr2 %>'.split("_")[1];
   var yAxisZoomL = d3.axisLeft(y2).tickSize(3).ticks(5).tickFormat(d3.format(".2s"));
 
   var vbrush = d3.brushY()
-  .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
-  .on("end", brush);
+              .extent([[0, -chrHgt/2-1],[chrWdt, chrHgt-chrHgt/2+1]])
+              .on("end", brush);
 
   window["y0"] = y0;
 
   //Draw graph
   var svg = d3.select("div#container").append("svg")
-  // .attr("width", "100%")
-  // .attr("height", "100%")
-  .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
-  .attr("preserveAspectRatio", "xMinYMid meet")
-  .attr("id", "matrixSVG");
+            .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
+            .attr("preserveAspectRatio", "xMinYMid meet")
+            .attr("id", "matrixSVG");
 
   svg.select("#brushid").remove();
 
@@ -150,11 +152,11 @@ nChr2 = '<% $input_chr2 %>'; // '<% $input_chr2 %>'.split("_")[1];
     });
   };
 
-  // const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapSId +'/positions?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
+  // const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
   //                }, function(status) {
   //                   alert('Something went wrong.');
   //                 });
-  // const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapTId + '/positions?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
+  // const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
   //                }, function(status) {
   //                   alert('Something went wrong.');
   // });

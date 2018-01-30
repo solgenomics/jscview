@@ -32,6 +32,8 @@ sub index :Path("/") :Args(0) {
     my ( $self, $c ) = @_;
 
     # Hello World
+    my $dbhost = $c->config->{dbhost};
+  	$c->stash->{dbhost} = $dbhost;
     $c->stash(template => 'index.mas');
 }
 

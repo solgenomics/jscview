@@ -7,9 +7,11 @@ use strict;
 use JSON::Any;
 my $json = JSON::Any->new;
 </%perl>
-
- <div class="container">
- <h2 align="center">Comparative map</h2> 
+<& ../site/header.mas &>
+<main role="main" class="container">
+<br><br><br><br>
+ <!-- <div class="container"> -->
+ <!-- <h2 align="center">Comparative map</h2>  -->
  <h3 align="center">Tomato-EXPIMP 2001  & Tomato-EXPEN 2000</h3> 
 
  <form id="form" class="form-horizontal">
@@ -157,7 +159,7 @@ var myFunct=function(e){return this.indexOf(e)<0;};
             });
 
             var originX = width/2, axisSide = -1, chrZSide=1;
-                originY = height*0.4;
+                originY = height*0.2;
 
             if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; 
              // y = y+20 * Math.sin(radians(angi)); x= x+20* Math.cos(radians(angi))
@@ -181,4 +183,9 @@ if (i<12){
 
 
  </script>
-</div>
+</main>
+
+<& ../site/footer.mas &>
+
+</body>
+</html>

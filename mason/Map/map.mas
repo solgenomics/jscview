@@ -2,6 +2,7 @@
 <%args>
 $input_map => ()
 $input_chr => ()
+$dbhost => ()
 </%args>
 
 <style type="text/css">
@@ -20,8 +21,8 @@ $input_chr => ()
       text-anchor: start;
       fill: none;
       stroke: white;
-      font-size: 0.99rem;
-      stroke-width: 0.9rem;
+      font-size: 0.9rem;
+      stroke-width: 0.5rem;
       opacity: 0.9;
     }
 
@@ -32,13 +33,11 @@ $input_chr => ()
 <main role="main" class="container">
     <br>
     <script type="text/javascript">
-     var nmap =  '<% $input_map %>';
-
+      var nmap =  '<% $input_map %>';
      </script>
 
-    <br><br><br>
-    <h3 id="tittle" align="center" >Chromosomes</h3>
-    <br>
+    <br><br><br><br>
+    <h3 id="tittle" align="center" ></h3>
 
     <div id="container" class="svg-container">
       <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
@@ -46,25 +45,24 @@ $input_chr => ()
 
     <div id="comments" class="svg-container">
       <hr>
-      <p>
+      <p>  Comments </P>
+      <br>
         Type: <p id="type"></p><br>
-        Unit:  <br>
-        Comment: 
+        Unit:  <br>   
       </p>
     </div>
 
     <script>
 
-     var width = 800; //parseInt(d3.select('div#container').style('width'), 10);
+     var width = 800; 
      var height = 320;
-// alert(width);
+     var brApiSite = '<% $dbhost %>';
+
      var svg = d3.select("div#container").append("svg")
-     .attr("class", "svg-content")
-      // .attr("width", "100%")
-      // .attr("height", "100%") // width/3 )
-       .attr("viewBox", "0 0 " + width + " " + height ) 
-     .attr("preserveAspectRatio", "xMinYMid meet")
-      .attr("id", "matrixSVG");
+                  .attr("class", "svg-content")
+                  .attr("viewBox", "0 0 " + width + " " + height ) 
+                  .attr("preserveAspectRatio", "xMinYMid meet")
+                  .attr("id", "matrixSVG");
 
      svg.select("#brushid").remove();
 
@@ -94,7 +92,9 @@ $input_chr => ()
       document.getElementById("tittle").innerHTML = "";
       var requestmap = new XMLHttpRequest();
 
-      requestmap.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+map); 
+      //requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+map); 
+      requestmap.open('GET', 'http://192.168.33.10:3000/static/images/map9.json'); 
+
       requestmap.onreadystatechange = function() {
         if (this.readyState === 4) {
 
@@ -104,13 +104,12 @@ $input_chr => ()
         }
       }
       requestmap.send();
-//<p>"+ myArr[i].comments +"</p>
 
       var request = new XMLHttpRequest();
 
       request.open('GET', 'http://192.168.33.10:3000/static/images/map9.json'); 
-    //request.open('GET', 'http://localhost:3100/brapi/v1/sgn_maps/'+ map + '/positions?pageSize=10000000'); 
-    //request.open('GET', 'http://192.168.33.10:3100/brapi/v1/maps/'+ map + '/positions?pageSize=50'); 
+     // request.open('GET', brApiSite + '/brapi/v1/maps/'+ map + '/positions?pageSize=5000000'); 
+
 
       request.onreadystatechange = function() {
 
@@ -124,8 +123,8 @@ $input_chr => ()
 
           // Setting layout
           var radius = width / (list.length + 1),
-          originX=radius,
-          originY=150;
+          originX=30,
+          originY=130;
 
           for (var  i = (list.length-1); i > -1;i--) {
 
