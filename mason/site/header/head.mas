@@ -1,0 +1,19 @@
+<!-- INSERT_HEAD_PRE_HTML -->
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="/static/bootstrap4/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/css/spinner.css">
+<link href="/static/css/style.css" rel="stylesheet"> 
+
+<script language="javascript" type="text/javascript">
+   JSAN = {};
+   JSAN.use = function() {};
+   MochiKit = {__export__: false};
+</script>
+
+
+<& /site/header/local_head.mas &>
+
+
