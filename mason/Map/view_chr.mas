@@ -6,11 +6,7 @@ $host => ()
 
 </%args>
 
-<%perl>
-use JSON::Any;
-my $json = JSON::Any->new;
 
-</%perl>
 <& ../site/header.mas &>
 <!-- <body> -->
   <main role="main" class="container">
@@ -129,7 +125,7 @@ my $json = JSON::Any->new;
         var request = new XMLHttpRequest();
 
         // request.open('GET', brApiSite + '/brapi/v1/maps/'+ map +'/positions?linkageGroup='+ nchr +'&pageSize=100000000');
-        request.open('GET', 'http://192.168.33.10:3000/static/images/map9.json'); 
+        request.open('GET', host + '/static/images/map9.json'); 
         request.onreadystatechange = function() {
 
           if (this.readyState === 4) {

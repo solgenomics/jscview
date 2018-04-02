@@ -354,7 +354,7 @@
     var res = a.replace("rect", "").split("_");     
     
     if (window['comp'] != 1){
-      window.location='http://192.168.33.10:3000/Map/view_chr?map='+res[0]+'&chr=' + res[1];
+      window.location='http://maps.sgn.cornell.edu/Map/view_chr?map='+res[0]+'&chr=' + res[1];
     }
   }
 
