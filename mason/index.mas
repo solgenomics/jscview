@@ -31,8 +31,8 @@ $host => ()
   var brApiSite = '<% $dbhost %>';
   var host = '<% $host %>';
 
-  request.open('GET', host + '/static/images/map.json'); 
-  // request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
+  //request.open('GET', host + '/static/images/map.json'); 
+   request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
 
   //Working with list of maps and creating html div for each one of them
   // request.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
@@ -71,17 +71,14 @@ $host => ()
 
   request.send();
 
- </script>
-
-<script>
 
 //Function to draw chrs
 function maps(map){
 
   var requestmap = new XMLHttpRequest();
 
-  //request.open('GET', brApiSite + '/brapi/v1/maps/'+ map ); 
-  requestmap.open('GET', host + '/static/images/31.json' ); 
+  requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+ map ); 
+  // requestmap.open('GET', host + '/static/images/31.json' ); 
  
   requestmap.onreadystatechange = function() {
     if (this.readyState === 4) {

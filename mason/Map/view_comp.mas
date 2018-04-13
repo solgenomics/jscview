@@ -145,22 +145,22 @@ $host => ()
     });
   };
 
-  // const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroup='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
-  //                }, function(status) {
-  //                   alert('Something went wrong.');
-  //                 });
-  // const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroup='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
-  //                }, function(status) {
-  //                   alert('Something went wrong.');
+  const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
+                 }, function(status) {
+                    alert('Something went wrong.');
+                  });
+  const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroupId='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
+                 }, function(status) {
+                    alert('Something went wrong.');
+  });
+  // const chruno = getChrJSON(host + '/static/images/map2.json','tittle1').then(function(d) { return d;
+  // }, function(status) {
+  //   alert('Something went wrong.');
   // });
-  const chruno = getChrJSON(host + '/static/images/map2.json','tittle1').then(function(d) { return d;
-  }, function(status) {
-    alert('Something went wrong.');
-  });
-  const chrdos = getChrJSON(host + '/static/images/map9.json','tittle2').then(function(d) { return d;
-  }, function(status) {
-    alert('Something went wrong.');
-  });
+  // const chrdos = getChrJSON(host + '/static/images/map9.json','tittle2').then(function(d) { return d;
+  // }, function(status) {
+  //   alert('Something went wrong.');
+  // });
 
   Promise.all([
     chruno,

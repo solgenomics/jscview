@@ -199,6 +199,8 @@
         .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
         .call(yAxisSide(axisSide));
 
+      if (window['comp'] != -1){
+
       svg.append("g").attr("id", "svgog" + i).selectAll("text.horizontal")
         .attr("id", "textxg" + i)
         .data(dataT)
@@ -223,6 +225,8 @@
         .data(dataT)
         .enter().append("line")
         .style("stroke", randomColor);
+
+      }
 
     }
   }

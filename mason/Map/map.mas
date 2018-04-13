@@ -45,12 +45,11 @@ $host => ()
       <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
     </div>
 
-    <div id="comments" class="svg-container">
+    <div id="comment" class="svg-container">
       <hr>
-      <p>  Comments </P>
-      <br>
-        Type: <p id="type"></p><br>
-        Unit:  <br>   
+      <p id="comments"></p>
+      <p id="type"></p>
+      <p id="unit"></p> <br>   
       </p>
     </div>
 
@@ -95,23 +94,23 @@ $host => ()
       document.getElementById("tittle").innerHTML = "";
       var requestmap = new XMLHttpRequest();
 
-      //requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+map); 
-      requestmap.open('GET', host + '/static/images/map9.json'); 
+      requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+map); 
 
       requestmap.onreadystatechange = function() {
         if (this.readyState === 4) {
 
           var myArr1 = JSON.parse(this.responseText);
           document.getElementById("tittle").innerHTML = myArr1.result.name;
-          document.getElementById("type").innerHTML = myArr1.result.type;
+          document.getElementById("type").innerHTML = "Type: " + myArr1.result.type;
+          document.getElementById("unit").innerHTML = "Unit: " + myArr1.result.unit;
+          document.getElementById("comments").innerHTML = myArr1.result.comments;
         }
       }
       requestmap.send();
 
       var request = new XMLHttpRequest();
 
-      request.open('GET', host + '/static/images/map9.json'); 
-     // request.open('GET', brApiSite + '/brapi/v1/maps/'+ map + '/positions?pageSize=5000000'); 
+      request.open('GET', brApiSite + '/brapi/v1/maps/'+ map + '/positions?pageSize=5000000'); 
 
       request.onreadystatechange = function() {
 
