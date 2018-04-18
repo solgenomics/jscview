@@ -94,7 +94,7 @@ $host => ()
       document.getElementById("tittle").innerHTML = "";
       var requestmap = new XMLHttpRequest();
 
-      requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+map); 
+      requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+ map + '/?pageSize=1000000'); 
 
       requestmap.onreadystatechange = function() {
         if (this.readyState === 4) {
