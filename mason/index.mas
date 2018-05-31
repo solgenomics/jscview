@@ -53,7 +53,7 @@ $host => ()
         innerDivT.className = 'col-md-6';
         innerDivT.id = 'mapp' + myArr[i].mapDbId;
         iDiv.appendChild(innerDivT);
-        innerDivT.innerHTML = "<h3>"+ myArr[i].name +"</h3><p>Specie: <i>"+ myArr[i].species +"</i></p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br>Id: "+ myArr[i].mapDbId +"</p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
+        innerDivT.innerHTML = "<h3>"+ myArr[i].name +"</h3><p>Specie: <i>"+ myArr[i].species +"</i></p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br></p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
 
         document.getElementById('container').appendChild(iDiv);
 

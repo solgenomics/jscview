@@ -177,10 +177,10 @@ $host => ()
     });
     var dataByChr2 = target.filter(function(d) {
       return d.linkageGroup == nChr2;
-    }); 
+    });
+	$('#ballsWaveG').hide(); 
     return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY);
   });
-  $('#ballsWaveG').hide();
   }
 
   selectMap(mapSId,mapTId,nChr1,nChr2);

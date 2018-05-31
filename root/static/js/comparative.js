@@ -22,6 +22,8 @@
         var s,t;
         var IdMarkers = getCommonColumn(data,data1,"markerDbId"); 
         var datal = [];
+	var maxs = d3.max(data, function(d) { return +d.position;  });
+        var maxt = d3.max(data1, function(d) { return +d.position;  });
 
         for (var i = 0; i < IdMarkers.length; i++) {  
           s = data.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
@@ -36,7 +38,7 @@
         }
 
         var ang = 0;
-        var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0); 
+        var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
         
         links(dataForLink, svg, 0, chrWdt, chrHgt, 0, radius * 0.25, 0, 0 , y0, originX,originY,0);
 

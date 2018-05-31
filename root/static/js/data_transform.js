@@ -120,11 +120,11 @@
   	return dataT; 
   }
      
-  function transfLinkData_by2(data, ang, width, radius, x1, x2) {
+  function transfLinkData_by2(data, ang, width, radius, x1, x2, maxs, maxt) {
 
     var dataT = [];
-    var maxs = d3.max(data, function(d) { return +d.s;  });
-    var maxt = d3.max(data, function(d) { return +d.t;  });
+    //var maxs = d3.max(data, function(d) { return +d.s;  });
+    //var maxt = d3.max(data, function(d) { return +d.t;  });
     var yLinears = d3.scaleLinear().range(y1.range()).domain([0, maxs]); // sacar de aqui el rango como codigos anteriores
     var yLineart = d3.scaleLinear().range(y1.range()).domain([0, maxt]);
     var angSource, angTarget;
@@ -135,9 +135,9 @@
       angTarget = ang;
 
       dataT.push({
-        sx: -(width / 2 * Math.sin(angSource +180)),
+        sx: (width / 2), // * Math.sin(angSource +180)),
         sy: yLinears(data[i].s) * Math.cos(angSource),
-        tx: radius + (width / 2 * Math.sin(angTarget +180)),
+        tx: radius - (width / 2), // * Math.sin(angTarget +180)),
         ty: yLineart(data[i].t) * Math.cos(angTarget),
         markerDbId: data[i].markerDbId
       });

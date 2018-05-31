@@ -103,7 +103,6 @@ $host => ()
           document.getElementById("tittle").innerHTML = myArr1.result.name;
           document.getElementById("type").innerHTML = "Type: " + myArr1.result.type;
           document.getElementById("unit").innerHTML = "Unit: " + myArr1.result.unit;
-          document.getElementById("comments").innerHTML = myArr1.result.comments;
         }
       }
       requestmap.send();
@@ -121,6 +120,7 @@ $host => ()
         var data = result.data; 
         var list = unique(result.list);
         var forZoom = 0;
+	document.getElementById("comments").innerHTML = myArr.result.comments;
 
           // Setting layout
           var radius = width / (list.length + 1),
