@@ -1,1 +1,4 @@
-# jscview
+# Comparative map viewer 
+
+## Documentation
+
