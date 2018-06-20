@@ -1,6 +1,6 @@
 # Comparative map viewer 
 
-Comparative Map Viewer (CMV), this is a fully BrAPI compliant tool for viewing and comparing genetic maps. This works with JavaScript, D3.js v4 and Bootstrap. 
+Comparative Map Viewer (CMV), this is a fully BrAPI compliant tool for viewing and comparing genetic maps. This works with JavaScript, D3.js v4 and Bootstrap. Check CMV solgenomics <a href="http://maps.solgenomics.net">here</a>
 
 
 ## Documentation
@@ -93,8 +93,7 @@ You will need to edit this file to customize all the paths, so they work on your
 4. BrAPI database
 -----------------
 
-CMV works using <a href="https://brapi.org/">BrAPI</a> structure for markers data. You substitute this with a json file url with the following structure.
-
+CMV works using <a href="https://brapi.org/">BrAPI</a> structure for markers data. 
 
 
 
