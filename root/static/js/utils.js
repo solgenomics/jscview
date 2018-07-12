@@ -1,3 +1,35 @@
+  var getChrJSON = function(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        var status = xhr.status;
+        if (status == 200) {
+          resolve(xhr.response.result);
+
+        } else {
+          reject(status);
+        }
+      };
+      xhr.send();
+    });
+  };
+
+  function distToZoom(){
+      return  chrWdt * 3 + isLinear*200; 
+  }
+  
+  function yAxisSide(axisSide){
+      if (axisSide==1) return  yAxisR;
+      else return  yAxisL;
+  }
+
+  function yAxisZoomSide(axisSide){
+      if (axisSide==-1) return  yAxisZoomR;
+      else return  yAxisZoomL;
+  }
+
   function getid() {
 
   	var name = d3.select(this).attr('id');

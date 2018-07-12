@@ -22,7 +22,7 @@
         var s,t;
         var IdMarkers = getCommonColumn(data,data1,"markerDbId"); 
         var datal = [];
-	var maxs = d3.max(data, function(d) { return +d.position;  });
+        var maxs = d3.max(data, function(d) { return +d.position;  });
         var maxt = d3.max(data1, function(d) { return +d.position;  });
 
         for (var i = 0; i < IdMarkers.length; i++) {  
@@ -41,14 +41,33 @@
         var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
         
         links(dataForLink, svg, 0, chrWdt, chrHgt, 0, radius * 0.25, 0, 0 , y0, originX,originY,0);
-
+        
  };
+
+  function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp, mapId){
+      for (var i = 0; i < (list.length); i++) {
+        var angi =0;
+        if(leftSide == -1) angi = 180;
+        // var angi = ((i*180/(n))+(0.5*180/(n))-90) ; 
+        angi = angi + (i*180/nm)+(0.5*180/nm) -90 + (360/nm);   
+        var x = radius * Math.cos(radians(angi));
+        var y = radius * Math.sin(radians(angi));
+
+        var dataByChr = data.filter(function(d) { return d.linkageGroup == list[i]  });
+
+        var originX = width/2, axisSide = -1, chrZSide=1;
+            originY = height*0.2;
+
+        if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; } 
+
+          chromosome(dataByChr, svg, chrWdt, chrHgt, +leftSide*angi, x+(x0*+leftSide), (+leftSide*y)+y0, mapId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp); 
+      }
+  }
 
 
   function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2,x0, y0,originX,originY,zoom2chr ) {
-
    // if (zoom2chr == 1 ) zoom2chr = chrWdt;  //It add height depending if the link is between chromosomes or zoom to chr 
-    //console.log(x1 +" - "+x2);
+   // console.log(data);
     svg.append("g")
       .attr("id", "path-multi")
       .attr("class", "link")
@@ -111,6 +130,71 @@
    // d3.select(this).attr("stroke", "#C75601");
         alert("marker:"+d.markerDbId);
   }
+
+
+  function onclicklink(d) {
+
+    //function to redirect each chr itself web page
+   // d3.select(this).attr("stroke", "#C75601");
+        alert("marker:"+d.markerDbId);
+  }
+
+
+  function drawPath(svg, path, startX, startY, endX, endY) {
+
+      path.attr("d", "M" + (startX ) + " " + ( startY)
+                + " "
+                + " " + (endX ) + " " +  (endY));
+  }
+
+  function linkMulti(d) { 
+
+    var svgContainer= $("#matrixSVG");
+    var startElem =  $("#" + d.names);
+    var endElem   = $("#" + d.namet);
+    // var startAng = 90-((d.chrs)*180/n)+(0.5*180/n); 
+    // var endAng = 90-((d.chrt)*180/n)+(0.5*180/n); 
+    var startAng = 90- (((d.chrs)*180/(nm))+(0.5*180/(nm)))- (180/(nm)); 
+    var endAng = 90-(((d.chrt)*180/(nm))+(0.5*180/(nm)))- (180/(nm));  
+    var svgTop  = svgContainer.offset().top;
+    var svgLeft = svgContainer.offset().left;
+    var startCoord = startElem.offset();
+    var endCoord   = endElem.offset();
+
+    if (startAng<0) startAng=0;
+    var startX = (startCoord.left + 0.5*startElem.outerWidth() - svgLeft)*width/svgContainer.outerWidth();  
+    var startY = (startCoord.top  + startElem.outerWidth()- svgTop)*height/svgContainer.outerHeight()+(chrWdt*Math.sin(radians(startAng)));  
+    var endX = (endCoord.left + 0.5*endElem.outerWidth() - svgLeft)*width/svgContainer.outerWidth()+(chrWdt*Math.sin(radians(90-endAng)));    
+    if (endAng<0) endAng=0;
+    var endY = (endCoord.top - svgTop)*height/svgContainer.outerHeight() +(chrWdt*Math.sin(radians(endAng)));
+
+
+
+    // return "M" + (startX ) + " " + ( startY)
+    //           + " "
+    //           + " " + (endX ) + " " +  (endY);
+     return "M" + (startX) + "," + ( startY)
+            + " C" + (startX ) + "," +  ((startY + endY) / 2)
+            + " " + (endX) + "," +  ((startY + endY) / 2)
+            + " " + (endX) + "," +  (endY); 
+  } 
+
+  function connectElements(svg, data) {
+    svg.append("g")
+      // .attr("id", "path-multi")
+      .attr("class", "link")
+      .selectAll("path")
+      .data(data)
+      .enter().append("path")
+      .attr("id", function(d) {  return d.nameLink; })
+      .attr("d", linkMulti)
+      .style("opacity", 1)
+      // .style("stroke", "blue")
+      .style("stroke-width", 2)
+        .on('mouseover', function(d) { d3.select(this).attr("stroke", "blue"); });
+
+  }
+
 
   function getMatrixLinks(chrS,chrT,valueToJoin,chrdistZoom){ //Sirve para el grande tambien
     

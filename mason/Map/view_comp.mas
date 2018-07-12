@@ -24,7 +24,7 @@ $host => ()
   <br><br>
     <h3 class="my-4" align="center">Comparative Map<small></small></h3>
 
-    <form id="form" class="form-horizontal">
+    <form id="form" class="form-horizontal"> 
       <script type="text/javascript">
          function selectFunction() {           
            document.getElementById('submit1').className = "btn btn-primary";     
@@ -110,6 +110,7 @@ $host => ()
 
   //Draw graph
   var svg = d3.select("div#container").append("svg")
+            .attr("class", "svg-content")
             .attr("viewBox", "0 0 " + (width - 10) + " " + (width / 2 + 10))
             .attr("preserveAspectRatio", "xMinYMid meet")
             .attr("id", "matrixSVG");
@@ -124,64 +125,68 @@ $host => ()
   }
 
   function selectMap(mapSId,mapTId,nChr1,nChr2) {
-
+    svg.selectAll("*").remove();
+    $('#ballsWaveG').show();
   // To get data
-  var getChrJSON = function(url,tittle) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('get', url, true);
-      xhr.responseType = 'json';
-      xhr.onload = function() {
-        var status = xhr.status;
-        if (status == 200) {
-          resolve(xhr.response.result); 
-          document.getElementById(tittle).innerHTML = xhr.response.result.name;
+    var getChrJSON = function(url,tittle) {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', url, true);
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+          var status = xhr.status;
+          if (status == 200) {
+            resolve(xhr.response.result); 
+            document.getElementById(tittle).innerHTML = xhr.response.result.name;
 
-        } else {
-          reject(status);
-        }
-      };
-      xhr.send();
-    });
-  };
+          } else {
+            reject(status);
+          }
+        };
+        xhr.send();
+      });
+    };
 
-  const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
-                 }, function(status) {
-                    alert('Something went wrong.');
-                  });
-  const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroupId='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
-                 }, function(status) {
-                    alert('Something went wrong.');
-  });
-  // const chruno = getChrJSON(host + '/static/images/map2.json','tittle1').then(function(d) { return d;
-  // }, function(status) {
-  //   alert('Something went wrong.');
-  // });
-  // const chrdos = getChrJSON(host + '/static/images/map9.json','tittle2').then(function(d) { return d;
-  // }, function(status) {
-  //   alert('Something went wrong.');
-  // });
+  // const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
+  //                }, function(status) {
+  //                   alert('Something went wrong.');
+  //                 });
+    const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroupId='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
+                   }, function(status) {
+                      alert('Something went wrong.');
+    });
+    const chruno = getChrJSON(host + '/static/images/52.json','tittle1').then(function(d) { return d;
+    }, function(status) {
+      alert('Something went wrong.');
+    });
+    // const chrdos = getChrJSON(host + '/static/images/26.json','tittle2').then(function(d) { return d;
+    // }, function(status) {
+    //   alert('Something went wrong.');
+    // });
 
-  Promise.all([
-    chruno,
-    chrdos
-    ])
-  .then((values) => {
-    const source = values[0].linkageGroups;
-    const target = values[1].linkageGroups; 
-    var labels = [];
-    var dataByChr = source.filter(function(d) {
-      var n = {mName: d.markerName, id: d.markerDbId}; 
-      labels.push(n);
-      return d.linkageGroup == nChr1;
+    Promise.all([
+      chruno,
+      chrdos
+      ])
+    .then((values) => {
+      const source = values[0].linkageGroups;
+      const target = values[1].linkageGroups; 
+      var labels = [];
+      var dataByChr = source.filter(function(d) {
+        var n = {mName: d.markerName, id: d.markerDbId}; 
+        labels.push(n);
+        return d.linkageGroup == nChr1;
+      });
+      var dataByChr2 = target.filter(function(d) {
+        return d.linkageGroup == nChr2;
+      }); 
+      $('#ballsWaveG').hide();
+      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY);
     });
-    var dataByChr2 = target.filter(function(d) {
-      return d.linkageGroup == nChr2;
-    });
-	$('#ballsWaveG').hide(); 
-    return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY);
-  });
-  }
+    // 
+
+
+    }
 
   selectMap(mapSId,mapTId,nChr1,nChr2);
 
@@ -240,4 +245,3 @@ $host => ()
 
 </body>
 </html>
-

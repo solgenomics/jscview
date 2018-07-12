@@ -6,6 +6,12 @@ $host => ()
 
 
 <& ../site/header.mas &>
+<style type="text/css">
+  path {
+  fill:none;
+  /*stroke:black;*/
+}
+</style>
 <main role="main" class="container">
 <br><br><br><br>
 
@@ -21,49 +27,38 @@ $host => ()
         };        
       </script>
     </form>
-
+<br>
+<br>
 <div id="container" class="svg-container">
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
 
  <script>
 
-   var width = window.innerWidth*0.7,
-       height = window.innerHeight*0.9, 
-       n = 12,
+   const width = 800,
+       height = 800, 
        isLinear = 0;
-   var host = '<% $host %>';
+   const host = '<% $host %>';
+   const n=5, 
+         nm= n+4 ; // # de chr added to not start from 0 grades 
+
    
    var svg = d3.select("div#container").append("svg")
-    .attr("width", "100%")
-    .attr("height", "150%")
-    .attr("viewBox", "0 0 " + (width - 10) + " " + height*1.5 ) //(width / 2 + 10))
-    .attr("preserveAspectRatio", "xMinYMid meet")
-    .attr("id", "matrixSVG");
+              .attr("class", "svg-content")
+              .attr("viewBox", "0 0 " + width + " " + height ) 
+              .attr("preserveAspectRatio", "xMinYMid meet")
+              .attr("id", "matrixSVG");
 
 
    svg.select("#brushid").remove();
 
+
    // Setting Global variables
-   var radius = width / 3,
-       chrWdt = radius / 12,
-       chrHgt = radius * Math.sin(radians(180 / n))-(radius/5);
-    
-    function distToZoom(){
-      return  chrWdt * 3 + isLinear*200; 
-    }
-    function yAxisSide(axisSide){
-      if (axisSide==1) return  yAxisR;
-      else return  yAxisL;
-    }
-
-    function yAxisZoomSide(axisSide){
-      if (axisSide==-1) return  yAxisZoomR;
-      else return  yAxisZoomL;
-    }
-
-
-   var y0 = chrWdt * 7;
+   const radius = width /3 ,
+       chrWdt = (radius / (n*1.6) > 40) ? 40: radius / (n*1.6)  ,
+       chrHgt = radius * Math.sin(radians(180 / (nm)))-2.5*(radius/(nm)); 
+  
+   var y0 = radius * 0.5; 
    var y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
    var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
    var yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
@@ -77,31 +72,16 @@ $host => ()
                 .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
                 .on("brush", brush);
 
+   window["y0"] = y0;
 
-    window["y0"] = y0;
 
 ///get chrs
 var mapSId = 2;
 var mapTId = 9;
 
-  var getChrJSON = function(url) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('get', url, true);
-      xhr.responseType = 'json';
-      xhr.onload = function() {
-        var status = xhr.status;
-        if (status == 200) {
-          resolve(xhr.response.result);
 
-        } else {
-          reject(status);
-        }
-      };
-      xhr.send();
-    });
-  };
-var myFunct=function(e){return this.indexOf(e)<0;}; 
+
+// var myFunct=function(e){return this.indexOf(e)<0;}; 
 
   // const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
   //                 }, function(status) {
@@ -111,14 +91,16 @@ var myFunct=function(e){return this.indexOf(e)<0;};
   //                 }, function(status) {
   //                   alert('Something went wrong.');
   //                 });
-  const chruno = getChrJSON(host + '/static/images/map2.json').then(function(d) { return d;
+  const chruno = getChrJSON('http://192.168.33.10:3000/static/images/map2.json').then(function(d) { return d;
                   }, function(status) {
                     alert('Something went wrong.');
                   });
-  const chrdos = getChrJSON(host + '/static/images/map9.json').then(function(d) { return d;
+  const chrdos = getChrJSON('http://192.168.33.10:3000/static/images/map9.json').then(function(d) { return d;
                   }, function(status) {
                     alert('Something went wrong.');
                   });
+  var line = d3.line();
+
   Promise.all([
     chruno,
     chrdos
@@ -126,65 +108,50 @@ var myFunct=function(e){return this.indexOf(e)<0;};
     .then((values) => {
       const source = values[0].linkageGroups; 
       const target = values[1].linkageGroups;  
-      var s,t;
-      var IdMarkers = getCommonColumn(source,target,"markerDbId"); 
-       //       var filtered=source.filter(myFunct,IdMarkers);// console.log(filtered);
 
-              var datal = [];
+
+      // Construct links array
+      var s,t; 
+      var IdMarkers = getCommonColumn(source,target,"markerDbId"); 
+      var datal = [];
+      
       for (var i = 0; i < IdMarkers.length; i++) {  
-        s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+        s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i]) { return char; } });
         t = target.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
 
-
-           datal.push({
-                  "chrs": s[0].linkageGroup, 
-                  "s": (+s[0].position),  
-                  "chrt": t[0].linkageGroup, 
-                  "t": (+t[0].position), //-chrWdt*0.5),    //arreglar
-                  "markerDbId": IdMarkers[i]});
-      }
-             //     console.log(datal);
-
-          var forZoom = 1, x0 =50;
-          var comp=1;
-          var list = [1,2,3,4,5,6,7,8,9,10,11,12];
-          // Draw each chr
-
-          for (var i = 0; i < list.length*2; i++) {
-
-            var angi = (360 / (n*2)) * i -90;
-            var x = radius * Math.cos(radians(angi));
-            var y = radius * Math.sin(radians(angi));
-
-            var dataByChr = source.filter(function(d) {
-              return d.linkageGroup == list[i]
-            });
-            var dataByChr2 = source.filter(function(d) {
-              return d.linkageGroup == list[i-12]
-            });
-
-            var originX = width/2, axisSide = -1, chrZSide=1;
-                originY = height*0.2;
-
-            if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; 
-             // y = y+20 * Math.sin(radians(angi)); x= x+20* Math.cos(radians(angi))
-            //  y = y+20 * Math.cos(radians(angi)); x= x+20* Math.sin(radians(angi))
+        for (var si = 0; si < s.length; si++) {   
+          for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
+             datal.push({
+                    "chrs": s[si].linkageGroup, 
+                    "s": (+s[si].position),  
+                    "chrt": t[ti].linkageGroup, 
+                    "t": (+t[ti].position), 
+                    "markerDbId": IdMarkers[i],
+                    "names": "lmk" + mapSId + "_" + s[si].linkageGroup  + "-" + IdMarkers[i],
+                    "namet": "lmk" + mapTId + "_" + t[ti].linkageGroup  + "-" + IdMarkers[i],
+                    "nameLink": "l_"+IdMarkers[i]
+              });
             }
-if (i<12){
-            chromosome(dataByChr, svg, chrWdt, chrHgt, angi, x+x0, y+y0, mapSId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
-} else{
-            chromosome(dataByChr2, svg, chrWdt, chrHgt, angi, x -x0, y+y0, mapTId, list[i-12], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp);
+          } //}
+        }
 
-}
-          }
-          
-          var dataT = preTransfLinkData(datal, 360 / (n*2), 0, 0,chrWdt,chrHgt);
-        //  var dataForLink = transfLinkData(dataT, 360 / (n*2), chrWdt, radius, 0, 0);
-          var dataForLink = transfLinkData1(datal, 360 / (n*2), chrWdt, radius, 0, 0);
-          links(dataForLink, svg, 360 / (n*2), chrWdt, chrHgt, radius, 0, 0, x0, y0, originX,originY,0);
+
+      // Draw Chrs and markers
+
+      const forZoom = 1, x0 =0; //-width/8;
+      const comp=1;
+      var list = [1,2,3]; //,4,5,6,7,8,9,10,11,12,13,14,15];
+
+      // Draw each chr
+      drawSetChr(source,svg,list,x0,y0,1,forZoom,comp, mapSId);
+      drawSetChr(target,svg,list,x0,y0,-1,forZoom,comp, mapTId);
+
+      connectElements(svg,datal);
 
 
     });
+
+
 
 
  </script>
