@@ -1,6 +1,8 @@
 <%args>
-$input_chr => ()
+$input_chrS => ()
+$input_chrT => ()
 $host => ()
+$dbhost => ()
 
 </%args>
 
@@ -35,14 +37,15 @@ $host => ()
 
  <script>
 
+   const host = '<% $host %>';
+   const mapSId =  '<% $input_chrS %>';
+   const mapTId =  '<% $input_chrT %>';
+   const dbhost =  '<% $dbhost %>';
+
    const width = 800,
        height = 800, 
        isLinear = 0;
-   const host = '<% $host %>';
-   const n=5, 
-         nm= n+4 ; // # de chr added to not start from 0 grades 
 
-   
    var svg = d3.select("div#container").append("svg")
               .attr("class", "svg-content")
               .attr("viewBox", "0 0 " + width + " " + height ) 
@@ -52,9 +55,11 @@ $host => ()
 
    svg.select("#brushid").remove();
 
+   var n=1, 
+       nm= n+4 ; // # de chr added to not start from 0 grades 
 
    // Setting Global variables
-   const radius = width /3 ,
+   var radius = width /3 ,
        chrWdt = (radius / (n*1.6) > 40) ? 40: radius / (n*1.6)  ,
        chrHgt = radius * Math.sin(radians(180 / (nm)))-2.5*(radius/(nm)); 
   
@@ -73,11 +78,7 @@ $host => ()
                 .on("brush", brush);
 
    window["y0"] = y0;
-
-
-///get chrs
-var mapSId = 2;
-var mapTId = 9;
+   // console.log(yAxis);
 
 
 
@@ -109,15 +110,65 @@ var mapTId = 9;
       const source = values[0].linkageGroups; 
       const target = values[1].linkageGroups;  
 
+      var chrListSource = d3.map(source, function(d){return d.linkageGroup;}).keys();
+      var chrListTarget = d3.map(target, function(d){return d.linkageGroup;}).keys();
+
+      n =  (chrListSource.length >= chrListTarget.length) ? chrListSource.length : chrListTarget.length;
+      nm= n+4 ; // # de chr added to not start from 0 grades 
+
+
+       // Setting Global variables
+      radius = width /3 ,
+      chrWdt = (radius / (n*1.6) > 40) ? 40: radius / (n*1.6)  ,
+      chrHgt = radius * Math.sin(radians(180 / (nm)))-2.5*(radius/(nm)); 
+  
+      y0 = radius * 0.5; 
+      y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
+      y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
+      yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
+      yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
+      yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
+      yAxisR =  d3.axisRight(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
+      yAxisZoomR =  d3.axisRight(y2).tickSize(3);
+      yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
+
+      vbrush = d3.brushY()
+                  .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
+                  .on("brush", brush);
+
+      window["y0"] = y0;
 
       // Construct links array
+      var s,t;    
+      var dataLinks=  getLinksdata(source,target);
+
+
+      // Draw Chrs and markers
+
+      const forZoom = 1, x0 =0; //-width/8;
+      const comp=1;
+
+
+      // Draw each chr
+      drawSetChr(source,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId);
+      drawSetChr(target,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId);
+
+      connectElements(svg,dataLinks);
+
+    });
+
+
+
+ function getLinksdata (sale1,sale2){
+      // Construct links array
       var s,t; 
-      var IdMarkers = getCommonColumn(source,target,"markerDbId"); 
+      var IdMarkers = getCommonColumn(sale1,sale2,"markerDbId"); 
+
       var datal = [];
       
       for (var i = 0; i < IdMarkers.length; i++) {  
-        s = source.filter( function(char) { if (char.markerDbId===IdMarkers[i]) { return char; } });
-        t = target.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+        s = sale1.filter( function(char) { if (char.markerDbId===IdMarkers[i]) { return char; } });
+        t = sale2.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
 
         for (var si = 0; si < s.length; si++) {   
           for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
@@ -134,25 +185,8 @@ var mapTId = 9;
             }
           } //}
         }
-
-
-      // Draw Chrs and markers
-
-      const forZoom = 1, x0 =0; //-width/8;
-      const comp=1;
-      var list = [1,2,3]; //,4,5,6,7,8,9,10,11,12,13,14,15];
-
-      // Draw each chr
-      drawSetChr(source,svg,list,x0,y0,1,forZoom,comp, mapSId);
-      drawSetChr(target,svg,list,x0,y0,-1,forZoom,comp, mapTId);
-
-      connectElements(svg,datal);
-
-
-    });
-
-
-
+        return datal
+}
 
  </script>
 </main>
