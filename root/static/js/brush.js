@@ -93,7 +93,7 @@ function brush() {
         + zoomSide*chrWdt/2 + " ," + ymax  + " " 
         + (zoomSide*chrdistZoom) + "," + (chrHgt/2 + chrWdt)  + " " 
         + (zoomSide*chrdistZoom) + "," + -(chrHgt/2 + chrWdt));
- 
+
     // To draw marker labels
     svg.selectAll("#zoom" + name).select("#text" + name).selectAll("text.label")  //print marker names
        .data(labels).enter()
@@ -105,7 +105,7 @@ function brush() {
                d3.selectAll(".active").classed("active", false);
                d3.select(d3.event.target).classed("active", true);
            })
-       .on("click",function(d, i) { window.open("https://solgenomics.net/search/markers/markerinfo.pl?marker_id=" + d.id , '_blank'); });
+       .on("click",function(d, i) { window.open(brApiSite + "/search/markers/markerinfo.pl?marker_id=" + d.id , '_blank'); });
  
     force
        .nodes(labels)

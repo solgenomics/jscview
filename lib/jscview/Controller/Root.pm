@@ -31,9 +31,11 @@ The root page (/)
 sub index :Path("/") :Args(0) {
     my ( $self, $c ) = @_;
 
-    # Hello World
+    # Index
+    my $host = $c->request->hostname;
     my $dbhost = $c->config->{dbhost};
   	$c->stash->{dbhost} = $dbhost;
+  	$c->stash->{host} = $host;
     $c->stash(template => 'index.mas');
 }
 

@@ -1,20 +1,49 @@
-  var getChrJSON = function(url) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('get', url, true);
-      xhr.responseType = 'json';
-      xhr.onload = function() {
-        var status = xhr.status;
-        if (status == 200) {
-          resolve(xhr.response.result);
-
-        } else {
-          reject(status);
+    var getJSON =  function (brApiSite){
+        return new Promise(function(resolve, reject) {
+          var request = new XMLHttpRequest();
+          request.open('GET', brApiSite + '/brapi/v1/maps/', true);
+   
+          request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status == 200) {
+              var status = this.status;
+              var myArr = JSON.parse(this.responseText);           
+              resolve(myArr); 
+            } 
         }
-      };
-      xhr.send();
-    });
-  };
+        request.send();
+        }); 
+    }
+
+    var getChrJSON =  function (brApiSite,mapSId){
+        return new Promise(function(resolve, reject) {
+          var request = new XMLHttpRequest();
+          request.open('GET', brApiSite + '/brapi/v1/maps/'+ mapSId +'/positions?pageSize=100000000', true);
+     
+          request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status == 200) {
+              var status = this.status;
+              var myArr = JSON.parse(this.responseText);           
+              resolve(myArr); 
+            } 
+        }
+        request.send();
+        });
+    }
+
+  var getChrJSON1 =  function (brApiSite,mapSId,nChr1,tittle){
+        return new Promise(function(resolve, reject) {
+        var request = new XMLHttpRequest();
+        request.open('GET', brApiSite + '/brapi/v1/maps/'+ mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=100000000', true);
+   
+        request.onreadystatechange = function() {
+          if (this.readyState === 4 && this.status == 200) {
+            var myArr = JSON.parse(this.responseText);           
+            resolve(myArr); 
+            }
+        }
+        request.send();
+        });
+    }
 
   function distToZoom(){
       return  chrWdt * 3 + isLinear*200; 

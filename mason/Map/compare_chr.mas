@@ -1,0 +1,96 @@
+
+<%args>
+$dbhost => ()
+
+</%args>
+<& ../site/header.mas &>
+
+<!-- <body> -->
+<main role="main" class="container">
+    <br><br><br>
+    <h2 class="my-4" align="center" style="color:navy;">Compare</h2><br><br>
+    <form id="FormCompare" >
+        <div class="table-responsive">
+            <table class="table"><tr><td>
+                <div class="form-col">
+                    <div class="form-group col-md-10">
+                        <label for="mapSId">Select a map </label>
+                        <select  class="form-control" id="mapSId" name="mapSId">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="nchT">Chromosome</label>
+                        <input class="form-control" id="nchS" name="nchS" placeholder="Chromosome">
+                    </div>       
+                </div>
+            </td><td>
+                <div class="form-col">
+                    <div class="form-group col-md-10">
+                        <label for="mapSId">Select a map to compare</label>
+                        <select  class="form-control" id="mapTId" name="mapTId">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="nchT">Chromosome</label>
+                        <input class="form-control" id="nchT" name="nchT" placeholder="Chromosome">
+                    </div>                
+                </div>
+            </td></tr>
+            <tr><td>
+                <div class="form-group col-md-6"><br>
+                      <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
+                </div></td></tr>
+            </table>
+        </div>
+    </form>
+    <br><br><br><br><br><br><br>
+</main>
+
+<script type="text/javascript">
+
+    var request = new XMLHttpRequest();
+    var brApiSite = '<% $dbhost %>';
+
+    $('#ballsWaveG').show();
+
+    var result = getJSON(brApiSite).then(function(d) { return d;
+        }, function(status) {
+        alert('Something went wrong');
+    });
+
+
+    Promise.all([ result ])
+        .then((values) => { 
+            const data = values[0].result.data; 
+
+            for (var  i = 0; i<data.length; i++){
+                var select = document.getElementById("mapTId");
+                select.options[select.options.length] = new Option(data[i].name, data[i].mapDbId);
+                var select = document.getElementById("mapSId");
+                select.options[select.options.length] = new Option(data[i].name, data[i].mapDbId);
+            }
+            $('#ballsWaveG').hide();
+    });
+
+
+    function goComparative(){
+        var mapTId = document.getElementById('mapTId').value;
+        var nchT = document.getElementById('nchT').value;
+        var mapSId = document.getElementById('mapSId').value;
+        var nchS = document.getElementById('nchS').value;
+
+        if (nchS != "" && nchT != ""  && mapTId != "" && mapSId != "" ){
+            window.location= '/Map/view_comp?mapSId='+ mapSId +'&mapTId='+ mapTId +'&nChr1='+ nchS +'&nChr2=' + nchT;
+        } else {
+            alert("Please check your inputs.");
+        }
+    }
+
+</script>
+</body>
+<& ../site/footer.mas &>
+
+
+</html>

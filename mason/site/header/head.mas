@@ -13,7 +13,17 @@
    MochiKit = {__export__: false};
 </script>
 
-
+  <div id="ballsWaveG" class="overlay">
+    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+  </div>
+  
 <& /site/header/local_head.mas &>
 
 

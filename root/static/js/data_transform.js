@@ -175,14 +175,14 @@
  function fillArray(myArr){
 
     var data = [], list= [];
-      for (var i = 0; i < myArr.result.linkageGroups.length; i++) {
+      for (var i = 0; i < myArr.result.data.length; i++) {
         data.push({
-          linkageGroup: myArr.result.linkageGroups[i].linkageGroup,
-          position: myArr.result.linkageGroups[i].position,
-          markerName: myArr.result.linkageGroups[i].markerName,
-          markerDbId: myArr.result.linkageGroups[i].markerDbId  //to link solgenomics 
+          linkageGroup: myArr.result.data[i].linkageGroupName,
+          position: myArr.result.data[i].location,
+          markerName: myArr.result.data[i].markerName,
+          markerDbId: myArr.result.data[i].markerDbId  //to link solgenomics 
         });
-        list.push(myArr.result.linkageGroups[i].linkageGroup);
+        list.push(myArr.result.data[i].linkageGroupName);
       }
       return { data: data, list: list } ;
 }
@@ -190,16 +190,16 @@
  function fillFilterArray(myArr,chr){
 
     var data = [], list= [];  
-      for (var i = 0; i < myArr.result.linkageGroups.length; i++) {
-        if(myArr.result.linkageGroups[i].linkageGroup == chr){
+      for (var i = 0; i < myArr.result.data.length; i++) {
+        if(myArr.result.data[i].linkageGroupName == chr){
           data.push({
-            linkageGroup: myArr.result.linkageGroups[i].linkageGroup,
-            position: myArr.result.linkageGroups[i].position,
-            markerName: myArr.result.linkageGroups[i].markerName,
-	          markerDbId: myArr.result.linkageGroups[i].markerDbId
+            linkageGroup: myArr.result.data[i].linkageGroupName,
+            position: myArr.result.data[i].location,
+            markerName: myArr.result.data[i].markerName,
+	          markerDbId: myArr.result.data[i].markerDbId
           });
-          list.push(myArr.result.linkageGroups[i].linkageGroup);
+          list.push(myArr.result.data[i].linkageGroupName);
         }
-      }
+      } 
       return { data: data, list: list } ;
 }

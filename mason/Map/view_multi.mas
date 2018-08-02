@@ -1,11 +1,8 @@
 <%args>
-$input_chrS => ()
-$input_chrT => ()
-$host => ()
+$mapSId => ()
+$mapTId => ()
 $dbhost => ()
-
 </%args>
-
 
 <& ../site/header.mas &>
 <style type="text/css">
@@ -15,20 +12,17 @@ $dbhost => ()
 }
 </style>
 <main role="main" class="container">
-<br><br><br><br>
+    <br><br><br><br>
 
- <h3 align="center">Tomato-EXPIMP 2001  & Tomato-EXPEN 2000</h3> 
+ <div>
+    <table class="table">
+      <tr> 
+        <th colspan="2"><h4 id="tittle2" width="50%" align="center" style="color:navy;"></h4></th>
+        <th colspan="2"><h4 id="tittle1" width="50%" align="center" style="color:navy;"></h4></th>
+      </tr>
+    </table>
+  </div>
 
- <form id="form" class="form-horizontal">
-      
-           
-       <script type="text/javascript">
-         function selectFunction() {           
-           document.getElementById('submit1').className = "btn btn-primary";     
-           document.getElementById('submit2').className = "btn btn-primary";     
-        };        
-      </script>
-    </form>
 <br>
 <br>
 <div id="container" class="svg-container">
@@ -36,10 +30,9 @@ $dbhost => ()
 </div>
 
  <script>
-
-   const host = '<% $host %>';
-   const mapSId =  '<% $input_chrS %>';
-   const mapTId =  '<% $input_chrT %>';
+   
+   var mapSId =  '<% $mapSId %>';
+   var mapTId =  '<% $mapTId %>';
    const dbhost =  '<% $dbhost %>';
 
    const width = 800,
@@ -66,10 +59,10 @@ $dbhost => ()
    var y0 = radius * 0.5; 
    var y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
    var y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
-   var yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
-   var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
-   var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
-   var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
+   var yAxis = d3.axisRight(y1).tickSize(3).ticks(3).tickFormat(d3.format(".2s"));
+   var yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(3).tickFormat(d3.format(".2s"));
+   var yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(3);//.tickFormat(d3.format(".2s"));
+   var yAxisR =  d3.axisRight(y1).tickSize(2).ticks(3);//.tickFormat(d3.format(".2s"));
    var yAxisZoomR =  d3.axisRight(y2).tickSize(3);
    var yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
 
@@ -78,83 +71,76 @@ $dbhost => ()
                 .on("brush", brush);
 
    window["y0"] = y0;
-   // console.log(yAxis);
+   var line = d3.line();
 
+   $('#ballsWaveG').show();
 
-
-// var myFunct=function(e){return this.indexOf(e)<0;}; 
-
-  // const chruno = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapSId +'/positions?pageSize=10000000').then(function(d) { return d;
-  //                 }, function(status) {
-  //                   alert('Something went wrong.');
-  //                 });
-  // const chrdos = getChrJSON('http://192.168.33.10:3100/brapi/v1/maps/'+mapTId + '/positions?pageSize=10000000').then(function(d) { return d;
-  //                 }, function(status) {
-  //                   alert('Something went wrong.');
-  //                 });
-  const chruno = getChrJSON('http://192.168.33.10:3000/static/images/map2.json').then(function(d) { return d;
-                  }, function(status) {
-                    alert('Something went wrong.');
-                  });
-  const chrdos = getChrJSON('http://192.168.33.10:3000/static/images/map9.json').then(function(d) { return d;
-                  }, function(status) {
-                    alert('Something went wrong.');
-                  });
-  var line = d3.line();
-
-  Promise.all([
-    chruno,
-    chrdos
-  ])
-    .then((values) => {
-      const source = values[0].linkageGroups; 
-      const target = values[1].linkageGroups;  
-
-      var chrListSource = d3.map(source, function(d){return d.linkageGroup;}).keys();
-      var chrListTarget = d3.map(target, function(d){return d.linkageGroup;}).keys();
-
-      n =  (chrListSource.length >= chrListTarget.length) ? chrListSource.length : chrListTarget.length;
-      nm= n+4 ; // # de chr added to not start from 0 grades 
-
-
-       // Setting Global variables
-      radius = width /3 ,
-      chrWdt = (radius / (n*1.6) > 40) ? 40: radius / (n*1.6)  ,
-      chrHgt = radius * Math.sin(radians(180 / (nm)))-2.5*(radius/(nm)); 
+  const chrLeft = getChrJSON(dbhost,mapSId).then(function(d) { return d;
+                }, function(status) {
+                alert('Something went wrong.');
+                });
+  const chrRight= getChrJSON(dbhost,mapTId).then(function(d) { return d;
+                }, function(status) {
+                alert('Something went wrong.');
+                });
   
-      y0 = radius * 0.5; 
-      y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
-      y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
-      yAxis = d3.axisRight(y1).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
-      yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(10).tickFormat(d3.format(".2s"));
-      yAxisL =  d3.axisLeft(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
-      yAxisR =  d3.axisRight(y1).tickSize(2).ticks(10);//.tickFormat(d3.format(".2s"));
-      yAxisZoomR =  d3.axisRight(y2).tickSize(3);
-      yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
+  Promise.all([ chrLeft, chrRight ])
+    .then((values) => {
 
-      vbrush = d3.brushY()
-                  .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
-                  .on("brush", brush);
+      if (values[0] && values[1]){
+        document.getElementById('tittle1').innerHTML = values[0].result.name;
+        document.getElementById('tittle2').innerHTML = values[1].result.name;
+        const source = fillArray(values[0]); 
+        const target = fillArray(values[1]);  
 
-      window["y0"] = y0;
+        var chrListSource = unique(source.list);
+        var chrListTarget = unique(target.list);
+        var unit1 = values[0].result.unit;
+        var unit2 = values[1].result.unit;
 
-      // Construct links array
-      var s,t;    
-      var dataLinks=  getLinksdata(source,target);
+        n =  (chrListSource.length >= chrListTarget.length) ? chrListSource.length : chrListTarget.length;
+        nm= n+4 ; // # de chr added to not start from 0 grades 
 
+         // Setting Global variables
+        radius = width /3 ,
+        chrWdt = (radius / (n*1.6) > 40) ? 40: radius / (n*1.6)  ,
+        chrHgt = radius * Math.sin(radians(180 / (nm)))-2.5*(radius/(nm)); 
+    
+        y0 = radius * 0.5; 
+        y1 = d3.scaleLinear().range([-(chrWdt+chrHgt)/2, (chrWdt + chrHgt)/2]);
+        y2 = d3.scaleLinear().range([-chrWdt-chrHgt/2, chrWdt + chrHgt/2]); // Use - chwidth to draw circles in the borders
+        yAxis = d3.axisRight(y1).tickSize(3).ticks(3).tickFormat(d3.format(".2s"));
+        yAxisZoom = d3.axisLeft(y2).tickSize(3).ticks(3).tickFormat(d3.format(".2s"));
+        yAxisL =  d3.axisLeft(y1).tickSize(1).ticks(3);//.tickFormat(d3.format(".2s"));
+        yAxisR =  d3.axisRight(y1).tickSize(1).ticks(3);//.tickFormat(d3.format(".2s"));
+        yAxisZoomR =  d3.axisRight(y2).tickSize(3);
+        yAxisZoomL =  d3.axisLeft(y2).tickSize(3);//.tickFormat(d3.format(".2s"));
 
-      // Draw Chrs and markers
+        vbrush = d3.brushY()
+                    .extent([[0, -(chrWdt+chrHgt)/2-1],[chrWdt, chrWdt/2+chrHgt/2+1]])
+                    .on("brush", brush);
 
-      const forZoom = 1, x0 =0; //-width/8;
-      const comp=1;
+        window["y0"] = y0;
 
+        // Construct links array
+        var s,t;    
+        var dataLinks=  getLinksdata(source.data,target.data);
 
-      // Draw each chr
-      drawSetChr(source,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId);
-      drawSetChr(target,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId);
+        // Draw Chrs and markers
+        const forZoom = 0, x0 =0;
+        const comp=1;
 
-      connectElements(svg,dataLinks);
+        // Draw each chr
+        drawSetChr(source.data,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId, unit1);
+        drawSetChr(target.data,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId, unit2);
 
+        connectElements(svg,dataLinks);
+
+        $('#ballsWaveG').hide();
+      }
+      else{
+        alert('Something went wrong. Map id not valid !');
+      }
     });
 
 
@@ -180,7 +166,7 @@ $dbhost => ()
                     "markerDbId": IdMarkers[i],
                     "names": "lmk" + mapSId + "_" + s[si].linkageGroup  + "-" + IdMarkers[i],
                     "namet": "lmk" + mapTId + "_" + t[ti].linkageGroup  + "-" + IdMarkers[i],
-                    "nameLink": "l_"+IdMarkers[i]
+                    "nameLink": "l_s"+ s[si].linkageGroup + "_t" + t[ti].linkageGroup + "_" +  IdMarkers[i]
               });
             }
           } //}

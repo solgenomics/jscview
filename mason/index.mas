@@ -8,123 +8,89 @@ $host => ()
 </%args>
 <& ../site/header.mas &>
 
+<link type="text/css" rel="stylesheet" href="/static/css/style-cook.css">
+
+
 <!-- <body> -->
-  <div id="ballsWaveG" class="overlay">
-    <div id="ballsWaveG_1" class="ballsWaveG"></div>
-    <div id="ballsWaveG_2" class="ballsWaveG"></div>
-    <div id="ballsWaveG_3" class="ballsWaveG"></div>
-    <div id="ballsWaveG_4" class="ballsWaveG"></div>
-    <div id="ballsWaveG_5" class="ballsWaveG"></div>
-    <div id="ballsWaveG_6" class="ballsWaveG"></div>
-    <div id="ballsWaveG_7" class="ballsWaveG"></div>
-    <div id="ballsWaveG_8" class="ballsWaveG"></div>
-  </div>
+
  <div class="container" id="container">
-  <br><br>
-  <h2 class="my-4" align="center">All Maps
-        <small></small>
-  </h2>
-  
-<script type="text/javascript">
-   
-  var request = new XMLHttpRequest();
-  var brApiSite = '<% $dbhost %>';
-  var host = '<% $host %>';
+  <br><br><br><br>
 
-  request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
+<section id="services">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2 class="section-heading" style="color:navy;">Comparative Map Viewer</h2>
+            <hr class="my-4">
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <div class="thumbnail-holder">
+                <a href="/Map/map_search/">
+                  <img src="/static/images/search.jpg" alt="Comparative" title="Comparative" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" width="140" height="140">
+                  <div class="hover-cover"></div>
+                  <div class="hover-icon">Search</div>
+                </a>
+              </div>
+              <div class="recipe-box-content no-stars">      
+                <h3 class="mb-3">Search a<br>map</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <div class="thumbnail-holder">
+                <a href="/Map/compare/">
+                  <img src="/static/images/multi_comp.png" alt="Comparative" title="Comparative" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" width="140" height="140">
+                  <div class="hover-cover"></div>
+                  <div class="hover-icon">Compare</div>
+                </a>
+              </div>
+              <div class="recipe-box-content no-stars">      
+                <h3 class="mb-3">Compare <br>maps</h3>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+           <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <div class="thumbnail-holder">
+                <a href="/Map/compare_chr/">
+                  <img src="/static/images/comp.png" alt="Comparative" title="Comparative" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" width="140" height="140">
+                  <div class="hover-cover"></div>
+                  <div class="hover-icon">Compare</div>
+                </a>
+              </div>
+              <div class="recipe-box-content no-stars">      
+                <h3 class="mb-3">Compare <br>chromosomes</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <div class="thumbnail-holder">
+                <a href="/Map/map_list/">
+                  <img src="/static/images/all_map.png" alt="Comparative" title="Comparative" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" width="140" height="140">
+                  <div class="hover-cover"></div>
+                  <div class="hover-icon">Go</div>
+                </a>
+              </div>
+              <div class="recipe-box-content no-stars">      
+                <h3 class="mb-3">Map<br>list</h3>
+              </div>
+            </div>
+          </div>
+          
 
-  request.onreadystatechange = function() {
-
-    if (this.readyState === 4) {
-
-    var myArr = JSON.parse(this.responseText).result.data;
-
-      for (var  i = 0; i<myArr.length; i++){
-
-        var iDiv = document.createElement('div');
-        iDiv.className = 'row';
-
-        var innerDiv = document.createElement('div');
-        innerDiv.className = 'col-md-6';
-        innerDiv.id = 'map' + myArr[i].mapDbId;
-        iDiv.appendChild(innerDiv);
-
-        var innerDivT = document.createElement('div');
-        innerDivT.className = 'col-md-6';
-        innerDivT.id = 'mapp' + myArr[i].mapDbId;
-        iDiv.appendChild(innerDivT);
-        innerDivT.innerHTML = "<h3>"+ myArr[i].name +"</h3><p>Specie: <i>"+ myArr[i].species +"</i></p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br></p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
-
-        document.getElementById('container').appendChild(iDiv);
-
-        //Calling the chr drawing function
-        maps(myArr[i].mapDbId);
-
-       }
-     }
-             $('#ballsWaveG').hide();
-  }
-
-  request.send();
-
-
-//Function to draw chrs
-function maps(map){
-
-  var requestmap = new XMLHttpRequest();
-
-  requestmap.open('GET', brApiSite + '/brapi/v1/maps/'+ map + '/?pageSize=1000000'); 
- 
-  requestmap.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      var myArr1 = JSON.parse(this.responseText);
-      var LG =myArr1.result.linkageGroups;
-
-
-      var svg = d3.select("div#map"+map).append("svg")
-                  .attr("viewBox", "0 0 800 500"  ) 
-                 .attr("preserveAspectRatio", "xMinYMin meet")
-                  .attr("id", "matrixSVG1");
-
-      var width =45;
-      var height =  $("#mapp"+map).height()*1.2;
-      var maxpos = Math.max.apply(Math,LG.map(function(o){return o.maxPosition;}));
-      var conv = height/maxpos;
-
-     for (var i = 0; i < LG.length; i++) {  
-
-        svg.append("rect")
-        .attr("id", "rect" )
-        .attr("x", width*(i+1))
-        .attr("y", width/2)
-        .attr("rx", width/2)
-        .attr("ry", width/2)
-        .attr("width", width/1.5)
-        .attr("height",  LG[i].maxPosition * conv)
-        .attr("fill", 'transparent')
-        .attr("stroke", "black")
-        .style("stroke-width", 1);
-
-        svg.append("rect")
-        .attr("id", "rect" )
-        .attr("x", width*(i+1))
-        .attr("y", width)
-        .attr("width", width/1.5)
-        .attr("height", ( LG[i].maxPosition * conv - (width) ))
-        .attr("fill", '#d88c49')
-        .attr("stroke", "#d88c49")
-        .style("stroke-width", 0);
-      }
-    }
-  }
-  requestmap.send();
-
-};
-
-</script>
-
-</div>
+        </div>
+      </div>
+    </section>
+<br><br><br><br><br><br>
+    </div>
 
 <& ../site/footer.mas &>
 

@@ -1,9 +1,7 @@
  
 <%args>
 $input_map => ()
-$input_chr => ()
 $dbhost => ()
-$host => ()
 
 </%args>
 
@@ -33,13 +31,8 @@ $host => ()
 <& ../site/header.mas &>
 
 <main role="main" class="container">
-    <br>
-    <script type="text/javascript">
-      var nmap =  '<% $input_map %>';
-     </script>
-
-    <br><br><br><br>
-    <h3 id="tittle" align="center" ></h3>
+    <br><br><br><br><br>
+    <h3 id="tittle" align="center" style="color:navy;"></h3>
 
     <div id="container" class="svg-container">
       <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
@@ -54,12 +47,13 @@ $host => ()
     </div>
 
     <script>
-
+     var nmap =  '<% $input_map %>';
+     var brApiSite = '<% $dbhost %>';
      var width = 800; 
      var height = 320;
-     var brApiSite = '<% $dbhost %>';
-     var host = '<% $host %>';
 
+     $('#ballsWaveG').show();
+     
      var svg = d3.select("div#container").append("svg")
                   .attr("class", "svg-content")
                   .attr("viewBox", "0 0 " + width + " " + height ) 
@@ -69,7 +63,7 @@ $host => ()
      svg.select("#brushid").remove();
 
      var isLinear = 1, axisSide=-1, chrZSide = 1;
-     var comp=0;
+     var comp=false;
      var chrWdt = 20,
          chrHgt = 150; 
 
@@ -90,6 +84,7 @@ $host => ()
 
      function selectMap(map) {
 
+      
       svg.selectAll("*").remove();
       document.getElementById("tittle").innerHTML = "";
       var requestmap = new XMLHttpRequest();
@@ -99,10 +94,10 @@ $host => ()
       requestmap.onreadystatechange = function() {
         if (this.readyState === 4) {
 
-          var myArr1 = JSON.parse(this.responseText);
-          document.getElementById("tittle").innerHTML = myArr1.result.name;
-          document.getElementById("type").innerHTML = "Type: " + myArr1.result.type;
-          document.getElementById("unit").innerHTML = "Unit: " + myArr1.result.unit;
+          var resp = JSON.parse(this.responseText);
+          document.getElementById("tittle").innerHTML = resp.result.name;
+          document.getElementById("type").innerHTML = "Type: " + resp.result.type;
+          document.getElementById("unit").innerHTML = "Unit: " + resp.result.unit;
           
         }
       }
@@ -118,6 +113,7 @@ $host => ()
 
         var myArr = JSON.parse(this.responseText); 
         var result = fillArray(myArr);
+        var unit = myArr.result.unit;
         var data = result.data; 
         var list = unique(result.list);
         var forZoom = 0;
@@ -137,12 +133,13 @@ $host => ()
             });
 
             // Draw each chr
-            chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp);
+            chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp,unit);
 
           }
         } 
+        $('#ballsWaveG').hide();
       }
-      request.send();
+      request.send();      
     };
 
     selectMap(nmap); 

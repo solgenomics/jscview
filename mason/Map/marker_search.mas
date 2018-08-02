@@ -1,0 +1,136 @@
+
+<%args>
+$dbhost => ()
+$host => ()
+
+</%args>
+<& ../site/header.mas &>
+
+<style type="text/css">
+#input {
+    /*background-image: url('/css/searchicon.png'); /* Add a search icon to input */*/
+    background-position: 10px 12px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+    width: 100%; /* Full-width */
+    font-size: 16px; /* Increase font-size */
+    padding: 12px 20px 12px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+    margin-bottom: 12px; /* Add some space below the input */
+}
+
+#UL {
+    /* Remove default list styling */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#UL li a {
+    border: 1px solid #ddd; /* Add a border to all links */
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #f6f6f6; /* Grey background color */
+    padding: 12px; /* Add some padding */
+    text-decoration: none; /* Remove default text underline */
+    font-size: 18px; /* Increase the font-size */
+    color: black; /* Add a black text color */
+    display: block; /* Make it into a block element to fill the whole list */
+}
+
+#UL li a:hover:not(.header) {
+    background-color: #eee; /* Add a hover effect to all links, except for headers */
+}
+</style>
+
+<!-- <body> -->
+<!--   <div id="ballsWaveG" class="overlay">
+    <div id="ballsWaveG_1" class="ballsWaveG"></div>
+    <div id="ballsWaveG_2" class="ballsWaveG"></div>
+    <div id="ballsWaveG_3" class="ballsWaveG"></div>
+    <div id="ballsWaveG_4" class="ballsWaveG"></div>
+    <div id="ballsWaveG_5" class="ballsWaveG"></div>
+    <div id="ballsWaveG_6" class="ballsWaveG"></div>
+    <div id="ballsWaveG_7" class="ballsWaveG"></div>
+    <div id="ballsWaveG_8" class="ballsWaveG"></div>
+  </div> -->
+ <div class="container" id="container">
+  <br><br><br><br>
+  <h2 class="my-4" align="center">Search by Marker name
+        <small></small>
+  </h2>
+
+
+  <section id="services">
+    <!-- <input type="text" id="input" onkeyup="getMapList()" placeholder="Search for names.."> -->
+
+    <ul id="UL" class="UL"></ul>
+
+  </section>
+
+    </div>
+
+  <script type="text/javascript">
+
+    var request = new XMLHttpRequest();
+    var brApiSite = '<% $dbhost %>';
+    var host = '<% $host %>'; alert("sdf" + host); 
+    var cList = $('ul.UL'); .-8;
+    //  $('#ballsWaveG').show();
+
+    // var result = getJSON(brApiSite).then(function(d) { return d;
+    //         }, function(status) {
+    //           alert('Something went wrong');
+    //         });
+
+
+    // Promise.all([ result ])
+    //  .then((values) => { 
+    //     const data = values[0].result.data; 
+
+    //     $.each(data, function(i)
+    //     {
+    //         var li = $('<li/>')
+    //             .addClass('ui-menu-item')
+    //             .attr('role', 'menuitem')
+    //             .appendTo(cList);
+    //         var idMap = $('<a/>')
+    //             .addClass('ui-all')
+    //             .attr("href",host+ "/Map/" + data[i].mapDbId)
+    //             .text(data[i].name)
+    //             .appendTo(li);
+    //     });
+    //      $('#ballsWaveG').hide();
+    // });
+
+
+    function getMapList() {
+        // Declare variables
+        var input, filter, ul, li, a, i;
+        input = document.getElementById('input');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("UL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+    
+</script>
+  </script>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<& ../site/footer.mas &>
+
+</body>
+</html>

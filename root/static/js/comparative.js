@@ -1,5 +1,5 @@
 
- function selectCompMap(data,map,data1,map1,nChr1,nChr2,y0,originX,originY) {
+ function selectCompMap(data,map,data1,map1,nChr1,nChr2,y0,originX,originY,comp, unit1,unit2) {
 
   if (nChr1>1){  document.getElementById('before').innerHTML = "< Chr " + (+nChr1-1); } else { document.getElementById('before').innerHTML = ""; }
   if (nChr1<12){  document.getElementById('after').innerHTML = "Chr " + (+nChr1+1) + " >"; } else { document.getElementById('after').innerHTML = ""; }
@@ -15,8 +15,8 @@
         axisSide = 1;
 
         // Draw each chr 
-        chromosome(data, svg, chrWdt, chrHgt, 0, radius * 0.25 , y0,map, list[0], 1,isLinear,1,originX,originY,axisSide, 1,-1); 
-        chromosome(data1, svg, chrWdt, chrHgt, 0, radius, y0,map1, list[1], 0,isLinear,1,originX,originY,axisSide2, chrZSide2,-1);
+        chromosome(data, svg, chrWdt, chrHgt, 0,radius*0.25,y0,map, list[0], 1,isLinear,1,originX,originY,axisSide, chrZSide1,comp,unit1); 
+        chromosome(data1, svg, chrWdt, chrHgt, 0, radius,  y0,map1, list[1], 0,isLinear,1,originX,originY,axisSide2, chrZSide2,comp,unit2);
 
         //for links
         var s,t;
@@ -35,7 +35,7 @@
                     "chrt": t[0].linkageGroup, 
                     "t": (+t[0].position), 
                     "markerDbId": IdMarkers[i]});
-        }
+        } 
 
         var ang = 0;
         var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
@@ -44,8 +44,10 @@
         
  };
 
-  function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp, mapId){
+  async function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp, mapId,unit){
+ 
       for (var i = 0; i < (list.length); i++) {
+
         var angi =0;
         if(leftSide == -1) angi = 180;
         // var angi = ((i*180/(n))+(0.5*180/(n))-90) ; 
@@ -60,14 +62,13 @@
 
         if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; } 
 
-          chromosome(dataByChr, svg, chrWdt, chrHgt, +leftSide*angi, x+(x0*+leftSide), (+leftSide*y)+y0, mapId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp); 
+          chromosome(dataByChr, svg, chrWdt, chrHgt, +leftSide*angi, x+(x0*+leftSide), (+leftSide*y)+y0, mapId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp, unit); 
       }
   }
 
 
   function links(data, svg, ang, chrWdt, chrHgt, radius, x1, x2,x0, y0,originX,originY,zoom2chr ) {
-   // if (zoom2chr == 1 ) zoom2chr = chrWdt;  //It add height depending if the link is between chromosomes or zoom to chr 
-   // console.log(data);
+
     svg.append("g")
       .attr("id", "path-multi")
       .attr("class", "link")
@@ -181,7 +182,6 @@
 
   function connectElements(svg, data) {
     svg.append("g")
-      // .attr("id", "path-multi")
       .attr("class", "link")
       .selectAll("path")
       .data(data)
@@ -191,7 +191,9 @@
       .style("opacity", 1)
       // .style("stroke", "blue")
       .style("stroke-width", 2)
-        .on('mouseover', function(d) { d3.select(this).attr("stroke", "blue"); });
+        .on('mouseover', function(d) { 
+          // d3.select(this).attr("stroke", "blue");
+           });
 
   }
 

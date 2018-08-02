@@ -4,25 +4,14 @@ $input_chr2 => ()
 $mapSId => ()
 $mapTId => ()
 $dbhost => ()
-$host => ()
 
 </%args>
 
 <& ../site/header.mas &>
 
 <main role="main" class="container">
-  <div id="ballsWaveG" class="overlay">
-    <div id="ballsWaveG_1" class="ballsWaveG"></div>
-    <div id="ballsWaveG_2" class="ballsWaveG"></div>
-    <div id="ballsWaveG_3" class="ballsWaveG"></div>
-    <div id="ballsWaveG_4" class="ballsWaveG"></div>
-    <div id="ballsWaveG_5" class="ballsWaveG"></div>
-    <div id="ballsWaveG_6" class="ballsWaveG"></div>
-    <div id="ballsWaveG_7" class="ballsWaveG"></div>
-    <div id="ballsWaveG_8" class="ballsWaveG"></div>
-  </div>
   <br><br>
-    <h3 class="my-4" align="center">Comparative Map<small></small></h3>
+    <h3 class="my-4" align="center" style="color:navy;">Comparative Map<small></small></h3>
 
     <form id="form" class="form-horizontal"> 
       <script type="text/javascript">
@@ -57,9 +46,8 @@ $host => ()
     var mapTId = '<% $mapTId %>';
     var mapSId = '<% $mapSId %>';
     var brApiSite = '<% $dbhost %>';
-    var host = '<% $host %>';
-    var nChr1 = '<% $input_chr1 %>',
-        nChr2 = '<% $input_chr2 %>';
+    var nChr1 = '<% $input_chr1 %>';
+    var nChr2 = '<% $input_chr2 %>';
 
   // Setting Global variables
   var width = 800, 
@@ -124,69 +112,43 @@ $host => ()
     return id;
   }
 
+
   function selectMap(mapSId,mapTId,nChr1,nChr2) {
+
     svg.selectAll("*").remove();
     $('#ballsWaveG').show();
-  // To get data
-    var getChrJSON = function(url,tittle) {
-      return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('get', url, true);
-        xhr.responseType = 'json';
-        xhr.onload = function() {
-          var status = xhr.status;
-          if (status == 200) {
-            resolve(xhr.response.result); 
-            document.getElementById(tittle).innerHTML = xhr.response.result.name;
 
-          } else {
-            reject(status);
-          }
-        };
-        xhr.send();
-      });
-    };
-
-  // const chruno = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=1000000000','tittle1').then(function(d) { return d;
-  //                }, function(status) {
-  //                   alert('Something went wrong.');
-  //                 });
-    const chrdos = getChrJSON(brApiSite + '/brapi/v1/maps/'+mapTId + '/positions?linkageGroupId='+ nChr2 +'&pageSize=1000000000','tittle2').then(function(d) { return d;
-                   }, function(status) {
-                      alert('Something went wrong.');
-    });
-    const chruno = getChrJSON(host + '/static/images/52.json','tittle1').then(function(d) { return d;
-    }, function(status) {
-      alert('Something went wrong.');
-    });
-    // const chrdos = getChrJSON(host + '/static/images/26.json','tittle2').then(function(d) { return d;
-    // }, function(status) {
-    //   alert('Something went wrong.');
-    // });
+    // To get data
+    const chrLeft = getChrJSON1(brApiSite,mapSId,nChr1).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
+    const chrRight = getChrJSON1(brApiSite,mapTId,nChr2).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
 
     Promise.all([
-      chruno,
-      chrdos
-      ])
+      chrLeft,
+      chrRight
+    ])
     .then((values) => {
-      const source = values[0].linkageGroups;
-      const target = values[1].linkageGroups; 
-      var labels = [];
-      var dataByChr = source.filter(function(d) {
-        var n = {mName: d.markerName, id: d.markerDbId}; 
-        labels.push(n);
-        return d.linkageGroup == nChr1;
-      });
-      var dataByChr2 = target.filter(function(d) {
-        return d.linkageGroup == nChr2;
-      }); 
-      $('#ballsWaveG').hide();
-      return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY);
+      if (values[0] && values[1]){
+        document.getElementById("tittle1").innerHTML = values[0].result.name;
+        document.getElementById("tittle2").innerHTML = values[1].result.name;
+        const source = values[0];  
+        const target = values[1]; 
+        var unit1 = values[0].result.unit;
+        var unit2 = values[1].result.unit;
+        var dataByChr = fillFilterArray(source, nChr1).data;
+        var dataByChr2 = fillFilterArray(target, nChr2).data;
+        var comp = true;
+
+        $('#ballsWaveG').hide();
+        return selectCompMap(dataByChr,mapSId, dataByChr2,mapTId,nChr1,nChr2,y0,originX,originY,comp, unit1, unit2);
+      }
     });
-    // 
-
-
-    }
+  }
 
   selectMap(mapSId,mapTId,nChr1,nChr2);
 

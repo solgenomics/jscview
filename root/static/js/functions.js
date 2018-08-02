@@ -1,5 +1,5 @@
 
-  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp) {
+  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit) {
 
     //isLinear
     if (isLinear == 0 ) { var va = 2;   }
@@ -47,7 +47,7 @@
     svg.append("text")
        .attr("dx", -width*1.5)
        .attr("dy", -(height + width )/2 -1 ) 
-       .text("cM")
+       .text(unit)
        .attr("font-size",10);    
 
     svg.append("rect")
@@ -63,7 +63,15 @@
         .style("stroke-width", 1)
         .on('click', onclick)
         .on("mouseover", function(d) {    
-                tooltip.select('.label').html("hi"); });
+          if (window['side'+i]==1) { var st ='s' }
+          else {var st ='t' };
+          d3.select("svg").selectAll("[id*='_" +st + chrId + "_']").attr("stroke", "navy");
+          tooltip.select('.label').html("hi"); })
+        .on("mouseout", function(d) {  
+          if (window['side'+i]==1) { var st ='s' }
+          else {var st ='t' };  
+          d3.select("svg").selectAll("[id*='_"+st + chrId + "_']").attr("stroke", "lightgray");
+          });
 
     svg.selectAll("line.horizontal")
         .attr("id", "lines" + i)
@@ -199,32 +207,32 @@
         .attr("transform", " translate(" + ( width / 2 * axisSide) + ","+ (0)  + ")")
         .call(yAxisSide(axisSide));
 
-      if (window['comp'] != -1){
+      if (window['comp'] == false){
 
-      svg.append("g").attr("id", "svgog" + i).selectAll("text.horizontal")
-        .attr("id", "textxg" + i)
-        .data(dataT)
-        .enter().append("text")
-          .attr("class", "label-bg")
-          .attr("dx", width * 1.5)
-          .attr("height", 0);
+          svg.append("g").attr("id", "svgog" + i).selectAll("text.horizontal")
+            .attr("id", "textxg" + i)
+            .data(dataT)
+            .enter().append("text")
+              .attr("class", "label-bg")
+              .attr("dx", width * 1.5)
+              .attr("height", 0);
 
-      svg.append("g").attr("id", "svgo" + i).selectAll("text.horizontal")
-        .attr("id", "textx" + i)
-        .data(dataT)
-        .enter().append("text")
-          .attr("class", "label")
-          .attr("dx", width * 1.5)
-          .attr("height", 0)
-          .on("mouseover", mouseovertxt)
-        .on("mouseout", mouseouttxt);
+          svg.append("g").attr("id", "svgo" + i).selectAll("text.horizontal")
+            .attr("id", "textx" + i)
+            .data(dataT)
+            .enter().append("text")
+              .attr("class", "label")
+              .attr("dx", width * 1.5)
+              .attr("height", 0)
+              .on("mouseover", mouseovertxt)
+            .on("mouseout", mouseouttxt);
 
-      // for lines names
-      svg.append("g").attr("id", "svgol" + i).selectAll("line.l")
-        .attr("id", "lname" + i)
-        .data(dataT)
-        .enter().append("line")
-        .style("stroke", randomColor);
+          // for lines names
+          svg.append("g").attr("id", "svgol" + i).selectAll("line.l")
+            .attr("id", "lname" + i)
+            .data(dataT)
+            .enter().append("line")
+            .style("stroke", randomColor);
 
       }
 
@@ -358,7 +366,7 @@
     var res = a.replace("rect", "").split("_");     
     
     if (window['comp'] != 1){
-      window.location='http://maps.solgenomics.net/Map/view_chr?map='+res[0]+'&chr=' + res[1];
+      window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1];
     }
   }
 

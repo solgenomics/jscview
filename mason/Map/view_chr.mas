@@ -2,27 +2,13 @@
 $input_map => ()
 $input_chr => ()
 $dbhost => ()
-$host => ()
 
 </%args>
-
-
 <& ../site/header.mas &>
-<!-- <body> -->
-  <main role="main" class="container">
-  <div id="ballsWaveG" class="overlay">
-    <div id="ballsWaveG_1" class="ballsWaveG"></div>
-    <div id="ballsWaveG_2" class="ballsWaveG"></div>
-    <div id="ballsWaveG_3" class="ballsWaveG"></div>
-    <div id="ballsWaveG_4" class="ballsWaveG"></div>
-    <div id="ballsWaveG_5" class="ballsWaveG"></div>
-    <div id="ballsWaveG_6" class="ballsWaveG"></div>
-    <div id="ballsWaveG_7" class="ballsWaveG"></div>
-    <div id="ballsWaveG_8" class="ballsWaveG"></div>
-  </div>
 
+  <main role="main" class="container">
     <br><br>
-    <h3 class="my-4" id="tittle" align="center">All Maps<small></small></h3>
+    <h3 class="my-4" id="tittle" align="center" style="color:navy;"><small></small></h3>
 
     <form id="form1" class="form-horizontal">
       <div class="table-responsive">
@@ -48,7 +34,8 @@ $host => ()
       var nChr = '<% $input_chr %>';
       var map =  '<% $input_map %>';
       var brApiSite = '<% $dbhost %>';
-      var host = '<% $host %>';
+
+      $('#ballsWaveG').show();
 
       var width = 800; 
       var height = 500; 
@@ -130,11 +117,12 @@ $host => ()
 
           if (this.readyState === 4) {
 
-            var myArr = JSON.parse(this.responseText); 
-            var result = fillFilterArray(myArr,nchr);
+            var resp = JSON.parse(this.responseText); 
+            var result = fillFilterArray(resp,nchr);
             var data = result.data;
+            var unit = resp.result.unit;
 
-            document.getElementById("tittle").innerHTML = myArr.result.name;
+            document.getElementById("tittle").innerHTML = resp.result.name;
 
             // Setting layout
             var radius = 0;
@@ -142,7 +130,7 @@ $host => ()
             var forZoom = 1;
 
             // Draw each chr
-            chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, map, nchr, forZoom,isLinear,n,originX,originY,chrZSide,axisSide,sideComp);
+            chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, map, nchr, forZoom,isLinear,n,originX,originY,chrZSide,axisSide,sideComp,unit);
 
             }
         $('#ballsWaveG').hide();
@@ -167,12 +155,15 @@ $host => ()
             }
           }
       }
+
       function goComparative(){
-        // var nChr = '<% $input_chr %>';
-        // var map =  '<% $input_map %>';
         var mapTId = document.getElementById('mapTId').value;
         var nchT = document.getElementById('nchT').value;
-        window.location= host + '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
+        if (mapTId != "" && nchT != ""){
+            window.location= '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
+        } else {
+            alert("Select a map and chromosome number.");
+        }
       }
 
 
@@ -186,11 +177,11 @@ $host => ()
 
           if (this.readyState === 4) {
 
-            var myArr = JSON.parse(this.responseText).result.data;
+            var resp = JSON.parse(this.responseText).result.data;
 
-            for (var  i = 0; i<myArr.length; i++){
+            for (var  i = 0; i<resp.length; i++){
                 var select = document.getElementById("mapTId");
-                select.options[select.options.length] = new Option(myArr[i].name, myArr[i].mapDbId);
+                select.options[select.options.length] = new Option(resp[i].name, resp[i].mapDbId);
 
            }
           }
@@ -198,7 +189,7 @@ $host => ()
         request.send();
       }
 
-getMapList();
+    getMapList();
 
     </script>
     <div class="form-group">
@@ -234,7 +225,7 @@ getMapList();
           <div class="form-group col-md-6">
             <label for="mapTId">Compare to map</label>
                     <select  class="form-control" id="mapTId" name="mapTId">
-                      <option ><------Select-----></option>
+                      <option value=""></option>
                     </select>
           </div>
           <div class="form-group col-md-6">
