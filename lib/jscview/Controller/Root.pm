@@ -33,7 +33,9 @@ sub index :Path("/") :Args(0) {
 
     # Index
     my $host = $c->request->hostname;
-    my $dbhost = $c->config->{dbhost};
+    # my $dbhost = $c->config->{dbhost};
+    my $dbhost = $host;
+    $dbhost =~ s/maps/www/;
   	$c->stash->{dbhost} = $dbhost;
   	$c->stash->{host} = $host;
     $c->stash(template => 'index.mas');
