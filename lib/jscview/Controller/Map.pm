@@ -27,11 +27,9 @@ sub index :Path('/Map/view_chr/') :Args(0) {
   my $params = $c->req->body_params();
   my $input_chr = $c->req->param("chr");
   my $input_map = $c->req->param("map");
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
   $c->stash->{dbhost} = $dbhost;
   $c->stash->{host} = $host;
   $c->stash->{input_chr} = $input_chr;
@@ -48,13 +46,10 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   my $input_chr2 = $c->req->param("nChr2");  
   my $input_mapSId = $c->req->param("mapSId");
   my $input_mapTId = $c->req->param("mapTId");
-  my $dbhost = $c->config->{dbhost};
-  my $host = $c->request->hostname;
-  # $c->stash->{dbhost} = $dbhost;
-  # $c->stash->{host} = $host;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{mapSId} = $input_mapSId;
   $c->stash->{mapTId} = $input_mapTId;
   $c->stash->{input_chr1} = $input_chr1;
@@ -69,11 +64,10 @@ sub view_multiple :Path('/Map/view_multi/') :Args(0) {
   my $params = $c->req->body_params();
   my $input_mapSId = $c->req->param("mapSId");
   my $input_mapTId = $c->req->param("mapTId");
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{dbhost} = $dbhost;
   $c->stash->{host} = $host; 
   $c->stash->{mapSId} = $input_mapSId;
@@ -86,11 +80,10 @@ sub index2 :Path('/Map/') :Args(1) {
   my ($self, $c, $id) = @_;
 
   $c->stash->{input_map} = $id;
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/map.mas');
@@ -100,12 +93,9 @@ sub index2 :Path('/Map/') :Args(1) {
 sub map_search :Path('/Map/map_search/') :Args(0) {
   my ($self, $c, $id) = @_;
 
-  # $c->stash->{input_map} = $id;
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->config->{host};
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
@@ -115,11 +105,10 @@ sub map_search :Path('/Map/map_search/') :Args(0) {
 sub map_list :Path('/Map/map_list/') :Args(0) {
   my ($self, $c, $id) = @_;
 
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/map_list.mas');
@@ -129,11 +118,10 @@ sub map_list :Path('/Map/map_list/') :Args(0) {
 sub marker_search :Path('/Map/marker_search/') :Args(0) {
   my ($self, $c, $id) = @_;
   
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/marker_search.mas');
@@ -142,12 +130,10 @@ sub marker_search :Path('/Map/marker_search/') :Args(0) {
 sub compare :Path('/Map/compare/') :Args(0) {
   my ($self, $c, $id) = @_;
 
-  # $c->stash->{input_map} = $id;
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/compare.mas');
@@ -156,12 +142,10 @@ sub compare :Path('/Map/compare/') :Args(0) {
 sub compare_chr :Path('/Map/compare_chr/') :Args(0) {
   my ($self, $c, $id) = @_;
 
-  # $c->stash->{input_map} = $id;
-  # my $dbhost = $c->config->{dbhost};
-  # my $host = $c->request->hostname;
-  my $host =  $c->request->hostname;
+  my $host = $c->request->base;
   my $dbhost = $host;
-  $dbhost =~ s/maps/www/;
+  $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+  
   $c->stash->{host} = $host; 
   $c->stash->{dbhost} = $dbhost;
   $c->stash(template => 'Map/compare_chr.mas');
