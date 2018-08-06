@@ -397,11 +397,18 @@
       return meanL;
   }
 
+  escapeSpecialChars = function(string) {
+        return string.replace(/[-\/\\^$*+?:.()|[\]{}]/g, '\\$&')
+      };
+
   function hightlightMarkers(labels){
       
+      var name;
+
       for (var i = 1; i < labels.length; i++) { 
         labels[i].markerDbId=labels[i].markerDbId.replace(/\./g,''); 
-        svg.selectAll("#lpmk"+ labels[i].markerDbId).style("stroke", "red").moveToFront();
+        name =escapeSpecialChars(labels[i].markerDbId) ;
+        svg.selectAll("#lpmk"+ name).style("stroke", "red").moveToFront();
       }
    }
 
