@@ -50,6 +50,7 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
   my $dbhost = $host;
   $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
+  $c->stash->{dbhost} = $dbhost;
   $c->stash->{mapSId} = $input_mapSId;
   $c->stash->{mapTId} = $input_mapTId;
   $c->stash->{input_chr1} = $input_chr1;
