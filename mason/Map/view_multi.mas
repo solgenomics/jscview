@@ -128,11 +128,11 @@ $dbhost => ()
 
         // Draw Chrs and markers
         const forZoom = 0, x0 =0;
-        const comp=1;
+        const comp=true;
 
         // Draw each chr
-        drawSetChr(source.data,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId, unit1);
-        drawSetChr(target.data,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId, unit2);
+        drawSetChr(source.data,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId, unit1, chrListSource);
+        drawSetChr(target.data,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId, unit2, chrListTarget);
 
         connectElements(svg,dataLinks);
 

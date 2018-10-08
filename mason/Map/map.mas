@@ -133,7 +133,7 @@ $dbhost => ()
             });
 
             // Draw each chr
-            chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp,unit);
+            chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp,unit,list);
 
           }
         } 

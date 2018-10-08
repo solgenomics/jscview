@@ -41,7 +41,6 @@ $dbhost => ()
       var height = 500; 
       var n =1;
       var isLinear = 1, axisSide=-1, chrZSide = 1;
-      var sideComp=1;
 
       var svg = d3.select("div#container").append("svg")
                   .attr("class", "svg-content")
@@ -121,6 +120,7 @@ $dbhost => ()
             var result = fillFilterArray(resp,nchr);
             var data = result.data;
             var unit = resp.result.unit;
+            var comp=false;
 
             document.getElementById("tittle").innerHTML = resp.result.name;
 
@@ -130,7 +130,7 @@ $dbhost => ()
             var forZoom = 1;
 
             // Draw each chr
-            chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, map, nchr, forZoom,isLinear,n,originX,originY,chrZSide,axisSide,sideComp,unit);
+            chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, map, nchr, forZoom,isLinear,n,originX,originY,chrZSide,axisSide,comp,unit,nchr);
 
             }
         $('#ballsWaveG').hide();

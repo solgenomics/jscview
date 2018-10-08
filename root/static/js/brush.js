@@ -34,6 +34,9 @@ function brush() {
      var zoomSide = sideName(name);
      var chrdistZoom = distToZoom(); 
      var comp = vComp();         //To evaluate if it is for comparative graph
+     
+     if(comp==false) comp=1 
+     else comp =-1  
 
      var force = d3.forceSimulation()
          .force("link", d3.forceLink().id(function(d) { return d.id; })) //.distance(3))

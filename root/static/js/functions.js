@@ -1,6 +1,6 @@
 
-  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit) {
-
+  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit,list) {
+console.log(comp);
     //isLinear
     if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
@@ -72,6 +72,10 @@
           else {var st ='t' };  
           d3.select("svg").selectAll("[id*='_"+st + chrId + "_']").attr("stroke", "lightgray");
           });
+    var  markerColor;
+    if (comp ==true && forZoom ==0) markerColor=randomColor(); 
+    else markerColor=randomColor;
+
 
     svg.selectAll("line.horizontal")
         .attr("id", "lines" + i)
@@ -82,7 +86,7 @@
         .attr("y1", function(d) { return d.y1;  })
         .attr("x2", function(d) { return d.x2;  })
         .attr("y2", function(d) { return d.y2;  })
-        .style("stroke", randomColor)
+        .style("stroke", markerColor) 
         .style("stroke-width", 2)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout)
@@ -171,10 +175,10 @@
         .call(yAxisZoomSide(zoomSide));
 
       /* cM for axes */
-      zoom.append("text")
-        .attr("dx", distZoom-20)
-        .attr("dy", -width-3-height/2)
-        .text("cM");
+      // zoom.append("text")
+      //   .attr("dx", distZoom-20)
+      //   .attr("dy", -width-3-height/2)
+      //   .text("cM");
         // .attr("font-size",16);  
 
       /* Symbol close [X] */
@@ -361,12 +365,12 @@
 
     //function to redirect each chr itself web page
     var a = d3.select(this).attr('id');
-    list = []; 
-    list.push(a.replace("rect", "")); 
+    listA = []; 
+    listA.push(a.replace("rect", "")); 
     var res = a.replace("rect", "").split("_");     
     
-    if (window['comp'] != 1){
-      window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1];
+    if (window['comp'] != true){
+      window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1]; // + '&list=' + list;
     }
   }
 

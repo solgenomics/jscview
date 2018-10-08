@@ -39,7 +39,7 @@
 
         var ang = 0;
         var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
-        
+        // alert(svg.select("#lines"+nChr1).attr('stroke'));
         links(dataForLink, svg, 0, chrWdt, chrHgt, 0, radius * 0.25, 0, 0 , y0, originX,originY,0);
         
  };
@@ -78,10 +78,10 @@
       .attr("id", function(d) {  return "lpmk" + (d.markerDbId); })
       .attr("d", link)
       .style("opacity", 1)
-      .style("stroke-width", 1)
+      .style("stroke-width", 2)
       .attr("transform", " translate(" + (originX) + "," + (originY +y0) + ") ") 
         .on('mouseover', function(d) {
-           d3.select(this).attr("stroke", "#C75601");
+           d3.select(this).attr("stroke", "#C75600");
          //  alert("marker:"+d.markerDbId);
     }); //.text(function(d) { alert ("er") ; return "--->" + d.markerDbId ; });
 
