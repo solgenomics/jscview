@@ -11,7 +11,7 @@ function brush() {
         y1.domain([0, eval(maxpos)]);
         var ymin = y1(document.getElementById('minrange').value); 
         var ymax = y1(document.getElementById('maxrange').value); 
-        var s = [ymin,ymax];  console.log(y1.domain());
+        var s = [ymin,ymax]; 
         svg.select("#" + name).selectAll("rect").attr("y",ymin).attr("x",0).attr("width",chrWdt).attr("height",ymax-ymin).style("display","inline");
      } else {
         if (!d3.event.sourceEvent) return; // Only transition after input.
@@ -67,7 +67,7 @@ function brush() {
         .attr("x2", function(d) {  return zoomSide*(chrdistZoom + chrWdt); })
         .attr("y1", function(d,i) {  
                   if (comp==-1) labelsChrSforComp.push({x:comp*zoomSide*(chrWdt/2), y: d.y, t: d.markerName, id: d.markerDbId, markerDbId: d.markerDbId });     
-                      var m = {x: 0, d: d.y, n: d.markerName, markerDbId: d.markerDbId , y: y2(d.y), t: d.markerName, id: d.markerDbId }; 
+                      var m = {x: comp*zoomSide*(chrWdt/2), d: d.y, n: d.markerName, markerDbId: d.markerDbId , y: y2(d.y), t: d.markerName, id: d.markerDbId }; 
                       dataL.push(m); 
                   if(i > 0) links.push({source: dataL[i-1], target: m}); //it was labels[i-1] I don't know why, verify                 
                 return y2(d.y); })
@@ -109,7 +109,7 @@ function brush() {
                d3.select(d3.event.target).classed("active", true);
            })
        .on("click",function(d, i) { window.open(brApiSite + "/search/markers/markerinfo.pl?marker_id=" + d.id , '_blank'); });
- 
+
     force
        .nodes(labels)
        .on("tick",  ticked); 
@@ -134,7 +134,7 @@ function brush() {
 //      svg.selectAll("#zoom" + window["target"] ).selectAll("line")
       svg.selectAll("#svg" + window["target"] ).selectAll("line")
         .attr("d", function(d){
-          dataChrT.push({x:comp*zoomSide*(chrWdt/2), d: (d.y), n: d.markerName, markerDbId: d.markerDbId });
+          dataChrT.push({x:comp*zoomSide*(chrWdt/2), d: (d.y), n: d.markerName, markerDbId: d.markerDbId }); 
         });
       drawCompLine(labelsChrSforComp, dataChrT, zoomSide*(chrdistZoom+chrWdt/2), chrdistZoom, y0);  
     }
@@ -154,13 +154,10 @@ function brush() {
       if (comp==-1) dcomp= -comp*chrWdt;    //comp=-1 rtl, labels between chr and zoom
 
       //Fit labels and path after movement, make changes here
-      svg.select("#zoom" + name).select("#text" + name).selectAll("text.label") 
+      svg.select("#zoom" + name).selectAll("#text" + name).selectAll("text.label") 
         .attr("id", function(d) {  return "lamk" + (d.markerDbId); })
-        .attr("x", function(d) { d.x = chrdistZoom + chrWdt * 2 * comp ;  return zoomSide*d.x; })
-        .attr("y", function(d,i) {
-                       //    if(d.y > chrHgt + chrWdt) d.y = chrHgt + chrWdt*2;        // arrreglar aca los max y min  ... junto a donde se define la variable
-                       return d.y; })
-       // .attr("font-size",'20px')
+        .attr("x", function(d) { d.x = chrdistZoom + chrWdt * 2 * comp ; return zoomSide*d.x; })
+        .attr("y", function(d) { return d.y; })
         .style("fill", function(d) {
           if (d.markerDbId == getmarkerid()) return "red";
           else return "black"; });
@@ -171,10 +168,10 @@ function brush() {
           if (i < labels.length) {
            var s = [zoomSide*(chrdistZoom+dcomp), y2(d.d )],  
            m = [zoomSide*(chrdistZoom+(chrWdt*comp)+dcomp), y2(d.d)],
-           e = [zoomSide*(labels[i].x - 5 ), labels[i].y ];    
-           return l([s, m, e]);
+           e = [zoomSide*(chrdistZoom + chrWdt * 2 * comp ), labels[i].y ];    
+           return l([s, m, e]); 
          }
-       });
+       }); 
     }
 }
 

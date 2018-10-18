@@ -39,9 +39,8 @@
 
         var ang = 0;
         var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
-        // alert(svg.select("#lines"+nChr1).attr('stroke'));
         links(dataForLink, svg, 0, chrWdt, chrHgt, 0, radius * 0.25, 0, 0 , y0, originX,originY,0);
-        
+
  };
 
   async function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp, mapId,unit){
@@ -49,20 +48,20 @@
       for (var i = 0; i < (list.length); i++) {
 
         var angi =0;
+
         if(leftSide == -1) angi = 180;
-        // var angi = ((i*180/(n))+(0.5*180/(n))-90) ; 
-        angi = angi + (i*180/nm)+(0.5*180/nm) -90 + (360/nm);   
+        angi = angi + (i*180/nm)+(0.5*180/nm) -90 + (360/nm);
+
         var x = radius * Math.cos(radians(angi));
         var y = radius * Math.sin(radians(angi));
-
         var dataByChr = data.filter(function(d) { return d.linkageGroup == list[i]  });
-
         var originX = width/2, axisSide = -1, chrZSide=1;
             originY = height*0.2;
 
         if (angi >90 && angi < 270) { angi = angi -180; axisSide = 1; chrZSide = -1; } 
 
-          chromosome(dataByChr, svg, chrWdt, chrHgt, +leftSide*angi, x+(x0*+leftSide), (+leftSide*y)+y0, mapId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp, unit); 
+        chromosome(dataByChr, svg, chrWdt, chrHgt, +leftSide*angi, x+(x0*+leftSide), (+leftSide*y)+y0, mapId, list[i], forZoom, isLinear, 3, originX,originY,chrZSide,axisSide,comp, unit); 
+      
       }
   }
 
@@ -82,45 +81,19 @@
       .attr("transform", " translate(" + (originX) + "," + (originY +y0) + ") ") 
         .on('mouseover', function(d) {
            d3.select(this).attr("stroke", "#C75600");
-         //  alert("marker:"+d.markerDbId);
-    }); //.text(function(d) { alert ("er") ; return "--->" + d.markerDbId ; });
+    }); 
 
-
- 
-    svg.selectAll("text")
-            .data(data)
-            .enter()
-        .append("text")
-            .attr("x", 8)
-            .attr("dy", 28)
-           .append("textPath")
-        .attr("xlink:href", function (d) { return "#lpmk" + (d.markerDbId); })
-        .text(function (d) { return "hola-lpmk" + (d.markerDbId); });
-
-
-
-
+      // To draw linked lines in zoom
     function link(d) { 
-  /*    var text = svg.append("text")
-    .attr("x", d.tx +x2)
-    .attr("dy",  d.ty);
-
-        text.append("textPath")
-    .attr("xlink:href","lpmk" + (d.markerDbId))
-          .attr("transform", " translate(" + (originX) + "," + (originY +y0) + ") ") 
-
-    .text("My counter text");*/
 
       if (zoom2chr == 1 ) {
        return "M" + (d.tx +x2 ) + " " + ( d.ty)
-              + "1"
               + " " + (d.sx+ x1 ) + " " +  (d.sy);
       } else { 
         return "M" + (d.tx+ x2 -x0 ) + "," + ( d.ty)
             + "C" + (d.tx+ x2 -x0 ) + "," +  ((d.ty + d.sy) / 2)
             + " " + (d.sx+ x1+x0) + "," +  ((d.ty + d.sy) / 2)
             + " " + (d.sx+ x1+x0) + "," +  (d.sy); 
-
       }
     } 
   } 
@@ -153,8 +126,6 @@
     var svgContainer= $("#matrixSVG");
     var startElem =  $("#" + d.names);
     var endElem   = $("#" + d.namet);
-    // var startAng = 90-((d.chrs)*180/n)+(0.5*180/n); 
-    // var endAng = 90-((d.chrt)*180/n)+(0.5*180/n); 
     var startAng = 90- (((d.chrs)*180/(nm))+(0.5*180/(nm)))- (180/(nm)); 
     var endAng = 90-(((d.chrt)*180/(nm))+(0.5*180/(nm)))- (180/(nm));  
     var svgTop  = svgContainer.offset().top;
@@ -169,11 +140,6 @@
     if (endAng<0) endAng=0;
     var endY = (endCoord.top - svgTop)*height/svgContainer.outerHeight() +(chrWdt*Math.sin(radians(endAng)));
 
-
-
-    // return "M" + (startX ) + " " + ( startY)
-    //           + " "
-    //           + " " + (endX ) + " " +  (endY);
      return "M" + (startX) + "," + ( startY)
             + " C" + (startX ) + "," +  ((startY + endY) / 2)
             + " " + (endX) + "," +  ((startY + endY) / 2)

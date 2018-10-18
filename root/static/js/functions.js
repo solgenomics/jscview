@@ -1,6 +1,6 @@
 
   function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit,list) {
-console.log(comp);
+
     //isLinear
     if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
@@ -375,7 +375,6 @@ console.log(comp);
   }
 
   function getPosition(labels){
-      
       //function to get marker labels position in order to not overlapping each other
       var u, label1 =[], label2=[], meanL = []; 
       
@@ -395,7 +394,7 @@ console.log(comp);
 
       label2= label2.reverse();
       for (var i = 0; i < label1.length; i++) { 
-          u = (label1[label1.length-i-1] + label2[label1.length-i-1]) /2
+          u = (label1[label1.length-i-1] + label2[label1.length-i-1]) /2;
           meanL.push({y: u, t: labels[i].t, x: labels[i].x, id: labels[i].id, markerDbId: labels[i].markerDbId} ); 
       }
       return meanL;
