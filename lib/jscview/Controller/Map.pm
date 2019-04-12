@@ -27,6 +27,7 @@ sub index :Path('/Map/view_chr/') :Args(0) {
     my $params = $c->req->body_params();
     my $input_chr = $c->req->param("chr");
     my $input_map = $c->req->param("map");
+    my $list = $c->req->param("list");
     my $host = $c->request->base;
     my $dbhost = $host;
 
@@ -36,6 +37,7 @@ sub index :Path('/Map/view_chr/') :Args(0) {
     $c->stash->{host} = $host;
     $c->stash->{input_chr} = $input_chr;
     $c->stash->{input_map} = $input_map;
+    $c->stash->{list} = $list;
     $c->stash(template => 'Map/view_chr.mas');
 }
 
