@@ -61,7 +61,15 @@
         .attr("fill", 'transparent')
         .attr("stroke", "black")
         .style("stroke-width", 1)
-        .on('click', onclick)
+        .on('click', function(d){
+            var a = d3.select(this).attr('id');
+            listA = []; 
+            listA.push(a.replace("rect", "")); 
+            var res = a.replace("rect", "").split("_");     
+            if (window['comp'] != true){
+              window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1]+ '&list=' + list;
+            }
+          })
         .on("mouseover", function(d) {    
           if (window['side'+i]==1) { var st ='s' }
           else {var st ='t' };
@@ -358,20 +366,6 @@
   function moveToFront() {
 
     this.parentNode.appendChild(this);
-  }
-
-
-  function onclick() {
-
-    //function to redirect each chr itself web page
-    var a = d3.select(this).attr('id');
-    listA = []; 
-    listA.push(a.replace("rect", "")); 
-    var res = a.replace("rect", "").split("_");     
-    
-    if (window['comp'] != true){
-      window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1]; // + '&list=' + list;
-    }
   }
 
   function getPosition(labels){

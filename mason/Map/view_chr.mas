@@ -2,7 +2,7 @@
 $input_map => ()
 $input_chr => ()
 $dbhost => ()
-
+$list => ()
 </%args>
 <& ../site/header.mas &>
 
@@ -15,10 +15,10 @@ $dbhost => ()
         <table class="table">
           <tr>
             <th align="center" width="50%">
-              <a id="before" class="btn btn-primary" href="#" onclick="nChr=+nChr-1; selectMap(map,nChr);"></a>
+              <a id="before" class="btn btn-primary" href="#" onclick="nChr=aList[aList.indexOf(nChr)-1]; selectMap(map,nChr,aList);"></a>
               </th>
             <th align="center" width="50%">
-            <a id="after"  class="btn btn-primary" href="#" onclick="nChr=+nChr+1; selectMap(map,nChr);"></a>
+            <a id="after"  class="btn btn-primary" href="#" onclick="nChr=aList[aList.indexOf(nChr)+1]; selectMap(map,nChr,aList);"></a>
             </th>
           </tr>
         </table>
@@ -34,6 +34,8 @@ $dbhost => ()
       var nChr = '<% $input_chr %>';
       var map =  '<% $input_map %>';
       var brApiSite = '<% $dbhost %>';
+      var list = '<% $list %>';
+      var aList = list.split(',');
 
       $('#ballsWaveG').show();
 
@@ -69,7 +71,7 @@ $dbhost => ()
 
       svg.select("#brushid").remove();
 
-      selectMap(map,nChr);
+      selectMap(map,nChr,aList);
 
 
       /* Supporting functions */
@@ -98,13 +100,14 @@ $dbhost => ()
         svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) id = d.markerDbId;  return "2"});
 
         return id;
-
       }
 
-      function selectMap(map, nchr) {
+      function selectMap(map, nchr,aList) {
+        
+        var indexofChr = aList.indexOf(nChr);
 
-        if (nchr>1){  document.getElementById('before').innerHTML = "< Chr " + (+nchr-1); } else { document.getElementById('before').innerHTML = ""; }
-        if (nchr<12){  document.getElementById('after').innerHTML = "Chr " + (+nchr+1) + " >"; } else { document.getElementById('after').innerHTML = ""; }
+        if (indexofChr>0){  document.getElementById('before').innerHTML = "< Chr " + (aList[indexofChr-1]); } else { document.getElementById('before').style.display = 'none'; }
+        if (indexofChr<aList.length-1){  document.getElementById('after').innerHTML = "Chr " + (aList[indexofChr+1]) + " >"; } else { document.getElementById('after').style.display = 'none'; }
 
         svg.selectAll("*").remove();
 
