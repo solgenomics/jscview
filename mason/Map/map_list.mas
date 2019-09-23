@@ -14,7 +14,7 @@ $dbhost => ()
    
   var request = new XMLHttpRequest();
   var brApiSite = '<% $dbhost %>';
-  
+console.log(brApiSite);  
   request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
 
   request.onreadystatechange = function() {
