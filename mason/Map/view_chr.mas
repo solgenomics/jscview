@@ -184,7 +184,7 @@ $list => ()
 
             for (var  i = 0; i<resp.length; i++){
                 var select = document.getElementById("mapTId");
-                select.options[select.options.length] = new Option(resp[i].name, resp[i].mapDbId);
+                select.options[select.options.length] = new Option(resp[i].mapName, resp[i].mapDbId);
 
            }
           }

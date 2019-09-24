@@ -32,9 +32,9 @@ $dbhost => ()
                     for (var  i = 0; i<data.length; i++){
 
                         var select = document.getElementById("mapTId");
-                        select.options[select.options.length] = new Option(data[i].name, data[i].mapDbId);
+                        select.options[select.options.length] = new Option(data[i].mapName, data[i].mapDbId);
                         var select = document.getElementById("mapSId");
-                        select.options[select.options.length] = new Option(data[i].name, data[i].mapDbId);
+                        select.options[select.options.length] = new Option(data[i].mapName, data[i].mapDbId);
                     }
 
                      $('#ballsWaveG').hide();

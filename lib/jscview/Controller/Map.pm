@@ -28,11 +28,13 @@ sub index :Path('/Map/view_chr/') :Args(0) {
     my $input_chr = $c->req->param("chr");
     my $input_map = $c->req->param("map");
     my $list = $c->req->param("list");
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/; 
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/; 
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{dbhost} = $dbhost;
     $c->stash->{host} = $host;
@@ -50,11 +52,13 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
     my $input_chr2 = $c->req->param("nChr2");  
     my $input_mapSId = $c->req->param("mapSId");
     my $input_mapTId = $c->req->param("mapTId");
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{dbhost} = $dbhost;
     $c->stash->{mapSId} = $input_mapSId;
@@ -70,11 +74,13 @@ sub view_multiple :Path('/Map/view_multi/') :Args(0) {
     my $params = $c->req->body_params();
     my $input_mapSId = $c->req->param("mapSId");
     my $input_mapTId = $c->req->param("mapTId");
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{dbhost} = $dbhost;
     $c->stash->{host} = $host; 
@@ -87,11 +93,13 @@ sub index2 :Path('/Map/') :Args(1) {
     my ($self, $c, $id) = @_;
 
     $c->stash->{input_map} = $id;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
@@ -101,11 +109,13 @@ sub index2 :Path('/Map/') :Args(1) {
 
 sub map_search :Path('/Map/map_search/') :Args(0) {
     my ($self, $c, $id) = @_;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
@@ -114,11 +124,13 @@ sub map_search :Path('/Map/map_search/') :Args(0) {
 
 sub map_list :Path('/Map/map_list/') :Args(0) {
     my ($self, $c, $id) = @_;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
     
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
@@ -128,11 +140,13 @@ sub map_list :Path('/Map/map_list/') :Args(0) {
 
 sub marker_search :Path('/Map/marker_search/') :Args(0) {
     my ($self, $c, $id) = @_;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
@@ -141,11 +155,13 @@ sub marker_search :Path('/Map/marker_search/') :Args(0) {
 
 sub compare :Path('/Map/compare/') :Args(0) {
     my ($self, $c, $id) = @_;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
 
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
@@ -154,11 +170,13 @@ sub compare :Path('/Map/compare/') :Args(0) {
 
 sub compare_chr :Path('/Map/compare_chr/') :Args(0) {
     my ($self, $c, $id) = @_;
-    my $host = $c->request->base;
-    my $dbhost = $host;
+    my $host = $c->config->{host};
+    my $dbhost = $c->config->{dbhost};
+    # my $host = $c->request->base;
+    # my $dbhost = $host;
    
-    $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/; 
-    $dbhost =~ s/http:\/\/maps/https:\/\/www/;
+    # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/; 
+    # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;

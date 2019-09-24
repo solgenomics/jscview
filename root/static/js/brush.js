@@ -83,7 +83,7 @@ function brush() {
       svg.selectAll("path").remove();
     } 
     else{
-      hightlightMarkers(dataL);
+      //hightlightMarkers(dataL);
       svg.selectAll(".zoom").selectAll(".rect").style("stroke", "red");
     }
 

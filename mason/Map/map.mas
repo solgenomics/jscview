@@ -93,12 +93,11 @@ $dbhost => ()
 
       requestmap.onreadystatechange = function() {
         if (this.readyState === 4) {
-
           var resp = JSON.parse(this.responseText);
-          document.getElementById("tittle").innerHTML = resp.result.name;
+          document.getElementById("tittle").innerHTML = resp.result.mapName;
           document.getElementById("type").innerHTML = "Type: " + resp.result.type;
           document.getElementById("unit").innerHTML = "Unit: " + resp.result.unit;
-          
+          document.getElementById("comments").innerHTML = resp.result.comments; 
         }
       }
       requestmap.send();
@@ -114,11 +113,10 @@ $dbhost => ()
         var myArr = JSON.parse(this.responseText); 
         var result = fillArray(myArr);
         var unit = myArr.result.unit;
-        var data = result.data; 
-        var list = unique(result.list);
+        var data = result.data;        
+        var list = unique(result.list).sort(sortNumber);
+        var listx = list.sort(sortNumber); console.log(list);
         var forZoom = 0;
-
-        document.getElementById("comments").innerHTML = myArr.result.comments; 
 
           // Setting layout
           var radius = width / (list.length + 1),

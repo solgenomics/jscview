@@ -88,8 +88,8 @@ $dbhost => ()
     .then((values) => {
 
       if (values[0] && values[1]){
-        document.getElementById('tittle1').innerHTML = values[0].result.name;
-        document.getElementById('tittle2').innerHTML = values[1].result.name;
+        document.getElementById('tittle1').innerHTML = values[0].result.mapName;
+        document.getElementById('tittle2').innerHTML = values[1].result.mapName;
         const source = fillArray(values[0]); 
         const target = fillArray(values[1]);  
 
@@ -159,14 +159,14 @@ $dbhost => ()
         for (var si = 0; si < s.length; si++) {   
           for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
              datal.push({
-                    "chrs": s[si].linkageGroup, 
-                    "s": (+s[si].position),  
-                    "chrt": t[ti].linkageGroup, 
-                    "t": (+t[ti].position), 
+                    "chrs": s[si].linkageGroupName, 
+                    "s": (+s[si].location),  
+                    "chrt": t[ti].linkageGroupName, 
+                    "t": (+t[ti].location), 
                     "markerDbId": IdMarkers[i],
-                    "names": "lmk" + mapSId + "_" + s[si].linkageGroup  + "-" + IdMarkers[i],
-                    "namet": "lmk" + mapTId + "_" + t[ti].linkageGroup  + "-" + IdMarkers[i],
-                    "nameLink": "l_s"+ s[si].linkageGroup + "_t" + t[ti].linkageGroup + "_" +  IdMarkers[i]
+                    "names": "lmk" + mapSId + "_" + s[si].linkageGroupName  + "-" + IdMarkers[i],
+                    "namet": "lmk" + mapTId + "_" + t[ti].linkageGroupName  + "-" + IdMarkers[i],
+                    "nameLink": "l_s"+ s[si].linkageGroup + "_t" + t[ti].linkageGroupName + "_" +  IdMarkers[i]
               });
             }
           } //}

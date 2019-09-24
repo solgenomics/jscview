@@ -20,6 +20,7 @@
 
         //for links
         var s,t;
+        // var IdMarkers = getCommonColumn(data,data1,"markerName"); 
         var IdMarkers = getCommonColumn(data,data1,"markerDbId"); 
         var datal = [];
         var maxs = d3.max(data, function(d) { return +d.position;  });
@@ -35,6 +36,7 @@
                     "chrt": t[0].linkageGroup, 
                     "t": (+t[0].position), 
                     "markerDbId": IdMarkers[i]});
+                    //"markerName": IdMarkers[i]});
         } 
 
         var ang = 0;

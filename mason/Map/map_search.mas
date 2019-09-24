@@ -46,7 +46,7 @@ $dbhost => ()
   <h2 class="my-4" align="center">Search by Map name</h2>
 
   <section id="services">
-    <input type="text" id="input" onkeyup="getMapList()" placeholder="Search for names..">
+    <input type="text" id="input" onkeyup="getMapList()" placeholder="Search for names ...">
     <ul id="UL" class="UL"></ul>
   </section>
 
@@ -77,7 +77,7 @@ $dbhost => ()
             var idMap = $('<a/>')
                 .addClass('ui-all')
                 .attr("href", "/Map/" + data[i].mapDbId)
-                .text(data[i].name)
+                .text(data[i].mapName)
                 .appendTo(li);
         });
          $('#ballsWaveG').hide();

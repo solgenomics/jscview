@@ -43,7 +43,32 @@
         }
         request.send();
         });
-    }
+  }
+
+  var authRequest = function (brApiSite){
+      
+      var request = new XMLHttpRequest();
+      request.open('POST', brApiSite + '/brapi/v1/login');
+      request.setRequestHeader('Content-Type', 'application/json');
+
+      request.onreadystatechange = function () {
+          if (this.readyState === 4) {
+              console.log('Status:', this.status);
+              console.log('Headers:', this.getAllResponseHeaders());
+              console.log('Body:', this.responseText);
+          }
+      };
+
+      var body = {
+        'client_id': '',
+        'grant_type': 'authorization_code',
+        'password': 'password0',
+        'username': 'username0'
+      };
+
+      request.send(JSON.stringify(body));
+  }
+  
 
   function distToZoom(){
       return  chrWdt * 3 + isLinear*200; 
@@ -145,4 +170,29 @@
         });
     });
     return result;
+  }
+
+  function compareValues(key, order='asc') {
+      return function(a, b) {
+          if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+              return 0;
+          }
+
+          const varA = (typeof a[key] === 'string') ? a[key].toUpperCase() : a[key];
+          const varB = (typeof b[key] === 'string') ? b[key].toUpperCase() : b[key];
+
+          let comparison = 0;
+          if (varA > varB) {
+              comparison = 1;
+          } else if (varA < varB) {
+              comparison = -1;
+          }
+          return (
+              (order == 'desc') ? (comparison * -1) : comparison
+          );
+      };
+  }
+  
+  function sortNumber(a, b) {
+      return a - b;
   }

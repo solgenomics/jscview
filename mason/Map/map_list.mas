@@ -37,7 +37,7 @@ console.log(brApiSite);
         innerDivT.className = 'col-md-6';
         innerDivT.id = 'mapp' + myArr[i].mapDbId;
         iDiv.appendChild(innerDivT);
-        innerDivT.innerHTML = "<h3>"+ myArr[i].name +"</h3><p>Specie: <i>"+ myArr[i].species +"</i></p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br></p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
+        innerDivT.innerHTML = "<h3>"+ myArr[i].mapName +"</h3><p>Specie: <i>"+ myArr[i].species +"</i></p><p>Linkage groups: "+ myArr[i].linkageGroupCount +" <br>Type: "+ myArr[i].type +" <br>Unit: "+ myArr[i].unit +"<br>Marker count: "+ myArr[i].markerCount +"<br></p><a class='btn btn-primary' href='/Map/"+ myArr[i].mapDbId +"'>View map</a><hr>";
 
         document.getElementById('container').appendChild(iDiv);
 
@@ -62,7 +62,7 @@ function maps(map){
     if (this.readyState === 4) {
 
       var myArr1 = JSON.parse(this.responseText);
-      var LG =myArr1.result.linkageGroups;
+      var LG =myArr1.result.data;
 
 
       var svg = d3.select("div#map"+map).append("svg")
@@ -75,7 +75,7 @@ function maps(map){
       var maxpos = Math.max.apply(Math,LG.map(function(o){return o.maxPosition;}));
       var conv = height/maxpos;
 
-     for (var i = 0; i < LG.length; i++) {  
+     for (var i = 0; i < LG.length; i++) {
 
         svg.append("rect")
         .attr("id", "rect" )

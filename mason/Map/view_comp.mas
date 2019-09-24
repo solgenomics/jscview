@@ -134,8 +134,8 @@ $dbhost => ()
     ])
     .then((values) => {
       if (values[0] && values[1]){
-        document.getElementById("tittle1").innerHTML = values[0].result.name;
-        document.getElementById("tittle2").innerHTML = values[1].result.name;
+        document.getElementById("tittle1").innerHTML = values[0].result.mapName;
+        document.getElementById("tittle2").innerHTML = values[1].result.mapName;
         const source = values[0];  
         const target = values[1]; 
         var unit1 = values[0].result.unit;

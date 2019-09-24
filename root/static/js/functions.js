@@ -1,9 +1,12 @@
 
-  function chromosome(data, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit,list) {
+  function chromosome(datai, svg0, width, height, ang0, x, y, mapId, chrId, forZoom, isLinear,nChr,originX,originY,zSide,axisSide,comp, unit,list) {
 
     //isLinear
     if (isLinear == 0 ) { var va = 2;   }
     else var va = nChr + forZoom + 1;
+
+    //sort markers
+    var data = datai.sort(compareValues("position"));
 
     var i = mapId + "_" + chrId; 
     var heightZoom = height + width*2;
@@ -21,7 +24,7 @@
 
     var tooltip = svg.append("div") 
                   .attr("class", "tooltip")       
-                  .style("opacity", 0.5); /// cambiar tool tip
+                  .style("opacity", 0.5);
 
     tooltip.append('div')                       
            .attr('class', 'label'); 

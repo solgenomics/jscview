@@ -60,7 +60,7 @@ $host => ()
 
 
   <section id="services">
-    <!-- <input type="text" id="input" onkeyup="getMapList()" placeholder="Search for names.."> -->
+    <!-- <input type="text" id="input" onkeyup="getMapList()" placeholder="Search for names ..."> -->
 
     <ul id="UL" class="UL"></ul>
 
