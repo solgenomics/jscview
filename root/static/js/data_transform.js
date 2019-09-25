@@ -22,8 +22,8 @@
   			x2: (yLinear(+data[i].position) * cos) + borderY,
   			y1: (yLinear(+data[i].position) * sin) + borderX,//-(height/2* sin),
   			y2: (yLinear(+data[i].position) * sin) - borderX,//-(height/2* sin),
-  			markerName: data[i].markerName,
-			  markerDbId: data[i].markerDbId
+  			marker_name: data[i].marker_name,
+			  marker_db_id: data[i].marker_db_id
   		});
   	}
   	return dataT;
@@ -38,8 +38,8 @@
 
   		dataT.push({
   			y: data[i].position,
-  			markerName: data[i].markerName,
-			markerDbId: data[i].markerDbId
+  			marker_name: data[i].marker_name,
+			  marker_db_id: data[i].marker_db_id
   		});
   	}
   	return dataT;
@@ -86,7 +86,8 @@
   			ty: (yLineart(data[i].t) * Math.sin(angTarget)),
   			chrs: data[i].chrs,
   			chrt: data[i].chrt,
-        markerDbId: data[i].markerDbId
+        marker_name: data[i].marker_name,
+        marker_db_id: data[i].marker_db_id
   		});
   	}
   	return dataT;
@@ -114,7 +115,8 @@
   			sy: data[i].sy + (width / 2 * Math.cos(angSourceT)) + (radius * Math.sin(angSource)),
   			tx: data[i].tx - (width / 2 * Math.sin(angTargetT)) + (radius * Math.cos(angTarget)),
   			ty: data[i].ty + (width / 2 * Math.cos(angTargetT)) + (radius * Math.sin(angTarget)),
-        markerDbId: data[i].markerDbId
+        marker_name: data[i].marker_name,
+        marker_db_id: data[i].marker_db_id
   		});
   	}  
   	return dataT; 
@@ -139,7 +141,8 @@
         sy: yLinears(data[i].s) * Math.cos(angSource),
         tx: radius - (width / 2), // * Math.sin(angTarget +180)),
         ty: yLineart(data[i].t) * Math.cos(angTarget),
-        markerDbId: data[i].markerDbId
+        marker_name: data[i].marker_name,
+        marker_db_id: data[i].marker_db_id
       });
     } 
     return dataT; 
@@ -166,7 +169,8 @@
         sy: - (width / 2 * Math.cos(angSource +180)) +  (radius * Math.sin(angSource)) + (yLinears(data[i].s) * Math.cos(angSource)),
         tx: (width / 2 * Math.sin(angTarget +180)) + (radius * Math.cos(angTarget)) - (yLineart(data[i].t) * Math.sin(angTarget)) , //- (width / 2 * Math.sin(ang)) + (radius * Math.cos(angTarget)),
         ty: - (width / 2 * Math.cos(angTarget +180)) +  (radius * Math.sin(angTarget)) + (yLineart(data[i].t) * Math.cos(angTarget)), //+ (width / 2 * Math.cos(ang)) + (radius * Math.sin(angTarget)),
-        markerDbId: data[i].markerDbId
+        marker_db_id: data[i].marker_db_id,
+        marker_name: data[i].marker_name
       });
     } 
     return dataT; 
@@ -177,10 +181,10 @@
     var data = [], list= [];
       for (var i = 0; i < myArr.result.data.length; i++) {
         data.push({
-          linkageGroup: myArr.result.data[i].linkageGroupName,
+          linkage_group_name: myArr.result.data[i].linkageGroupName,
           position: myArr.result.data[i].location,
-          markerName: myArr.result.data[i].markerName,
-          markerDbId: myArr.result.data[i].markerDbId  //to link solgenomics 
+          marker_name: myArr.result.data[i].markerName,
+          marker_db_id: myArr.result.data[i].markerDbId  //to link solgenomics 
         });
         list.push(myArr.result.data[i].linkageGroupName);
       }
@@ -193,10 +197,10 @@
       for (var i = 0; i < myArr.result.data.length; i++) {
         if(myArr.result.data[i].linkageGroupName == chr){
           data.push({
-            linkageGroup: myArr.result.data[i].linkageGroupName,
+            linkage_group_name: myArr.result.data[i].linkageGroupName,
             position: myArr.result.data[i].location,
-            markerName: myArr.result.data[i].markerName,
-	          markerDbId: myArr.result.data[i].markerDbId
+            marker_name: myArr.result.data[i].markerName,
+	          marker_db_id: myArr.result.data[i].markerDbId
           });
           list.push(myArr.result.data[i].linkageGroupName);
         }

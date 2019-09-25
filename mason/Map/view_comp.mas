@@ -108,7 +108,8 @@ $dbhost => ()
   function getmarkerid(){
     var id = '';
     var name = document.getElementById('searchmk').value;
-    svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) id = d.markerDbId;  return "2"});
+    svg.selectAll("line").style("stroke-width", function(d){ if (d.marker_name == name) id = d.marker_name;  return "2"});
+    
     return id;
   }
 
@@ -119,23 +120,33 @@ $dbhost => ()
     $('#ballsWaveG').show();
 
     // To get data
-    const chrLeft = getChrJSON1(brApiSite,mapSId,nChr1).then(function(d) { return d;
+    const chrLeft = getMapChrJSON(brApiSite,mapSId,nChr1).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
-    const chrRight = getChrJSON1(brApiSite,mapTId,nChr2).then(function(d) { return d;
+    const chrRight = getMapChrJSON(brApiSite,mapTId,nChr2).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
+    const mapLeftName = getMapJSON(brApiSite,mapSId).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
+    const mapRightName = getMapJSON(brApiSite,mapTId).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
 
     Promise.all([
       chrLeft,
-      chrRight
+      chrRight,
+      mapLeftName,
+      mapRightName
     ])
     .then((values) => {
       if (values[0] && values[1]){
-        document.getElementById("tittle1").innerHTML = values[0].result.mapName;
-        document.getElementById("tittle2").innerHTML = values[1].result.mapName;
+        document.getElementById("tittle1").innerHTML = values[2].result.mapName;
+        document.getElementById("tittle2").innerHTML = values[3].result.mapName;
         const source = values[0];  
         const target = values[1]; 
         var unit1 = values[0].result.unit;

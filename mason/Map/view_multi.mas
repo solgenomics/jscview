@@ -75,26 +75,34 @@ $dbhost => ()
 
    $('#ballsWaveG').show();
 
-  const chrLeft = getChrJSON(dbhost,mapSId).then(function(d) { return d;
+  const mapLeft = getMapPositionJSON(dbhost,mapSId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
-  const chrRight= getChrJSON(dbhost,mapTId).then(function(d) { return d;
+  const mapRight= getMapPositionJSON(dbhost,mapTId).then(function(d) { return d;
+                }, function(status) {
+                alert('Something went wrong.');
+                });
+  const mapLeftName = getMapJSON(dbhost,mapSId).then(function(d) { return d;
+                }, function(status) {
+                alert('Something went wrong.');
+                });
+  const mapRightName = getMapJSON(dbhost,mapTId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
   
-  Promise.all([ chrLeft, chrRight ])
+  Promise.all([ mapLeft, mapRight,mapLeftName, mapRightName ])
     .then((values) => {
 
       if (values[0] && values[1]){
-        document.getElementById('tittle1').innerHTML = values[0].result.mapName;
-        document.getElementById('tittle2').innerHTML = values[1].result.mapName;
+        document.getElementById('tittle1').innerHTML = values[2].result.mapName;
+        document.getElementById('tittle2').innerHTML = values[3].result.mapName;
         const source = fillArray(values[0]); 
         const target = fillArray(values[1]);  
 
-        var chrListSource = unique(source.list);
-        var chrListTarget = unique(target.list);
+        var chrListSource = unique(source.list).sort(sortNumber);
+        var chrListTarget = unique(target.list).sort(sortNumber);
         var unit1 = values[0].result.unit;
         var unit2 = values[1].result.unit;
 
@@ -123,9 +131,9 @@ $dbhost => ()
         window["y0"] = y0;
 
         // Construct links array
-        var s,t;    
-        var dataLinks=  getLinksdata(source.data,target.data);
-
+        var s,t;
+        var dataLinks = getLinksdata(source.data,target.data);
+  //console.log(target.data);
         // Draw Chrs and markers
         const forZoom = 0, x0 =0;
         const comp=true;
@@ -145,28 +153,27 @@ $dbhost => ()
 
 
 
- function getLinksdata (sale1,sale2){
+ function getLinksdata (sourceData,targetData){
       // Construct links array
-      var s,t; 
-      var IdMarkers = getCommonColumn(sale1,sale2,"markerDbId"); 
-
+      var s,t;
       var datal = [];
+      var IdMarkers = getCommonColumn(sourceData,targetData,"marker_name"); 
       
       for (var i = 0; i < IdMarkers.length; i++) {  
-        s = sale1.filter( function(char) { if (char.markerDbId===IdMarkers[i]) { return char; } });
-        t = sale2.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+        s = sourceData.filter( function(char) { if (char.marker_name===IdMarkers[i]) { return char; } });
+        t = targetData.filter( function(char) { if (char.marker_name===IdMarkers[i])  return char; });
 
         for (var si = 0; si < s.length; si++) {   
           for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
              datal.push({
-                    "chrs": s[si].linkageGroupName, 
-                    "s": (+s[si].location),  
-                    "chrt": t[ti].linkageGroupName, 
-                    "t": (+t[ti].location), 
-                    "markerDbId": IdMarkers[i],
-                    "names": "lmk" + mapSId + "_" + s[si].linkageGroupName  + "-" + IdMarkers[i],
-                    "namet": "lmk" + mapTId + "_" + t[ti].linkageGroupName  + "-" + IdMarkers[i],
-                    "nameLink": "l_s"+ s[si].linkageGroup + "_t" + t[ti].linkageGroupName + "_" +  IdMarkers[i]
+                    "chr_source": s[si].linkage_group_name, 
+                    "source_location": (+s[si].position),  
+                    "chr_target": t[ti].linkage_group_name, 
+                    "target_location": (+t[ti].position), 
+                    "marker_name": IdMarkers[i],
+                    "marker_line_source": "lmk" + mapSId + "_" + s[si].linkage_group_name  + "-" + IdMarkers[i],
+                    "marker_line_target": "lmk" + mapTId + "_" + t[ti].linkage_group_name  + "-" + IdMarkers[i],
+                    "link_name": "l_s"+ s[si].linkage_group_name + "_t" + t[ti].linkage_group_name + "_" +  IdMarkers[i]
               });
             }
           } //}

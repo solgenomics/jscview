@@ -14,7 +14,7 @@
         }); 
     }
 
-    var getChrJSON =  function (brApiSite,mapSId){
+    var getMapPositionJSON =  function (brApiSite,mapSId){
         return new Promise(function(resolve, reject) {
           var request = new XMLHttpRequest();
           request.open('GET', brApiSite + '/brapi/v1/maps/'+ mapSId +'/positions?pageSize=100000000', true);
@@ -30,7 +30,23 @@
         });
     }
 
-  var getChrJSON1 =  function (brApiSite,mapSId,nChr1,tittle){
+    var getMapJSON =  function (brApiSite,mapSId){
+        return new Promise(function(resolve, reject) {
+          var request = new XMLHttpRequest();
+          request.open('GET', brApiSite + '/brapi/v1/maps/'+ mapSId, true);
+     
+          request.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status == 200) {
+              var status = this.status;
+              var myArr = JSON.parse(this.responseText);           
+              resolve(myArr); 
+            } 
+        }
+        request.send();
+        });
+    }
+
+  var getMapChrJSON =  function (brApiSite,mapSId,nChr1,tittle){
         return new Promise(function(resolve, reject) {
         var request = new XMLHttpRequest();
         request.open('GET', brApiSite + '/brapi/v1/maps/'+ mapSId +'/positions?linkageGroupId='+ nChr1 +'&pageSize=100000000', true);
@@ -68,7 +84,7 @@
 
       request.send(JSON.stringify(body));
   }
-  
+
 
   function distToZoom(){
       return  chrWdt * 3 + isLinear*200; 

@@ -95,9 +95,9 @@ $list => ()
       }
 
       function getmarkerid(){
-        var id = null;
+        var id = '';
         var name = document.getElementById('searchmk').value;
-        svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) id = d.markerDbId;  return "2"});
+        svg.selectAll("line").style("stroke-width", function(d){ if (d.marker_name == name) id = d.marker_name;  return "2"});
 
         return id;
       }
@@ -111,21 +111,28 @@ $list => ()
 
         svg.selectAll("*").remove();
 
-        var request = new XMLHttpRequest();
+        const chrData = getMapChrJSON(brApiSite,map,nchr).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
+        const mapName = getMapJSON(brApiSite,map).then(function(d) { return d;
+                    }, function(status) {
+                    alert('Something went wrong.');
+                    });
 
-        request.open('GET', brApiSite + '/brapi/v1/maps/'+ map +'/positions?linkageGroupId='+ nchr +'&pageSize=100000000');
-
-        request.onreadystatechange = function() {
-
-          if (this.readyState === 4) {
-
-            var resp = JSON.parse(this.responseText); 
+        Promise.all([
+          chrData, mapName
+        ])
+        .then((values) => {
+          if (values[0]){
+            const resp = values[0]; 
+            const respName = values[1];
             var result = fillFilterArray(resp,nchr);
             var data = result.data;
             var unit = resp.result.unit;
             var comp=false;
 
-            document.getElementById("tittle").innerHTML = resp.result.name;
+            document.getElementById("tittle").innerHTML = respName.result.mapName; 
 
             // Setting layout
             var radius = 0;
@@ -136,11 +143,9 @@ $list => ()
             chromosome(data, svg, chrWdt, chrHgt, 0, radius, y0, map, nchr, forZoom,isLinear,n,originX,originY,chrZSide,axisSide,comp,unit,nchr);
 
             }
-        $('#ballsWaveG').hide();
+            $('#ballsWaveG').hide();
 
-          }
-
-        request.send();
+          })
       }
 
       function checkrange(){

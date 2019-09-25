@@ -92,7 +92,7 @@
         .attr("id", "lines" + i)
         .data(dataT)
       .enter().append("svg:line")
-        .attr("id", function(d) {  return "lmk" + i + "-" + (d.markerDbId); })
+        .attr("id", function(d) {  return "lmk" + i + "-" + (d.marker_name); })
         .attr("x1", function(d) { return d.x1;  })
         .attr("y1", function(d) { return d.y1;  })
         .attr("x2", function(d) { return d.x2;  })
@@ -161,7 +161,7 @@
         .attr("id", "line" + i)
         .data(dataZoom)
        .enter().append("line")
-        .attr("id", function(d) {  return "lbmk" + (d.markerDbId); })
+        .attr("id", function(d) {  return "lbmk" + (d.marker_db_id); })
         .attr("y2", function(d) {  return y1(d.y); })
         .attr("y1", function(d) {  return y1(d.y); })
         .attr("class", "line")
@@ -193,18 +193,17 @@
         // .attr("font-size",16);  
 
       /* Symbol close [X] */
-      zoom.append("text")
-        .attr("id", "close" + i)
-        .attr("dx", distZoom*zoomSide) // width*(zoomSide-1)/2+distZoom*zoomSide/2) 
-        .attr("dy", -width*1.5-height/2-5)
-        .text("[x] Close")
-        .style("stroke", "red")
-        .on('click', function() {
-            zoom.attr("visibility", "hidden");
-            zoom.selectAll("path.pointer").style("stroke", "lightgray");
-
-       svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
-    });
+      // zoom.append("text")
+      //   .attr("id", "close" + i)
+      //   .attr("dx", distZoom*zoomSide) // width*(zoomSide-1)/2+distZoom*zoomSide/2) 
+      //   .attr("dy", -width*1.5-height/2-5)
+      //   .text("[x] Close")
+      //   .style("stroke", "red")
+      //   .on('click', function() {
+      //       zoom.attr("visibility", "hidden");
+      //       zoom.selectAll("path.pointer").style("stroke", "lightgray");
+      //       svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", 4);
+      //   });
 
       zoom.attr("visibility", "hidden");
 
@@ -334,12 +333,12 @@
     svg.select("#svg" + name).select("#svgog" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m - chrHgt/2; })
-      .text(function(d) { return " " + d.markerName; });//.moveToFront();  
+      .text(function(d) { return " " + d.marker_name; });//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgo" + name).selectAll("text")
       .filter(filterByRange)
       .attr("dy", function(d, m) { return pos * m - chrHgt/2; })
-      .text(function(d) { return d.markerName; }).style("font-size", "10px");//.moveToFront();  
+      .text(function(d) { return d.marker_name; }).style("font-size", "10px");//.moveToFront();  
 
     svg.select("#svg" + name).select("#svgol" + name).selectAll("line").filter(filterByRange)
       .attr("x1", function(d) {  if ((d.y1) > - chrHgt/2 -1 & (d.y1) < chrHgt) return d.x2 })
@@ -392,7 +391,7 @@
       label2= label2.reverse();
       for (var i = 0; i < label1.length; i++) { 
           u = (label1[label1.length-i-1] + label2[label1.length-i-1]) /2;
-          meanL.push({y: u, t: labels[i].t, x: labels[i].x, id: labels[i].id, markerDbId: labels[i].markerDbId} ); 
+          meanL.push({y: u, t: labels[i].t, x: labels[i].x, id: labels[i].id, marker_db_id: labels[i].marker_db_id} ); 
       }
       return meanL;
   }
@@ -406,8 +405,8 @@
       var name;
 
       for (var i = 1; i < labels.length; i++) { 
-        labels[i].markerDbId=labels[i].markerDbId.replace(/\./g,''); 
-        name =escapeSpecialChars(labels[i].markerDbId) ;
+        labels[i].marker_name=labels[i].marker_name.replace(/\./g,''); 
+        name =escapeSpecialChars(labels[i].marker_name) ;
         svg.selectAll("#lpmk"+ name).style("stroke", "red").moveToFront();
       }
    }
@@ -440,7 +439,7 @@
           svg.selectAll("#lmk" +s+'-' +id)
               .style("stroke", "red")
               .style("stroke-width", function(d){ 
-                    svg.select("#mksearched").attr("dy", d.y1).text(d.markerName); 
+                    svg.select("#mksearched").attr("dy", d.y1).text(d.marker_name); 
                     return 4 })
               .attr("x2", svg.select("#mksearched").attr("dx")).moveToFront();
         }
@@ -455,7 +454,7 @@
      
       var id=null, position; 
       var t=window['target'], s=window['source'];
-      svg.selectAll("line").style("stroke-width", function(d){ if (d.markerName == name) { id = d.markerDbId; }; return "2"}); // que busque en el target tambien
+      svg.selectAll("line").style("stroke-width", function(d){ if (d.marker_name == name) { id = d.marker_name; }; return "2"}); // que busque en el target tambien
 
       if (id == null){
           alert("Marker not found");
@@ -464,7 +463,7 @@
         svg.selectAll("line").style("stroke", "lightgray").style("stroke-width", 2);
         svg.select("#zoom"+s).selectAll("path.pointer").style("stroke", "lightgray");
         svg.select("#zoom"+s).selectAll("path.pointer").style("stroke-width", "2"); //function(d){ if (d.n == name) id= d.markerDbId;  return "2"});
-        svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", function(d){ if (d.markerName == name) { position = d.y1;}; return  4}).moveToFront();
+        svg.selectAll("#lmk" +s+'-' +id).style("stroke", "red").style("stroke-width", function(d){ if (d.marker_name == name) { position = d.y1;}; return  4}).moveToFront();
         svg.selectAll("#lmk" + t + '-' + id).style("stroke", "red").style("stroke-width", 4).moveToFront();
         svg.select("#zoom"+s).selectAll("#pmk"+id).style("stroke", "red").moveToFront();
         svg.select("#zoom"+s).selectAll("#lamk"+id).style("background-color", "red").moveToFront();

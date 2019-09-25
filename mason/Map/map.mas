@@ -115,7 +115,6 @@ $dbhost => ()
         var unit = myArr.result.unit;
         var data = result.data;        
         var list = unique(result.list).sort(sortNumber);
-        var listx = list.sort(sortNumber); console.log(list);
         var forZoom = 0;
 
           // Setting layout
@@ -127,9 +126,9 @@ $dbhost => ()
 
             // Filter data by chr;
             var dataByChr = data.filter(function(d) {
-              return d.linkageGroup == list[i]
+              return d.linkage_group_name == list[i]
             });
-
+ 
             // Draw each chr
             chromosome(dataByChr, svg, chrWdt, chrHgt, 0, radius*i, y0, map,list[i], forZoom,isLinear,5,originX,originY,chrZSide,axisSide,comp,unit,list);
 

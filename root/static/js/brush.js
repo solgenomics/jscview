@@ -66,8 +66,8 @@ function brush() {
         .attr("x1", function(d) {  return zoomSide*chrdistZoom; })
         .attr("x2", function(d) {  return zoomSide*(chrdistZoom + chrWdt); })
         .attr("y1", function(d,i) {  
-                  if (comp==-1) labelsChrSforComp.push({x:comp*zoomSide*(chrWdt/2), y: d.y, t: d.markerName, id: d.markerDbId, markerDbId: d.markerDbId });     
-                      var m = {x: comp*zoomSide*(chrWdt/2), d: d.y, n: d.markerName, markerDbId: d.markerDbId , y: y2(d.y), t: d.markerName, id: d.markerDbId }; 
+                  if (comp==-1) labelsChrSforComp.push({x:comp*zoomSide*(chrWdt/2), y: d.y, t: d.marker_name, marker_name: d.marker_name, id: d.marker_db_id, marker_db_id: d.marker_db_id });     
+                      var m = {x: comp*zoomSide*(chrWdt/2), d: d.y, n: d.marker_name, marker_db_id: d.marker_db_id , y: y2(d.y), t: d.marker_name, marker_name:d.marker_name, id: d.marker_db_id }; 
                       dataL.push(m); 
                   if(i > 0) links.push({source: dataL[i-1], target: m}); //it was labels[i-1] I don't know why, verify                 
                 return y2(d.y); })
@@ -118,7 +118,7 @@ function brush() {
     svg.select("#zoom" + name).selectAll("path.pointer")
       .data(dataL).enter()
       .append("svg:path")
-      .attr("id", function(d) {  return "pmk" + (d.markerDbId); })
+      .attr("id", function(d) {  return "pmk" + (d.marker_name); })
       .classed("pointer", true)
       .attr("fill", "none")
       .style("stroke", randomColor) 
@@ -134,7 +134,7 @@ function brush() {
 //      svg.selectAll("#zoom" + window["target"] ).selectAll("line")
       svg.selectAll("#svg" + window["target"] ).selectAll("line")
         .attr("d", function(d){
-          dataChrT.push({x:comp*zoomSide*(chrWdt/2), d: (d.y), n: d.markerName, markerDbId: d.markerDbId }); 
+          dataChrT.push({x:comp*zoomSide*(chrWdt/2), d: (d.y), n: d.marker_name, marker_name: d.marker_name, marker_db_id: d.marker_db_id }); 
         });
       drawCompLine(labelsChrSforComp, dataChrT, zoomSide*(chrdistZoom+chrWdt/2), chrdistZoom, y0);  
     }
@@ -147,23 +147,23 @@ function brush() {
     
     //Function to fix position after links movement
     function ticked() {
-      var zoomSide = sideName(name);        //To gice direction to zoom -1 = rtl, 1=ltr
+      var zoomSide = sideName(name);        //To give direction to zoom -1 = rtl, 1=ltr
       var chrdistZoom = distToZoom();       //Distance to zoom
       var dcomp=0;                          //Helps to change direction in path.pointer 
 
       if (comp==-1) dcomp= -comp*chrWdt;    //comp=-1 rtl, labels between chr and zoom
 
       //Fit labels and path after movement, make changes here
-      svg.select("#zoom" + name).selectAll("#text" + name).selectAll("text.label") 
-        .attr("id", function(d) {  return "lamk" + (d.markerDbId); })
+      svg.select("#zoom" + name).selectAll("#text" + name).selectAll("text.label")
+        .attr("id", function(d) {  return "lamk" + (d.marker_name); })
         .attr("x", function(d) { d.x = chrdistZoom + chrWdt * 2 * comp ; return zoomSide*d.x; })
         .attr("y", function(d) { return d.y; })
         .style("fill", function(d) {
-          if (d.markerDbId == getmarkerid()) return "red";
+          if (d.marker_name == getmarkerid()) return "red";
           else return "black"; });
 
       svg.select("#zoom" + name).selectAll("path.pointer") 
-        .attr("id", function(d) {  return "pmk" + (d.markerDbId); })
+        .attr("id", function(d) {  return "pmk" + (d.marker_name); })
         .attr("d", function(d, i) { 
           if (i < labels.length) {
            var s = [zoomSide*(chrdistZoom+dcomp), y2(d.d )],  

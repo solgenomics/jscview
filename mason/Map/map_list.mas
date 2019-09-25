@@ -14,7 +14,7 @@ $dbhost => ()
    
   var request = new XMLHttpRequest();
   var brApiSite = '<% $dbhost %>';
-console.log(brApiSite);  
+
   request.open('GET', brApiSite + '/brapi/v1/maps/',false); 
 
   request.onreadystatechange = function() {
@@ -63,7 +63,6 @@ function maps(map){
 
       var myArr1 = JSON.parse(this.responseText);
       var LG =myArr1.result.data;
-
 
       var svg = d3.select("div#map"+map).append("svg")
                   .attr("viewBox", "0 0 800 500"  ) 

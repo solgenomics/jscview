@@ -20,23 +20,22 @@
 
         //for links
         var s,t;
-        // var IdMarkers = getCommonColumn(data,data1,"markerName"); 
-        var IdMarkers = getCommonColumn(data,data1,"markerDbId"); 
+        var IdMarkers = getCommonColumn(data,data1,"marker_name"); 
         var datal = [];
         var maxs = d3.max(data, function(d) { return +d.position;  });
         var maxt = d3.max(data1, function(d) { return +d.position;  });
 
         for (var i = 0; i < IdMarkers.length; i++) {  
-          s = data.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
-          t = data1.filter( function(char) { if (char.markerDbId===IdMarkers[i])  return char; });
+          s = data.filter( function(char) { if (char.marker_name===IdMarkers[i])  return char; });
+          t = data1.filter( function(char) { if (char.marker_name===IdMarkers[i])  return char; });
 
              datal.push({
-                    "chrs": s[0].linkageGroup, 
+                    "chrs": s[0].linkage_group_name, 
                     "s": (+s[0].position),  
-                    "chrt": t[0].linkageGroup, 
+                    "chrt": t[0].linkage_group_name, 
                     "t": (+t[0].position), 
-                    "markerDbId": IdMarkers[i]});
-                    //"markerName": IdMarkers[i]});
+                    "marker_db_id": IdMarkers[i],
+                    "marker_name": IdMarkers[i]});
         } 
 
         var ang = 0;
@@ -56,7 +55,7 @@
 
         var x = radius * Math.cos(radians(angi));
         var y = radius * Math.sin(radians(angi));
-        var dataByChr = data.filter(function(d) { return d.linkageGroup == list[i]  });
+        var dataByChr = data.filter(function(d) { return d.linkage_group_name == list[i]  });
         var originX = width/2, axisSide = -1, chrZSide=1;
             originY = height*0.2;
 
@@ -76,22 +75,22 @@
       .selectAll("path")
       .data(data)
       .enter().append("path")
-      .attr("id", function(d) {  return "lpmk" + (d.markerDbId); })
+      .attr("id", function(d) {  return "lpmk" + (d.marker_name); })
       .attr("d", link)
       .style("opacity", 1)
       .style("stroke-width", 2)
       .attr("transform", " translate(" + (originX) + "," + (originY +y0) + ") ") 
         .on('mouseover', function(d) {
-           d3.select(this).attr("stroke", "#C75600");
+          // d3.select(this).attr("stroke", "#C75600");
     }); 
 
       // To draw linked lines in zoom
     function link(d) { 
 
-      if (zoom2chr == 1 ) {
+      if (zoom2chr == 1 ) { 
        return "M" + (d.tx +x2 ) + " " + ( d.ty)
               + " " + (d.sx+ x1 ) + " " +  (d.sy);
-      } else { 
+      } else {
         return "M" + (d.tx+ x2 -x0 ) + "," + ( d.ty)
             + "C" + (d.tx+ x2 -x0 ) + "," +  ((d.ty + d.sy) / 2)
             + " " + (d.sx+ x1+x0) + "," +  ((d.ty + d.sy) / 2)
@@ -126,10 +125,10 @@
   function linkMulti(d) { 
 
     var svgContainer= $("#matrixSVG");
-    var startElem =  $("#" + d.names);
-    var endElem   = $("#" + d.namet);
-    var startAng = 90- (((d.chrs)*180/(nm))+(0.5*180/(nm)))- (180/(nm)); 
-    var endAng = 90-(((d.chrt)*180/(nm))+(0.5*180/(nm)))- (180/(nm));  
+    var startElem =  $("#" + d.marker_line_source);
+    var endElem   = $("#" + d.marker_line_target);
+    var startAng = 90- (((d.chr_source)*180/(nm))+(0.5*180/(nm)))- (180/(nm)); 
+    var endAng = 90-(((d.chr_target)*180/(nm))+(0.5*180/(nm)))- (180/(nm));  
     var svgTop  = svgContainer.offset().top;
     var svgLeft = svgContainer.offset().left;
     var startCoord = startElem.offset();
@@ -154,7 +153,7 @@
       .selectAll("path")
       .data(data)
       .enter().append("path")
-      .attr("id", function(d) {  return d.nameLink; })
+      .attr("id", function(d) {  return d.link_name; })
       .attr("d", linkMulti)
       .style("opacity", 1)
       // .style("stroke", "blue")
@@ -173,8 +172,8 @@
 
     for (var i = 0; i < valueToJoin.length ; i++) { 
 
-       chr1 = chrS.filter(function(d) { return d.markerDbId == valueToJoin[i] }); 
-       chr2 = chrT.filter(function(d) { return d.markerDbId == valueToJoin[i] }); 
+       chr1 = chrS.filter(function(d) { return d.marker_name == valueToJoin[i] }); 
+       chr2 = chrT.filter(function(d) { return d.marker_name == valueToJoin[i] }); 
 
            links.push({ "chrs": 1 , 
                   "sx": (+chr1[0].x),  
@@ -182,7 +181,8 @@
                   "chrt": 9, 
                   "tx": +radius - chrdistZoom -chrWdt, ///+chr2[0].x  //2 + chrWdt*1.1,  //(+radius/2+chrWdt*0.6), //arreglar x 
                   "ty": (+chr2[0].d), //-chrWdt*0.5),    //arreglar
-                  "markerDbId": chr2[0].markerDbId});
+                  "marker_name": chr2[0].marker_name,
+                  "marker_db_id": chr2[0].marker_db_id});
     }
     return links;
   }
@@ -190,7 +190,7 @@
   // Called in brush
   function drawCompLine(labels,chrT,x,chrdistZoom,y0){
 
-        var IdMarkers = getCommonColumn(labels,chrT,"markerDbId"); 
+        var IdMarkers = getCommonColumn(labels,chrT,"marker_name"); 
         var targetChr = []; 
         var t=window['target'];
         var x0 = 0;
@@ -201,7 +201,8 @@
           targetChr.push({
                           x: document.getElementById('lmk'+ t +'-'+ IdMarkers[i]).getAttribute('x1'),
                           d: document.getElementById('lmk'+ t +'-'+ IdMarkers[i]).getAttribute('y1'), 
-                          markerDbId: IdMarkers[i] });
+                          marker_name: IdMarkers[i],
+                          marker_db_id: IdMarkers[i] });
         }
 
         //Pass data to construct links
