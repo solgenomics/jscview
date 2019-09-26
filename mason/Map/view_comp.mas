@@ -1,10 +1,11 @@
 <%args>
-$input_chr1 => ()
-$input_chr2 => ()
+$input_chrS => ()
+$input_chrT => ()
 $mapSId => ()
 $mapTId => ()
 $dbhost => ()
-
+$dataSource1 => ()
+$dataSource2 => ()
 </%args>
 
 <& ../site/header.mas &>
@@ -24,14 +25,14 @@ $dbhost => ()
   <div class="table-responsive">
     <table class="table">
       <tr> 
-        <th colspan="2"><h4 id="tittle1" width="50%" align="center" ></h4></th>
-        <th colspan="2"><h4 id="tittle2" width="50%" align="center" ></h4></th>
+        <th colspan="2"><h4 id="tittle1" width="50%" align="center" ></h4><p id="tittleSource1" width="50%" align="center" ></p></th>
+        <th colspan="2"><h4 id="tittle2" width="50%" align="center" ></h4><p id="tittleSource2" width="50%" align="center" ></p></th>
       </tr>
       <tr>
-        <td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="right" width="25%"><a id="after" class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
-        <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="left" width="25%"><a id="before" class="btn btn-primary" href="#" onclick="nChr1=+nChr1-1; selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after" class="btn btn-primary" href="#" onclick="nChr1=+nChr1+1;selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="left" width="25%"><a id="before2" class="btn btn-primary" href="#" onclick="nChr2=+nChr2-1; selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2);"></a></td>
+        <td align="right" width="25%"><a id="after2"  class="btn btn-primary" href="#" onclick="nChr2=+nChr2+1;selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2);"></a></td>
       </tr>
     </table>
   </div>
@@ -46,8 +47,10 @@ $dbhost => ()
     var mapTId = '<% $mapTId %>';
     var mapSId = '<% $mapSId %>';
     var brApiSite = '<% $dbhost %>';
-    var nChr1 = '<% $input_chr1 %>';
-    var nChr2 = '<% $input_chr2 %>';
+    var nChr1 = '<% $input_chrS %>';
+    var nChr2 = '<% $input_chrT %>';
+    const dataSource1 =  '<% $dataSource1 %>';
+    const dataSource2 =  '<% $dataSource2 %>';
 
   // Setting Global variables
   var width = 800, 
@@ -106,33 +109,32 @@ $dbhost => ()
   svg.select("#brushid").remove();
 
   function getmarkerid(){
-    var id = '';
-    var name = document.getElementById('searchmk').value;
-    svg.selectAll("line").style("stroke-width", function(d){ if (d.marker_name == name) id = d.marker_name;  return "2"});
-    
-    return id;
+      var id = '';
+      var name = document.getElementById('searchmk').value;
+      svg.selectAll("line").style("stroke-width", function(d){ if (d.marker_name == name) id = d.marker_name;  return "2"});
+      return id;
   }
 
 
-  function selectMap(mapSId,mapTId,nChr1,nChr2) {
+  function selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2) {
 
     svg.selectAll("*").remove();
     $('#ballsWaveG').show();
 
     // To get data
-    const chrLeft = getMapChrJSON(brApiSite,mapSId,nChr1).then(function(d) { return d;
+    const chrLeft = getMapChrJSON(dataSource1,mapSId,nChr1).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
-    const chrRight = getMapChrJSON(brApiSite,mapTId,nChr2).then(function(d) { return d;
+    const chrRight = getMapChrJSON(dataSource2,mapTId,nChr2).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
-    const mapLeftName = getMapJSON(brApiSite,mapSId).then(function(d) { return d;
+    const mapLeftName = getMapJSON(dataSource1,mapSId).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
-    const mapRightName = getMapJSON(brApiSite,mapTId).then(function(d) { return d;
+    const mapRightName = getMapJSON(dataSource2,mapTId).then(function(d) { return d;
                     }, function(status) {
                     alert('Something went wrong.');
                     });
@@ -147,6 +149,8 @@ $dbhost => ()
       if (values[0] && values[1]){
         document.getElementById("tittle1").innerHTML = values[2].result.mapName;
         document.getElementById("tittle2").innerHTML = values[3].result.mapName;
+        document.getElementById("tittleSource1").innerHTML = dataSource1;
+        document.getElementById("tittleSource2").innerHTML = dataSource2;
         const source = values[0];  
         const target = values[1]; 
         var unit1 = values[0].result.unit;
@@ -161,7 +165,7 @@ $dbhost => ()
     });
   }
 
-  selectMap(mapSId,mapTId,nChr1,nChr2);
+  selectMap(dataSource1,dataSource2,mapSId,mapTId,nChr1,nChr2);
 
   function checkrange(){
 

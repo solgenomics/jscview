@@ -48,10 +48,12 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
     my ($self, $c) = @_;
      # get variables from catalyst object
     my $params = $c->req->body_params();
-    my $input_chr1 = $c->req->param("nChr1");  
-    my $input_chr2 = $c->req->param("nChr2");  
+    my $input_chr1 = $c->req->param("nChrS");  
+    my $input_chr2 = $c->req->param("nChrT");  
     my $input_mapSId = $c->req->param("mapSId");
     my $input_mapTId = $c->req->param("mapTId");
+    my $input_dataSource1 = $c->req->param("dataSource1");
+    my $input_dataSource2 = $c->req->param("dataSource2");
     my $host = $c->config->{host};
     my $dbhost = $c->config->{dbhost};
     # my $host = $c->request->base;
@@ -63,8 +65,10 @@ sub view_comparative :Path('/Map/view_comp/') :Args(0) {
     $c->stash->{dbhost} = $dbhost;
     $c->stash->{mapSId} = $input_mapSId;
     $c->stash->{mapTId} = $input_mapTId;
-    $c->stash->{input_chr1} = $input_chr1;
-    $c->stash->{input_chr2} = $input_chr2;
+    $c->stash->{dataSource1} = $input_dataSource1;
+    $c->stash->{dataSource2} = $input_dataSource2;
+    $c->stash->{input_chrS} = $input_chr1;
+    $c->stash->{input_chrT} = $input_chr2;
     $c->stash(template => 'Map/view_comp.mas');
 }
 
@@ -74,6 +78,8 @@ sub view_multiple :Path('/Map/view_multi/') :Args(0) {
     my $params = $c->req->body_params();
     my $input_mapSId = $c->req->param("mapSId");
     my $input_mapTId = $c->req->param("mapTId");
+    my $input_dataSource1 = $c->req->param("dataSource1");
+    my $input_dataSource2 = $c->req->param("dataSource2");
     my $host = $c->config->{host};
     my $dbhost = $c->config->{dbhost};
     # my $host = $c->request->base;
@@ -86,6 +92,8 @@ sub view_multiple :Path('/Map/view_multi/') :Args(0) {
     $c->stash->{host} = $host; 
     $c->stash->{mapSId} = $input_mapSId;
     $c->stash->{mapTId} = $input_mapTId;
+    $c->stash->{dataSource1} = $input_dataSource1;
+    $c->stash->{dataSource2} = $input_dataSource2;
     $c->stash(template => 'Map/view_multi.mas');
 }
 
@@ -157,14 +165,16 @@ sub compare :Path('/Map/compare/') :Args(0) {
     my ($self, $c, $id) = @_;
     my $host = $c->config->{host};
     my $dbhost = $c->config->{dbhost};
+    my $datasources = $c->config->{datasources};
     # my $host = $c->request->base;
     # my $dbhost = $host;
 
     # $dbhost =~ s/http:\/\/maps\.triticeaetoolbox\.org/https:\/\/triticumbase\.sgn\.cornell\.edu/;
     # $dbhost =~ s/http:\/\/maps/https:\/\/www/;
 
-    $c->stash->{host} = $host; 
+    $c->stash->{host} = $host;
     $c->stash->{dbhost} = $dbhost;
+    $c->stash->{datasources} = $datasources;
     $c->stash(template => 'Map/compare.mas');
 }
 
@@ -172,6 +182,9 @@ sub compare_chr :Path('/Map/compare_chr/') :Args(0) {
     my ($self, $c, $id) = @_;
     my $host = $c->config->{host};
     my $dbhost = $c->config->{dbhost};
+    my $datasources = $c->config->{datasources};
+
+    my $dbhost2 = get_host($self,$c);
     # my $host = $c->request->base;
     # my $dbhost = $host;
    
@@ -180,8 +193,17 @@ sub compare_chr :Path('/Map/compare_chr/') :Args(0) {
 
     $c->stash->{host} = $host; 
     $c->stash->{dbhost} = $dbhost;
+    $c->stash->{datasources} = $datasources;
     $c->stash(template => 'Map/compare_chr.mas');
 }
+
+sub get_host {
+    my $self = shift;
+    my $c = shift;
+    my $dbhost = $c->stash->{dbhost}?$c->stash->{dbhost}:$c->request->base;
+    $c->stash->{dbhost} = $dbhost;
+}
+
 =encoding utf8
 
 =head1 AUTHOR

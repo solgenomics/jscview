@@ -194,7 +194,7 @@
  function fillFilterArray(myArr,chr){
 
     var data = [], list= [];  
-      for (var i = 0; i < myArr.result.data.length; i++) {
+      for (var i = 0; i < myArr.result.data.length; i++) {console.log(chr);
         if(myArr.result.data[i].linkageGroupName == chr){
           data.push({
             linkage_group_name: myArr.result.data[i].linkageGroupName,

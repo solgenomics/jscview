@@ -8,7 +8,7 @@
     //sort markers
     var data = datai.sort(compareValues("position"));
 
-    var i = mapId + "_" + chrId; 
+    var i = mapId + "_" + chrId;
     var heightZoom = height + width*2;
     var distZoom = distToZoom(); 
 

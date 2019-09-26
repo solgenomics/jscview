@@ -2,6 +2,8 @@
 $mapSId => ()
 $mapTId => ()
 $dbhost => ()
+$dataSource1 => ()
+$dataSource2 => ()
 </%args>
 
 <& ../site/header.mas &>
@@ -17,8 +19,8 @@ $dbhost => ()
  <div>
     <table class="table">
       <tr> 
-        <th colspan="2"><h4 id="tittle2" width="50%" align="center" style="color:navy;"></h4></th>
-        <th colspan="2"><h4 id="tittle1" width="50%" align="center" style="color:navy;"></h4></th>
+        <th colspan="2"><h4 id="tittle1" width="50%" align="right" style="color:navy;"></h4><p id="tittleSource1" width="50%" align="right" ></p></th>
+        <th colspan="2"><h4 id="tittle2" width="50%" align="left" style="color:navy;"></h4><p id="tittleSource2" width="50%" align="left" ></p></th>
       </tr>
     </table>
   </div>
@@ -34,6 +36,8 @@ $dbhost => ()
    var mapSId =  '<% $mapSId %>';
    var mapTId =  '<% $mapTId %>';
    const dbhost =  '<% $dbhost %>';
+   const dataSource1 =  '<% $dataSource1 %>';
+   const dataSource2 =  '<% $dataSource2 %>';
 
    const width = 800,
        height = 800, 
@@ -75,19 +79,19 @@ $dbhost => ()
 
    $('#ballsWaveG').show();
 
-  const mapLeft = getMapPositionJSON(dbhost,mapSId).then(function(d) { return d;
+  const mapLeft = getMapPositionJSON(dataSource1,mapSId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
-  const mapRight= getMapPositionJSON(dbhost,mapTId).then(function(d) { return d;
+  const mapRight= getMapPositionJSON(dataSource2,mapTId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
-  const mapLeftName = getMapJSON(dbhost,mapSId).then(function(d) { return d;
+  const mapLeftName = getMapJSON(dataSource1,mapSId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
-  const mapRightName = getMapJSON(dbhost,mapTId).then(function(d) { return d;
+  const mapRightName = getMapJSON(dataSource2,mapTId).then(function(d) { return d;
                 }, function(status) {
                 alert('Something went wrong.');
                 });
@@ -98,6 +102,8 @@ $dbhost => ()
       if (values[0] && values[1]){
         document.getElementById('tittle1').innerHTML = values[2].result.mapName;
         document.getElementById('tittle2').innerHTML = values[3].result.mapName;
+        document.getElementById("tittleSource1").innerHTML = dataSource1;
+        document.getElementById("tittleSource2").innerHTML = dataSource2;
         const source = fillArray(values[0]); 
         const target = fillArray(values[1]);  
 

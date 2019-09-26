@@ -142,7 +142,7 @@ function brush() {
 
     function slide(){
       svg.selectAll("#zoom" + name).selectAll("line")
-        .attr("y1",100);  
+        .attr("y1",100); 
     }
     
     //Function to fix position after links movement

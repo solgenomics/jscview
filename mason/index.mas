@@ -10,7 +10,6 @@ $host => ()
 
 <link type="text/css" rel="stylesheet" href="/static/css/style-cook.css">
 
-
 <!-- <body> -->
 
  <div class="container" id="container">
@@ -89,7 +88,7 @@ $host => ()
         </div>
       </div>
     </section>
-<br><br><br><br><br><br>
+    <br><br><br><br><br><br>
     </div>
 
 <& ../site/footer.mas &>

@@ -1,7 +1,7 @@
 
 <%args>
 $dbhost => ()
-
+$datasources => ()
 </%args>
 <& ../site/header.mas &>
 
@@ -9,77 +9,75 @@ $dbhost => ()
 
     <div class="container" id="container">
         <br><br><br><br>
-        <h2 class="my-4" align="center" style="color:navy;">Compare</h2>
+        <h2 class="my-4" align="center" style="color:navy;">Compare maps</h2>
 
+        <form action="/Map/view_multi" id="form" method="post">
+            <div class="table-responsive">
+                <table class="table">
+                    <tr><td>
+                        <div class="form-col">
+                            <div class="form-group col-md-8">
+                                <label for="">Data Source</label>
+                                <select onchange="listMapsDropDown('dataSource1','mapSId');" class="form-control" id="dataSource1" name="dataSource1">
+                                  <option value=""></option>
+                                </select>
+                            </div> 
+                            <div class="form-group col-md-8">
+                                <label for="mapSId">Select map</label>
+                                <select  class="form-control" id="mapSId" name="mapSId">
+                                  <option value=""></option>
+                                </select>
+                            </div> 
+                        </div>
+                    </td><td>
+                        <div class="form-col">
+                            <div class="form-group col-md-8">
+                                <label for="">Data Source</label>
+                                <select  onchange="listMapsDropDown('dataSource2','mapTId');" class="form-control" id="dataSource2" name="dataSource2">
+                                  <option value=""></option>
+                                </select>
+                            </div> 
+                            <div class="form-group col-md-8">
+                                <label for="mapSId">Select map</label>
+                                <select  class="form-control" id="mapTId" name="mapTId">
+                                  <option value="" placeholder="Select"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </td></tr>
+                    <tr><td align="center">      
+                        <!-- <div class="form-row"> -->
+                            <!-- <div class="form-group col-ld-8 col-md-16"> -->
+                              <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    </td></tr>
+                </table>
+            </div>
+        </form>
 
         <script type="text/javascript">
-
-            var request = new XMLHttpRequest();
             var brApiSite = '<% $dbhost %>';
+            var sources = '<% $datasources %>'; 
+            var sourcesList = sources.split(',');
+            for (var  i = 0; i<sourcesList.length; i++){                
+                var select = document.getElementById("dataSource1");
+                select.options[select.options.length] = new Option(sourcesList[i], sourcesList[i]);
+                var select = document.getElementById("dataSource2");
+                select.options[select.options.length] = new Option(sourcesList[i], sourcesList[i]);
+            }
 
-            $('#ballsWaveG').show();
-
-            var result = getJSON(brApiSite).then(function(d) { return d;
-                    }, function(status) {
-                      alert('Something went wrong');
-                    });
-
-
-            Promise.all([ result ])
-                .then((values) => { 
-                    const data = values[0].result.data; 
-
-                    for (var  i = 0; i<data.length; i++){
-
-                        var select = document.getElementById("mapTId");
-                        select.options[select.options.length] = new Option(data[i].mapName, data[i].mapDbId);
-                        var select = document.getElementById("mapSId");
-                        select.options[select.options.length] = new Option(data[i].mapName, data[i].mapDbId);
-                    }
-
-                     $('#ballsWaveG').hide();
-                });
-
+            // $('#ballsWaveG').show();
 
             function goComparative(){
-
-                var mapTId = document.getElementById('mapTId').value;
-                var mapSId = document.getElementById('mapSId').value;
-
-                if (mapSId != "" && mapTId != "" ){
-                    window.location= '/Map/view_multi?mapSId='+ mapSId +'&mapTId='+ mapTId;
-                }
-                else {
-                    alert("Please select maps.");
-                }
+                
+                if (mapSId != "" && mapTId != "" ){ document.getElementById("form").submit(); }
+                else { alert("Please select maps."); }
             }
             
         </script>
 
-        <form>
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label for="mapSId">Select a map </label>
-                    <select  class="form-control" id="mapSId" name="mapSId">
-                      <option value=""></option>
-                    </select>
-                </div>
-          
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label for="mapSId">Select a map to compare</label>
-                    <select  class="form-control" id="mapTId" name="mapTId">
-                      <option value="" placeholder="Select"></option>
-                    </select>
-                </div>
-            </div><br><br><br>                
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                  <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
-                </div>
-            </div>
-        </form><br><br><br><br><br>
+        <br><br><br><br><br>
     </div>
 </main>
 
