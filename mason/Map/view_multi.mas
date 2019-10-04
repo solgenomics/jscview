@@ -24,9 +24,6 @@ $dataSource2 => ()
       </tr>
     </table>
   </div>
-
-<br>
-<br>
 <div id="container" class="svg-container">
     <polygon id="poligono" points="" style="fill:none; stroke:#003300; stroke-width:3;"></polygon>
 </div>
@@ -109,8 +106,8 @@ $dataSource2 => ()
 
         var chrListSource = unique(source.list).sort(sortNumber);
         var chrListTarget = unique(target.list).sort(sortNumber);
-        var unit1 = values[0].result.unit;
-        var unit2 = values[1].result.unit;
+        var unit1 = values[2].result.unit;
+        var unit2 = values[3].result.unit;
 
         n =  (chrListSource.length >= chrListTarget.length) ? chrListSource.length : chrListTarget.length;
         nm= n+4 ; // # de chr added to not start from 0 grades 
@@ -139,14 +136,14 @@ $dataSource2 => ()
         // Construct links array
         var s,t;
         var dataLinks = getLinksdata(source.data,target.data);
-  //console.log(target.data);
+
         // Draw Chrs and markers
         const forZoom = 0, x0 =0;
         const comp=true;
 
         // Draw each chr
-        drawSetChr(source.data,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId, unit1, chrListSource);
-        drawSetChr(target.data,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId, unit2, chrListTarget);
+        drawSetChr(source.data,svg,chrListSource,x0,y0,1,forZoom,comp, mapSId, unit1, nm);
+        drawSetChr(target.data,svg,chrListTarget,x0,y0,-1,forZoom,comp, mapTId, unit2, nm);
 
         connectElements(svg,dataLinks);
 
@@ -159,33 +156,7 @@ $dataSource2 => ()
 
 
 
- function getLinksdata (sourceData,targetData){
-      // Construct links array
-      var s,t;
-      var datal = [];
-      var IdMarkers = getCommonColumn(sourceData,targetData,"marker_name"); 
-      
-      for (var i = 0; i < IdMarkers.length; i++) {  
-        s = sourceData.filter( function(char) { if (char.marker_name===IdMarkers[i]) { return char; } });
-        t = targetData.filter( function(char) { if (char.marker_name===IdMarkers[i])  return char; });
 
-        for (var si = 0; si < s.length; si++) {   
-          for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
-             datal.push({
-                    "chr_source": s[si].linkage_group_name, 
-                    "source_location": (+s[si].position),  
-                    "chr_target": t[ti].linkage_group_name, 
-                    "target_location": (+t[ti].position), 
-                    "marker_name": IdMarkers[i],
-                    "marker_line_source": "lmk" + mapSId + "_" + s[si].linkage_group_name  + "-" + IdMarkers[i],
-                    "marker_line_target": "lmk" + mapTId + "_" + t[ti].linkage_group_name  + "-" + IdMarkers[i],
-                    "link_name": "l_s"+ s[si].linkage_group_name + "_t" + t[ti].linkage_group_name + "_" +  IdMarkers[i]
-              });
-            }
-          } //}
-        }
-        return datal
-}
 
  </script>
 </main>

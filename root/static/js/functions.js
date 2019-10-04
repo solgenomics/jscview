@@ -44,6 +44,7 @@
       .attr("dx", -width/2)
       .attr("dy", -(height + width * 2)/2 -1) 
       .text("Chr " + i.split("_")[1])
+      .attr("direction", function(d) { if (zSide == 1) { return "ltr";} else {return "rtl"; } } ) 
       .attr("font-size",12) // 
       .attr("fill", "#B75CA1");
 
@@ -70,7 +71,8 @@
             listA.push(a.replace("rect", "")); 
             var res = a.replace("rect", "").split("_");     
             if (window['comp'] != true){
-              window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1]+ '&list=' + list;
+              openWindowWithPost(res[0],res[1],list);
+              // window.location='/Map/view_chr?map='+res[0]+'&chr=' + res[1]+ '&list=' + list;
             }
           })
         .on("mouseover", function(d) {    
@@ -83,16 +85,21 @@
           else {var st ='t' };  
           d3.select("svg").selectAll("[id*='_"+st + chrId + "_']").attr("stroke", "lightgray");
           });
+
     var  markerColor;
+
     if (comp ==true && forZoom ==0) markerColor=randomColor(); 
     else markerColor=randomColor;
-
 
     svg.selectAll("line.horizontal")
         .attr("id", "lines" + i)
         .data(dataT)
       .enter().append("svg:line")
-        .attr("id", function(d) {  return "lmk" + i + "-" + (d.marker_name); })
+        .attr("id", function(d) { 
+            d.marker_name = d.marker_name.replace(".", "_"); 
+            d.marker_name = d.marker_name.replace("/", "_"); 
+            zSide==1?orientation="T":orientation="S"; 
+            return orientation + "lmk" + i + "-" + (d.marker_name); })
         .attr("x1", function(d) { return d.x1;  })
         .attr("y1", function(d) { return d.y1;  })
         .attr("x2", function(d) { return d.x2;  })
@@ -491,4 +498,24 @@
     }
     return element;
   }
+
+  function openWindowWithPost(map, chr, list) {
+    var f = document.getElementById('Form');
+    f.map.value = map;
+    f.chr.value = chr;
+    f.list.value = list;
+    f.submit();
+  }
+
+  function openWindowWithPostComp(map,mapTId,nChr,nchT,dbhost1,dbhost2) {
+    var f = document.getElementById('Form');
+    f.mapSId.value = map;
+    f.mapTId.value = mapTId;
+    f.nChrS.value = nChr;
+    f.nChrT.value = nchT;
+    f.dataSource1.value = dbhost1;
+    f.dataSource2.value = dbhost2;
+    f.submit();
+  }
+
 

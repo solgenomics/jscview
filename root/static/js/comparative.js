@@ -8,7 +8,7 @@
 
         svg.selectAll("*").remove();
 
-        var list = [nChr1,nChr2];
+        var list = [nChr1,nChr2]; console.log(list);
         window["source"] = map + "_" + list[0];
         window["target"] = map1 + "_" + list[1];
 
@@ -39,13 +39,15 @@
         } 
 
         var ang = 0;
-        var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt); 
+        var dataForLink = transfLinkData_by2(datal, ang, chrWdt, radius, 0 , 0, maxs, maxt);
         links(dataForLink, svg, 0, chrWdt, chrHgt, 0, radius * 0.25, 0, 0 , y0, originX,originY,0);
 
  };
 
-  async function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp, mapId,unit){
- 
+  async function drawSetChr(data,svg,list,x0,y0,leftSide,forZoom,comp,mapId,unit,nm){
+      
+      if (nm-4 !=  list.length) nm = list.length+4
+
       for (var i = 0; i < (list.length); i++) {
 
         var angi =0;
@@ -122,11 +124,14 @@
                 + " " + (endX ) + " " +  (endY));
   }
 
-  function linkMulti(d) { 
+  function linkMulti(d) {
 
     var svgContainer= $("#matrixSVG");
-    var startElem =  $("#" + d.marker_line_source);
-    var endElem   = $("#" + d.marker_line_target);
+    d.marker_name = d.marker_name.replace(".", "_");
+    d.marker_line_source = d.marker_line_source.replace(".", "_");d.marker_line_target = d.marker_line_target.replace(".", "_");
+    d.marker_line_source = d.marker_line_source.replace("/", "_");d.marker_line_target = d.marker_line_target.replace("/", "_");
+    var startElem =  $("#T" + d.marker_line_source); 
+    var endElem   = $("#S" + d.marker_line_target); 
     var startAng = 90- (((d.chr_source)*180/(nm))+(0.5*180/(nm)))- (180/(nm)); 
     var endAng = 90-(((d.chr_target)*180/(nm))+(0.5*180/(nm)))- (180/(nm));  
     var svgTop  = svgContainer.offset().top;
@@ -145,7 +150,7 @@
             + " C" + (startX ) + "," +  ((startY + endY) / 2)
             + " " + (endX) + "," +  ((startY + endY) / 2)
             + " " + (endX) + "," +  (endY); 
-  } 
+  }
 
   function connectElements(svg, data) {
     svg.append("g")
@@ -153,7 +158,7 @@
       .selectAll("path")
       .data(data)
       .enter().append("path")
-      .attr("id", function(d) {  return d.link_name; })
+      .attr("id", function(d) {  d.link_name = d.link_name.replace(".", "_"); return d.link_name; })
       .attr("d", linkMulti)
       .style("opacity", 1)
       // .style("stroke", "blue")
@@ -161,7 +166,6 @@
         .on('mouseover', function(d) { 
           // d3.select(this).attr("stroke", "blue");
            });
-
   }
 
 
@@ -199,8 +203,8 @@
         for (var i = 0; i < IdMarkers.length; i++) {  
 
           targetChr.push({
-                          x: document.getElementById('lmk'+ t +'-'+ IdMarkers[i]).getAttribute('x1'),
-                          d: document.getElementById('lmk'+ t +'-'+ IdMarkers[i]).getAttribute('y1'), 
+                          x: document.getElementById('Tlmk'+ t +'-'+ IdMarkers[i]).getAttribute('x1'),
+                          d: document.getElementById('Tlmk'+ t +'-'+ IdMarkers[i]).getAttribute('y1'), 
                           marker_name: IdMarkers[i],
                           marker_db_id: IdMarkers[i] });
         }
@@ -212,5 +216,31 @@
 
    }
 
+  function getLinksdata (sourceData,targetData){
+    // Construct links array
+    var s,t;
+    var datal = [];
+    var IdMarkers = getCommonColumn(sourceData,targetData,"marker_name"); 
+    
+    for (var i = 0; i < IdMarkers.length; i++) {  
+      s = sourceData.filter( function(char) { if (char.marker_name===IdMarkers[i]) { return char; } });
+      t = targetData.filter( function(char) { if (char.marker_name===IdMarkers[i])  return char; });
 
+      for (var si = 0; si < s.length; si++) {   
+        for (var ti = 0; ti < t.length; ti++) { // if (s[si].linkageGroup<6 && t[ti].linkageGroup<6 ) {
+           datal.push({
+                  "chr_source": s[si].linkage_group_name, 
+                  "source_location": (+s[si].position),  
+                  "chr_target": t[ti].linkage_group_name, 
+                  "target_location": (+t[ti].position), 
+                  "marker_name": IdMarkers[i],
+                  "marker_line_source": "lmk" + mapSId + "_" + s[si].linkage_group_name  + "-" + IdMarkers[i],
+                  "marker_line_target": "lmk" + mapTId + "_" + t[ti].linkage_group_name  + "-" + IdMarkers[i],
+                  "link_name": "l_s"+ s[si].linkage_group_name + "_t" + t[ti].linkage_group_name + "_" +  IdMarkers[i]
+            });
+          }
+        } //}
+      }
+      return datal
+}
 

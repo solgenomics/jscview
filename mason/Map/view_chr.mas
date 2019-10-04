@@ -129,7 +129,7 @@ $list => ()
             const respName = values[1];
             var result = fillFilterArray(resp,nchr);
             var data = result.data;
-            var unit = resp.result.unit;
+            var unit = respName.result.unit;
             var comp=false;
 
             document.getElementById("tittle").innerHTML = respName.result.mapName; 
@@ -168,7 +168,8 @@ $list => ()
         var mapTId = document.getElementById('mapTId').value;
         var nchT = document.getElementById('nchT').value;
         if (mapTId != "" && nchT != ""){
-            window.location= '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
+            openWindowWithPostComp(map,mapTId,nChr,nchT,brApiSite,brApiSite);
+            // window.location= '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
         } else {
             alert("Select a map and chromosome number.");
         }
@@ -244,6 +245,14 @@ $list => ()
             <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
           </div>
         </div>
+      </form>
+      <form id="Form" method="post" action="/Map/view_comp/">
+        <input type="hidden" name="mapSId" value="mapSId" />
+        <input type="hidden" name="mapTId" value="mapTId" />
+        <input type="hidden" name="nChrS" value="input_chrS" />
+        <input type="hidden" name="nChrT" value="input_chrT" />
+        <input type="hidden" name="dataSource1" value="dataSource1" />
+        <input type="hidden" name="dataSource2" value="dataSource2" />
       </form>
 
     </div>

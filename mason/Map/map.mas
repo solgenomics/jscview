@@ -148,6 +148,12 @@ $dbhost => ()
 
     </script>
 
+    <form id="Form" method="post" action="/Map/view_chr/">
+      <input type="hidden" name="map" value="map" />
+      <input type="hidden" name="chr" value="chr" />
+      <input type="hidden" name="list" value="list" />
+    </form>
+
     </main>
 
 <& ../site/footer.mas &>
