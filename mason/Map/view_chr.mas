@@ -71,7 +71,7 @@ $list => ()
 
       svg.select("#brushid").remove();
 
-      selectMap(map,nChr,aList);
+
 
 
       /* Supporting functions */
@@ -145,7 +145,12 @@ $list => ()
             }
             $('#ballsWaveG').hide();
 
-          })
+          });
+
+          document.getElementById("dataSource1").value = brApiSite;
+          document.getElementById("dataSource2").value = brApiSite;
+          document.getElementById("mapSId").value = map;
+          document.getElementById("nChrS").value = nchr;
       }
 
       function checkrange(){
@@ -166,9 +171,9 @@ $list => ()
 
       function goComparative(){
         var mapTId = document.getElementById('mapTId').value;
-        var nchT = document.getElementById('nchT').value;
+        var nchT = document.getElementById('nChrT').value;
         if (mapTId != "" && nchT != ""){
-            window.location= '/Map/view_comp?mapSId='+ map +'&mapTId='+ mapTId +'&nChr1='+ nChr +'&nChr2=' + nchT;
+            document.getElementById("FormCompare").submit();
         } else {
             alert("Select a map and chromosome number.");
         }
@@ -228,7 +233,7 @@ $list => ()
         </div>
       </form>
 
-      <form>
+      <form id="FormCompare" action="/Map/view_comp" method="post">
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="mapTId">Compare to map</label>
@@ -237,8 +242,13 @@ $list => ()
                     </select>
           </div>
           <div class="form-group col-md-6">
-            <label for="nchT">Chr</label>
-                  <input class="form-control" id="nchT" name="nchT">
+            <label for="nChrT">Chr</label>
+                  <input class="form-control" id="nChrT" name="nChrT">
+          </div><div>
+            <input class="form-control" name='dataSource1' id='dataSource1'/>
+            <input class="form-control" name='dataSource2' id='dataSource2' /> 
+            <input class="form-control" name='mapSId' id='mapSId' > 
+            <input class="form-control" name='nChrS' id='nChrS' /> 
           </div>
           <div class="form-group col-md-6">
             <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
@@ -249,7 +259,9 @@ $list => ()
     </div>
 <br><br>
 </main>
-
+<script type="text/javascript">
+  selectMap(map,nChr,aList);
+</script>
 <& ../site/footer.mas &>
 
 </body>
