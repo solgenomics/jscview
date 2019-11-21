@@ -245,10 +245,10 @@ $list => ()
             <label for="nChrT">Chr</label>
                   <input class="form-control" id="nChrT" name="nChrT">
           </div><div>
-            <input class="form-control" name='dataSource1' id='dataSource1'/>
-            <input class="form-control" name='dataSource2' id='dataSource2' /> 
-            <input class="form-control" name='mapSId' id='mapSId' > 
-            <input class="form-control" name='nChrS' id='nChrS' /> 
+            <input class="form-control" type="hidden" name='dataSource1' id='dataSource1'/>
+            <input class="form-control" type="hidden" name='dataSource2' id='dataSource2' /> 
+            <input class="form-control" type="hidden" name='mapSId' id='mapSId' > 
+            <input class="form-control" type="hidden" name='nChrS' id='nChrS' /> 
           </div>
           <div class="form-group col-md-6">
             <input type="button" class="btn btn-primary" value="Compare" onclick="goComparative();">
